@@ -1,0 +1,879 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<title>Developer Settings - LHDN e-Invoice Portal</title>
+<link href="/assets/css/components/tooltip.css" rel="stylesheet">
+<link href="/assets/css/pages/developer-settings.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4 px-lg-5">
+  <!-- Header -->
+  <div class="profile-welcome-card">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="welcome-icon">
+          <i class="fas fa-code"></i>
+        </div>
+        <div class="welcome-content">
+          <h4 class="mb-1">Developer Settings</h4>
+          <p class="mb-0">Manage announcements, news, and portal settings</p>
+        </div>
+      </div>
+      <div class="developer-actions">
+        <button class="btn btn-primary" id="createAnnouncementBtn">
+          <i class="fas fa-plus"></i> New Announcement
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Navigation -->
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="card settings-nav-card">
+        <div class="card-body">
+          <h6 class="settings-nav-title">
+            <i class="fas fa-cogs"></i>
+            Developer Tools
+          </h6>
+
+          <div class="settings-nav-items">
+            <a href="#announcements" class="settings-nav-item active" data-section="announcements">
+              <div class="settings-nav-icon">
+                <i class="fas fa-bullhorn"></i>
+              </div>
+              <div class="settings-nav-details">
+                <h6>Announcements</h6>
+                <p>Manage portal announcements</p>
+              </div>
+            </a>
+
+            <a href="#news" class="settings-nav-item" data-section="news">
+              <div class="settings-nav-icon">
+                <i class="fas fa-newspaper"></i>
+              </div>
+              <div class="settings-nav-details">
+                <h6>News & Updates</h6>
+                <p>Post news and updates</p>
+              </div>
+            </a>
+
+            <a href="#help-system" class="settings-nav-item" data-section="help-system">
+              <div class="settings-nav-icon">
+                <i class="fas fa-question-circle"></i>
+              </div>
+              <div class="settings-nav-details">
+                <h6>Help System</h6>
+                <p>Manage tutorials and help</p>
+              </div>
+            </a>
+
+            <a href="#portal-settings" class="settings-nav-item" data-section="portal-settings">
+              <div class="settings-nav-icon">
+                <i class="fas fa-sliders-h"></i>
+              </div>
+              <div class="settings-nav-details">
+                <h6>Portal Settings</h6>
+                <p>Advanced portal configuration</p>
+              </div>
+            </a>
+
+            <a href="#system-monitoring" class="settings-nav-item" data-section="system-monitoring">
+              <div class="settings-nav-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="settings-nav-details">
+                <h6>System Monitoring</h6>
+                <p>Monitor system health</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <!-- Announcements Section -->
+      <div class="settings-section active" id="announcements">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-bullhorn me-2"></i>
+              Announcements Management
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-warning">
+              <i class="fas fa-bullhorn me-2"></i>
+              <strong>Announcements</strong> are general notifications sent to users about important information, maintenance, or urgent updates.
+              These appear in the notification system and can be targeted to specific user groups.
+            </div>
+            <!-- Announcement Stats -->
+            <div class="row mb-4">
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-primary">
+                    <i class="fas fa-bullhorn"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="totalAnnouncements">0</h4>
+                    <p>Total Announcements</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-success">
+                    <i class="fas fa-check-circle"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="activeAnnouncements">0</h4>
+                    <p>Active</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-warning">
+                    <i class="fas fa-edit"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="draftAnnouncements">0</h4>
+                    <p>Drafts</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-info">
+                    <i class="fas fa-thumbtack"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="pinnedAnnouncements">0</h4>
+                    <p>Pinned</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Announcements Filter -->
+            <div class="announcements-filter mb-3">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="filter-buttons">
+                    <button class="btn btn-outline-primary btn-sm active" data-filter="all">All</button>
+                    <button class="btn btn-outline-success btn-sm" data-filter="published">Published</button>
+                    <button class="btn btn-outline-warning btn-sm" data-filter="draft">Drafts</button>
+                    <button class="btn btn-outline-secondary btn-sm" data-filter="archived">Archived</button>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search announcements..." id="announcementSearch">
+                    <button class="btn btn-outline-secondary btn-sm" type="button">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Announcements Table -->
+            <div class="table-responsive">
+              <table class="table table-hover" id="announcementsTable">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Target</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="announcementsTableBody">
+                  <!-- Announcements will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Loading State -->
+            <div id="announcementsLoading" class="text-center p-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2 text-muted">Loading announcements...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="announcementsEmpty" class="text-center p-5" style="display: none;">
+              <i class="fas fa-bullhorn text-muted" style="font-size: 3rem;"></i>
+              <h5 class="mt-3 text-muted">No announcements found</h5>
+              <p class="text-muted">Create your first announcement to get started.</p>
+              <button class="btn btn-primary" onclick="showCreateAnnouncementModal()">
+                <i class="fas fa-plus"></i> Create Announcement
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- News Section -->
+      <div class="settings-section" id="news" style="display: none;">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="fas fa-newspaper me-2"></i>
+              News & Updates Management
+            </h5>
+            <button class="btn btn-primary btn-sm" id="createNewsBtn">
+              <i class="fas fa-plus"></i> New Article
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>News & Updates</strong> are portal-specific articles about new features, system updates, and important changes.
+              These are different from <strong>Announcements</strong> which are general notifications to users.
+            </div>
+
+            <!-- News Stats -->
+            <div class="row mb-4">
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-info">
+                    <i class="fas fa-newspaper"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="totalNews">0</h4>
+                    <p>Total Articles</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-success">
+                    <i class="fas fa-eye"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="publishedNews">0</h4>
+                    <p>Published</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-warning">
+                    <i class="fas fa-edit"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="draftNews">0</h4>
+                    <p>Drafts</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card">
+                  <div class="stat-icon bg-primary">
+                    <i class="fas fa-star"></i>
+                  </div>
+                  <div class="stat-content">
+                    <h4 id="featuredNews">0</h4>
+                    <p>Featured</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- News Filter -->
+            <div class="news-filter mb-3">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="filter-buttons">
+                    <button class="btn btn-outline-primary btn-sm active" data-filter="all">All</button>
+                    <button class="btn btn-outline-success btn-sm" data-filter="published">Published</button>
+                    <button class="btn btn-outline-warning btn-sm" data-filter="draft">Drafts</button>
+                    <button class="btn btn-outline-info btn-sm" data-filter="featured">Featured</button>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search news..." id="newsSearch">
+                    <button class="btn btn-outline-secondary btn-sm" type="button">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- News Table -->
+            <div class="table-responsive">
+              <table class="table table-hover" id="newsTable">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Views</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="newsTableBody">
+                  <!-- News articles will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Loading State -->
+            <div id="newsLoading" class="text-center p-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2 text-muted">Loading news articles...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="newsEmpty" class="text-center p-5" style="display: none;">
+              <i class="fas fa-newspaper text-muted" style="font-size: 3rem;"></i>
+              <h5 class="mt-3 text-muted">No news articles found</h5>
+              <p class="text-muted">Create your first news article to keep users informed about portal updates.</p>
+              <button class="btn btn-primary" onclick="showCreateNewsModal()">
+                <i class="fas fa-plus"></i> Create News Article
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help System Section -->
+      <div class="settings-section" id="help-system" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-question-circle me-2"></i>
+              Help System Management
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Current Help URL</h6>
+                <div class="input-group mb-3">
+                  <input type="url" class="form-control" value="http://pxcserver.ddns.net:3000/help#tutorials" id="helpUrl">
+                  <button class="btn btn-outline-primary" type="button" onclick="updateHelpUrl()">
+                    <i class="fas fa-save"></i> Update
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6>Quick Actions</h6>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-outline-primary" onclick="openHelpEditor()">
+                    <i class="fas fa-edit"></i> Edit Help Content
+                  </button>
+                  <button class="btn btn-outline-info" onclick="previewHelp()">
+                    <i class="fas fa-eye"></i> Preview Help
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Portal Settings Section -->
+      <div class="settings-section" id="portal-settings" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-sliders-h me-2"></i>
+              Advanced Portal Settings
+            </h5>
+          </div>
+          <div class="card-body">
+            <!-- API & Performance Settings -->
+            <div class="setting-group">
+              <h6><i class="fas fa-tachometer-alt me-2"></i>API & Performance</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">LHDN API Rate Limit</label>
+                    <input type="number" class="form-control" value="300" id="apiRateLimit">
+                    <small class="form-text text-muted">Requests per minute (LHDN max: 300)</small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">API Timeout</label>
+                    <input type="number" class="form-control" value="30" id="apiTimeout">
+                    <small class="form-text text-muted">Seconds</small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Retry Attempts</label>
+                    <input type="number" class="form-control" value="3" id="retryAttempts">
+                    <small class="form-text text-muted">Failed request retries</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="setting-group">
+              <h6><i class="fas fa-shield-alt me-2"></i>Security & Authentication</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Session Timeout</label>
+                    <input type="number" class="form-control" value="30" id="sessionTimeout">
+                    <small class="form-text text-muted">Minutes</small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Max Login Attempts</label>
+                    <input type="number" class="form-control" value="5" id="maxLoginAttempts">
+                    <small class="form-text text-muted">Before account lockout</small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Lockout Duration</label>
+                    <input type="number" class="form-control" value="15" id="lockoutDuration">
+                    <small class="form-text text-muted">Minutes</small>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="enforceHttps" checked>
+                    <label class="form-check-label" for="enforceHttps">
+                      Enforce HTTPS
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="enableTwoFactor">
+                    <label class="form-check-label" for="enableTwoFactor">
+                      Enable 2FA for Admins
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="setting-group">
+              <h6><i class="fas fa-database me-2"></i>Data Management</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Log Retention</label>
+                    <input type="number" class="form-control" value="90" id="logRetention">
+                    <small class="form-text text-muted">Days</small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Notification Retention</label>
+                    <input type="number" class="form-control" value="30" id="notificationRetention">
+                    <small class="form-text text-muted">Days</small>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">File Cleanup</label>
+                    <select class="form-select" id="fileCleanup">
+                      <option value="never">Never</option>
+                      <option value="30">30 days</option>
+                      <option value="90" selected>90 days</option>
+                      <option value="180">180 days</option>
+                      <option value="365">1 year</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="autoBackup" checked>
+                    <label class="form-check-label" for="autoBackup">
+                      Enable Automatic Backups
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="compressLogs">
+                    <label class="form-check-label" for="compressLogs">
+                      Compress Old Logs
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Email & Notifications -->
+            <div class="setting-group">
+              <h6><i class="fas fa-envelope me-2"></i>Email & Notifications</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">SMTP Server</label>
+                    <input type="text" class="form-control" placeholder="smtp.example.com" id="smtpServer">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="mb-3">
+                    <label class="form-label">SMTP Port</label>
+                    <input type="number" class="form-control" value="587" id="smtpPort">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="mb-3">
+                    <label class="form-label">Encryption</label>
+                    <select class="form-select" id="smtpEncryption">
+                      <option value="tls" selected>TLS</option>
+                      <option value="ssl">SSL</option>
+                      <option value="none">None</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">From Email</label>
+                    <input type="email" class="form-control" placeholder="noreply@example.com" id="fromEmail">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">Admin Email</label>
+                    <input type="email" class="form-control" placeholder="admin@example.com" id="adminEmail">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- System Maintenance -->
+            <div class="setting-group">
+              <h6><i class="fas fa-tools me-2"></i>System Maintenance</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Maintenance Mode</label>
+                    <select class="form-select" id="maintenanceMode">
+                      <option value="off" selected>Off</option>
+                      <option value="scheduled">Scheduled</option>
+                      <option value="immediate">Immediate</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Maintenance Start</label>
+                    <input type="datetime-local" class="form-control" id="maintenanceStart">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Maintenance End</label>
+                    <input type="datetime-local" class="form-control" id="maintenanceEnd">
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Maintenance Message</label>
+                <textarea class="form-control" rows="2" id="maintenanceMessage" placeholder="System is under maintenance. Please try again later."></textarea>
+              </div>
+            </div>
+
+            <!-- Save Settings -->
+            <div class="text-end">
+              <button class="btn btn-outline-secondary me-2" onclick="resetPortalSettings()">
+                <i class="fas fa-undo"></i> Reset to Defaults
+              </button>
+              <button class="btn btn-primary" onclick="savePortalSettings()">
+                <i class="fas fa-save"></i> Save Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Monitoring Section -->
+      <div class="settings-section" id="system-monitoring" style="display: none;">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-chart-line me-2"></i>
+              System Monitoring Dashboard
+            </h5>
+          </div>
+          <div class="card-body">
+            <!-- System monitoring content will be added here -->
+            <div class="row">
+              <div class="col-md-4">
+                <div class="monitoring-card">
+                  <h6>System Health</h6>
+                  <div class="health-indicator good">
+                    <i class="fas fa-check-circle"></i> Healthy
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="monitoring-card">
+                  <h6>Database Status</h6>
+                  <div class="health-indicator good">
+                    <i class="fas fa-database"></i> Connected
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="monitoring-card">
+                  <h6>LHDN API Status</h6>
+                  <div class="health-indicator good">
+                    <i class="fas fa-globe"></i> Online
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit News Modal -->
+<div class="modal fade" id="newsModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newsModalTitle">Create News Article</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="newsForm">
+          <input type="hidden" id="newsId">
+
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label class="form-label">Title *</label>
+                <input type="text" class="form-control" id="newsTitle" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="newsCategory">
+                  <option value="feature">New Feature</option>
+                  <option value="update">System Update</option>
+                  <option value="improvement">Improvement</option>
+                  <option value="bugfix">Bug Fix</option>
+                  <option value="maintenance">Maintenance</option>
+                  <option value="security">Security</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Summary</label>
+            <textarea class="form-control" rows="2" id="newsSummary" placeholder="Brief summary for the news article"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Content *</label>
+            <textarea id="newsContent" class="form-control" rows="8"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Priority</label>
+                <select class="form-select" id="newsPriority">
+                  <option value="low">Low</option>
+                  <option value="normal" selected>Normal</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Visibility</label>
+                <select class="form-select" id="newsVisibility">
+                  <option value="public">Public</option>
+                  <option value="users">Registered Users</option>
+                  <option value="admin">Administrators</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Options</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="newsFeatured">
+                  <label class="form-check-label" for="newsFeatured">
+                    Featured article
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="newsNotify">
+                  <label class="form-check-label" for="newsNotify">
+                    Send notification
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Publish Date</label>
+                <input type="datetime-local" class="form-control" id="newsPublishDate">
+                <small class="form-text text-muted">Leave empty to publish immediately</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Tags</label>
+                <input type="text" class="form-control" id="newsTags" placeholder="feature, update, important">
+                <small class="form-text text-muted">Comma-separated tags</small>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-outline-primary" id="saveNewsAsDraftBtn">Save as Draft</button>
+        <button type="button" class="btn btn-primary" id="publishNewsBtn">Publish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Announcement Modal -->
+<div class="modal fade" id="announcementModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="announcementModalTitle">Create Announcement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="announcementForm">
+          <input type="hidden" id="announcementId">
+
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label class="form-label">Title *</label>
+                <input type="text" class="form-control" id="announcementTitle" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Type</label>
+                <select class="form-select" id="announcementType">
+                  <option value="general">General</option>
+                  <option value="maintenance">Maintenance</option>
+                  <option value="feature">Feature</option>
+                  <option value="security">Security</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Summary</label>
+            <textarea class="form-control" rows="2" id="announcementSummary" placeholder="Brief summary for notifications"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Content *</label>
+            <textarea id="announcementContent" class="form-control" rows="8"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Priority</label>
+                <select class="form-select" id="announcementPriority">
+                  <option value="low">Low</option>
+                  <option value="normal" selected>Normal</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Target Audience</label>
+                <select class="form-select" id="announcementAudience">
+                  <option value="all">All Users</option>
+                  <option value="admin">Administrators</option>
+                  <option value="users">Regular Users</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label class="form-label">Options</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="announcementPinned">
+                  <label class="form-check-label" for="announcementPinned">
+                    Pin to top
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="announcementPopup">
+                  <label class="form-check-label" for="announcementPopup">
+                    Show as popup
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Publish Date</label>
+                <input type="datetime-local" class="form-control" id="announcementPublishDate">
+                <small class="form-text text-muted">Leave empty to publish immediately</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Expiry Date</label>
+                <input type="datetime-local" class="form-control" id="announcementExpiryDate">
+                <small class="form-text text-muted">Leave empty for no expiry</small>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-outline-primary" id="saveAsDraftBtn">Save as Draft</button>
+        <button type="button" class="btn btn-primary" id="publishAnnouncementBtn">Publish</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/pages/developer-settings.js"></script>
+{% endblock %}

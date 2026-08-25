@@ -1,0 +1,399 @@
+/* Main container */
+.container-fluid {
+    padding: 0;
+    min-height: 100vh;
+    background: #f1f5f9; /* Light gray background */
+}
+
+
+
+
+/* Cards container with improved spacing */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+    padding: 0.5rem;
+}
+
+/* Add container width breakpoints */
+@media (min-width: 1921px) {
+    .content-section {
+        padding: 0 3rem;  /* Larger padding for ultra-wide screens */
+    }
+}
+
+@media (min-width: 2560px) {
+    .content-section {
+        padding: 0 4rem;  /* Even larger padding for 4K screens */
+    }
+}
+
+/* Enhanced card design */
+.info-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 1.5rem 1.25rem 1rem;
+    display: flex;
+    height: 120px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03);
+    width: 100%;
+    margin: 0 auto;
+    min-height: 100px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+    border: 1px solid rgba(0,0,0,0.03);
+    backdrop-filter: blur(8px);
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.08);
+}
+
+.info-card:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+}
+
+/* Card info section */
+.card-info {
+    display: flex;
+    align-items: center;   /* Center items vertically */
+    gap: 1rem;
+    margin-bottom: 0;     /* Removed bottom margin */
+}
+
+/* Enhanced icon styles */
+.card-icon {
+    width: 42px;          /* Slightly smaller icons */
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+/* Count info styles */
+.count-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.count-info h6 {
+    font-size: 1.75rem;   /* Slightly smaller font */
+    font-weight: 600;
+    margin: 0;
+    line-height: 1;
+}
+
+.count-info .text-muted {
+    font-size: 0.75rem;
+    color: #64748b !important;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+
+/* Card title styles */
+.card-title-new {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 0;           /* Removed padding */
+    margin: 0;            /* Removed margin */
+    border-top: none;     /* Removed border */
+    color: #64748b;
+    margin-right: 0;
+}
+
+/* Card specific styles */
+/* Invoices Card */
+.invoices-card {
+    border-top: 3px solid #0d6efd;
+    background: #fff;
+}
+
+.invoices-card .card-icon {
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+/* Submitted Card */
+.submitted-card {
+    border-top: 3px solid #198754;
+    background: #fff;
+}
+
+.submitted-card .card-icon {
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+/* Pending Card */
+.pending-card {
+    border-top: 3px solid #fd7e14;
+    background: #fff;
+}
+
+.pending-card .card-icon {
+    background: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+/* Cancelled Card */
+.cancelled-card {
+    border-top: 3px solid #ffc107;
+    background: #fff;
+}
+
+.cancelled-card .card-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+/* Hover effects */
+.info-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.info-card:hover .card-icon {
+    transform: scale(1.05);
+}
+
+/* Color-specific hover intensities */
+.invoices-card:hover {
+    background: #fafbff;
+}
+
+.submitted-card:hover {
+    background: #f8fbf9;
+}
+
+.pending-card:hover {
+    background: #fff9f5;
+}
+
+.cancelled-card:hover {
+    background: #fffdf5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+    .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .info-card {
+        min-height: 90px;
+        padding: 0.875rem 1rem;
+    }
+
+    .card-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
+
+    .count-info h6 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Card actions container */
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Three dots button */
+.btn-icon {
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.info-card:hover .btn-icon {
+    opacity: 1;
+}
+
+.btn-icon:hover {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+    min-width: 180px;
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+
+}
+
+.dropdown-item {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    color: #475569;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover {
+    background-color: #f8fafc;
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #e5e7eb;
+}
+
+/* Position the dropdown menu relative to the button */
+.card-menu .dropdown {
+    position: relative;
+}
+
+.card-menu .dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: 1022;
+    display: none;
+    min-width: 200px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    transform-origin: top right;
+}
+
+/* Animation for dropdown */
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.card-menu .dropdown-menu.show {
+    display: block;
+    animation: dropdownFade 0.2s ease;
+}
+
+/* Update the button styles */
+.card-menu .btn-icon {
+    position: relative;
+    z-index: 1001;
+}
+
+/* Add hover effects for dropdown items based on card type */
+.invoices-card .dropdown-item:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.submitted-card .dropdown-item:hover {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.pending-card .dropdown-item:hover {
+    background-color: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+.cancelled-card .dropdown-item:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+/* Card menu positioning */
+.card-menu {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1021;
+}
+
+/* Dropdown header styling */
+.dropdown-header {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+/* Add some extra padding to first item after header */
+.dropdown-header + .dropdown-item {
+    margin-top: 0.25rem;
+}
+
+/* Active filter state */
+/* Old Code
+.dropdown-item.active {
+    background-color: #f1f5f9;
+    font-weight: 500;
+} */
+
+.dropdown-item.active {
+    background-color: #e2e8f0;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* Ensure dropdowns are above other elements */
+.dropdown-menu.show {
+    display: block !important;
+    z-index: 1030;
+} 

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Invoice</title>
+    <style>
+        :root {
+            --primary-blue: #1e3a8a;
+            --secondary-blue: #2563eb;
+            --light-bg: #f8fafc;
+            --border-color: #e5e7eb;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .header-banner {
+            background: var(--primary-blue);
+            padding: 2px 40px;
+            color: white;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 40px;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .logo {
+            max-width: 180px;
+        }
+
+        .company-details {
+            text-align: right;
+        }
+
+        .invoice-title {
+            font-size: 24px;
+            color: var(--primary-blue);
+            margin: 0 0 16px 0;
+        }
+
+        .info-sections {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 0 40px;
+            margin-bottom: 40px;
+        }
+
+        .info-box {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .info-box h2 {
+            color: var(--primary-blue);
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .content {
+            padding: 0 40px 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+        }
+
+        thead {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        tr:nth-child(even) {
+            background: var(--light-bg);
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .amount-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .amount-box {
+            width: 350px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .amount-row:last-child {
+            background: var(--primary-blue);
+            color: white;
+            font-weight: bold;
+            border-bottom: none;
+        }
+
+        .footer {
+            background: var(--light-bg);
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--secondary-blue);
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-banner">
+            <span>Invoice #{{invoiceNo}} | Date: {{invoiceDate}}</span>
+        </div>
+
+        <div class="header">
+            <div class="logo-section">
+                <img src="/assets/img/Logo4.png" alt="Company Logo" class="logo">
+                <p>{{companyName}}<br>
+                {{companyAddress}}</p>
+            </div>
+            <div class="company-details">
+                <h1 class="invoice-title">TAX INVOICE</h1>
+                <p><strong>Pixelcare Consulting</strong></p>
+                    <p><strong>SST ID:</strong> {{supplierSSTID}}</p>
+                    <p><strong>TIN:</strong> C15845XXX00</p>
+                    <p><strong>BRN:</strong> 2054033105XX0</p>
+                    <p><strong>MSIC Code:</strong> {{supplierMSICCode}}</p>
+            </div>
+        </div>
+
+        <div class="info-sections">
+            <div class="info-box">
+                <h2>Bill To</h2>
+                <p><strong>{{buyerName}}</strong></p>
+                <p>{{buyerAddress}}</p>
+                <p><strong>TIN:</strong> C25845XXX00</p>
+                <p><strong>BRN:</strong> 20200145XXXX</p>
+                <p><strong>Contact:</strong> {{buyerPhone}}</p>
+            </div>
+            <div class="info-box">
+                <h2>Details</h2>
+                <p><strong>Due Date:</strong> {{dueDate}}</p>
+                <p><strong>Terms:</strong> {{paymentTerms}}</p>
+                <p><strong>Contact:</strong> {{buyerPhone}}</p>
+            </div>
+            <div class="info-box">
+                <h2>Payment Info</h2>
+                <p><strong>Bank:</strong> {{bankName}}</p>
+                <p><strong>Account:</strong> {{accountNo}}</p>
+                <p><strong>Swift:</strong> {{swiftCode}}</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Classification</th>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Amount</th>
+                        <th>Tax Rate</th>
+                        <th>Tax Amount</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>022</td>
+                        <td>Sample Description</td>
+                        <td class="text-right">1</td>
+                        <td class="text-right">MYR 100.00</td>
+                        <td class="text-right">6.00%</td>
+                        <td class="text-right">MYR 106.00</td>
+                        <td class="text-right">MYR 106.00</td>
+                        <td class="text-right">MYR 106.00</td>
+                    </tr>
+                    <tr>
+                        <td>022</td>
+                        <td>Sample Description</td>
+                        <td class="text-right">1</td>
+                        <td class="text-right">MYR 100.00</td>
+                        <td class="text-right">6.00%</td>
+                        <td class="text-right">MYR 106.00</td>
+                        <td class="text-right">MYR 106.00</td>
+                        <td class="text-right">MYR 106.00</td>
+                    </tr>
+                    <tr>
+                        <td>022</td>
+                        <td>Sample Description</td>
+                        <td class="text-right">1</td>
+                        <td class="text-right">MYR 100.00</td>
+                        <td class="text-right">6.00%</td>
+                        <td class="text-right">MYR 106.00</td>
+                        <td class="text-right">MYR 106.00</td>
+                        <td class="text-right">MYR 106.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="amount-section">
+                <div class="amount-box">
+                    <div class="amount-row">
+                        <span>Subtotal (Excluding Tax):</span>
+                        <span>MYR {{subtotal}}</span>
+                    </div>
+                    <div class="amount-row">
+                        <span>Total Tax:</span>
+                        <span>MYR {{sstTotal}}</span>
+                    </div>
+                    <div class="amount-row">
+                        <span>Total Amount (Including Tax):</span>
+                        <span>MYR {{totalAmount}}</span>
+                    </div>
+                    <div class="amount-row">
+                        <span>Total Payable Amount:</span>
+                        <span>MYR {{totalAmount}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                <p>Digital Signature: {{digitalSignature}}</p>
+                <p>This is a computer-generated invoice.<br>No signature is required.</p>
+            </div>
+            <img class="qr-code" src="/images/PXCQR.png" alt="QR Code">
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,463 @@
+/* Table Container */
+.table-card {
+    background: #fff;
+    border-radius: 12px;
+    border: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.table-responsive {
+    margin: 0;
+    padding: 0;
+    border-radius: 0.5rem;
+    overflow: visible;  
+    background: #fff;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Table Base Styles */
+.table {
+    width: 100% !important;
+    margin: 0 !important;
+    font-size: 0.875rem !important;
+    color: #475569;
+    background: #fff;
+    table-layout: fixed;
+    min-width: 800px;
+}
+
+/* Table Cell Styles */
+#invoiceTable tbody td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    color: #495057;
+    border-bottom: 1px solid #e9ecef;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+
+
+
+/* Column-specific styles */
+.submituid-column a {
+    color: #2563eb !important;
+    font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace !important;
+    font-size: 0.75rem !important;
+    text-decoration: none !important;
+    transition: color 0.15s ease !important;
+}
+
+.submituid-column a:hover {
+    color: #1d4ed8 !important;
+}
+
+.invoice-number .badge-invoice {
+    background: #e0f2fe !important;
+    color: #0369a1 !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+}
+
+/* Badge Styles */
+.badge-type {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px !important;
+    border-radius: 0.375rem;
+    font-size: 0.80rem !important;
+    font-weight: 500;
+    text-align: center;
+}
+
+.badge-type.invoice {
+    background: #dbeafe !important;
+    color: #2563eb !important;
+    padding: 4px 10px !important;
+    font-size: 0.75rem !important;
+}
+
+.badge-type.invoiceType {
+    background: #dbeafe !important;
+    color: #2563eb !important;
+    padding: 4px 10px !important;
+    font-size: 0.75rem !important;
+}
+
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px !important;
+    border-radius: 0.375rem;
+    font-weight: 500 !important;
+    font-size: 0.75rem !important;
+}
+
+.badge-status.Valid {
+    background: #dcfce7 !important;
+    color: #15803d !important;
+}
+
+.badge-status.Cancelled {
+    background: #fef9c3 !important;
+    color: #ca8a04 !important;
+}
+
+.badge-status.Invalid {
+    background: #fee2e2 !important;
+    color: #dc2626 !important;
+}
+/* DataTable Specific Styles */
+.dataTables_wrapper {
+    padding: 1rem;
+}
+
+.dataTables_length select {
+    height: 32px !important;
+    padding: 6px 28px 6px 12px !important;
+    font-size: 0.813rem !important;
+    border-radius: 6px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: all 0.2s ease !important;
+}
+
+
+/* Utility Classes */
+.text-center { text-align: center !important; }
+.text-end { text-align: right !important; }
+
+/* Amount Column */
+.amount-column {
+    font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace !important;
+    font-size: 0.813rem !important;
+    color: #1e293b !important;
+    font-weight: 500 !important;
+    text-align: right !important;
+    padding-right: 16px !important;
+}
+
+/* Row Hover Effect */
+.table tbody tr:hover {
+    background-color: #f8fafc !important;
+    transition: background-color 0.15s ease-in-out !important;
+}
+
+/* Checkbox Styling */
+.form-check {
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.form-check-input {
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 3px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.form-check-input:checked {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1) !important;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .dataTables_wrapper .row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .dataTables_length, 
+    .dataTables_filter {
+        text-align: left;
+        width: 100%;
+    }
+}
+
+/* Column Widths */
+.checkbox-column {
+    width: 28px !important;
+    min-width: 28px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+.index-column {
+    width: 40px !important;
+    min-width: 40px !important;
+}
+
+.uuid-column {
+    width: 180px !important;
+    min-width: 180px !important;
+}
+
+.invoice-number {
+    width: 100px !important;
+    min-width: 100px !important;
+}
+
+.type-column {
+    width: 80px !important;
+    min-width: 100px !important;
+    font-size: 0.60rem !important;
+}
+
+.customer-name {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+
+.date-column {
+    width: 130px !important;
+    min-width: 130px !important;
+}
+
+.status-column {
+    width: 90px !important;
+    min-width: 90px !important;
+}
+
+.source-column {
+    width: 100px !important;
+    min-width: 100px !important;
+}
+
+.amount-column {
+    width: 120px !important;
+    min-width: 120px !important;
+}
+
+.action-column {
+    width: 100px !important;
+    min-width: 100px !important;
+}
+
+/* Export Button */
+#exportSelected {
+    font-size: 0.813rem;
+    padding: 6px 16px !important;
+    background-color: #2563eb !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+#exportSelected:disabled {
+    background: #94a3b8 !important;
+    opacity: 0.7 !important;
+}
+
+#exportSelected .selected-count {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+/* Spinner Animation */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* DataTable Length Control */
+.dataTables_length {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Pagination Styles */
+.dataTables_paginate {
+    margin-top: 1rem !important;
+    padding-top: 0.5rem !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 4px !important;
+}
+
+.paginate_button {
+    padding: 6px 12px !important;
+    margin: 0 0.125rem !important;
+    border-radius: 6px !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    font-size: 0.875rem !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    transition: all 0.15s ease !important;
+}
+
+.paginate_button:hover:not(.disabled):not(.current) {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+}
+
+.paginate_button.current {
+    background: #2563eb !important;
+    color: white !important;
+    border-color: #2563eb !important;
+    font-weight: 500 !important;
+}
+
+.paginate_button.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+/* Info text styling */
+.dataTables_info {
+    color: #64748b !important;
+    font-size: 0.875rem !important;
+    padding-top: 1rem !important;
+}
+
+/* Bottom wrapper spacing */
+.dataTables_wrapper .row:last-child {
+    margin-top: 1rem !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+    .dataTables_paginate {
+        justify-content: center !important;
+        margin-top: 1rem !important;
+    }
+    
+    .dataTables_info {
+        text-align: center !important;
+    }
+}
+
+/* Table wrapper improvements */
+.dataTables_wrapper {
+    padding: 1.25rem !important;
+    background: #fff !important;
+    border-radius: 0.5rem !important;
+}
+
+/* Search and length control wrapper */
+.dataTables_wrapper .row:first-child {
+    margin-bottom: 1.5rem !important;
+    align-items: center !important;
+}
+
+/* Length dropdown styling */
+.dataTables_length label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    margin: 0 !important;
+    color: #64748b !important;
+    font-size: 0.875rem !important;
+}
+
+.dataTables_filter input {
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    padding: 0.375rem 0.75rem;
+    padding-right: 2.5rem;
+    width: 100%;
+    display: flex !important;
+    align-items: right !important;
+    justify-content: right !important;
+}
+
+.dataTables_filter input:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+    outline: 0;
+}
+
+
+.text-break-all {
+    min-width: 200px;
+    width: auto;
+    word-break: break-all;
+}
+
+
+
+.uuid-link:hover {
+    text-decoration: underline;
+}
+
+.text-truncate {
+    max-width: 200px; /* adjust as needed */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Loading Backdrop Styles */
+.loading-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.loading-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-message {
+    margin-top: 1rem;
+    color: #1e293b;
+}
+
+.loading-message h5 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.loading-message p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: #2563eb !important;
+}
+
+/* Prevent interaction while loading */
+.loading-backdrop[style*="display: block"] ~ * {
+    pointer-events: none;
+}

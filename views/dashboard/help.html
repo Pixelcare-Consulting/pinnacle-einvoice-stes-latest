@@ -1,0 +1,406 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<title>Help & Support - LHDN e-Invoice Portal</title>
+<link href="/assets/css/components/tooltip.css" rel="stylesheet">
+<link href="/assets/css/pages/settings.css" rel="stylesheet">
+<link href="/assets/css/pages/profile.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4 px-lg-5">
+  <!-- Header -->
+  <div class="profile-welcome-card">
+    <h2>
+      <i class="fas fa-question-circle"></i>
+      Help & Support
+    </h2>
+    <p>Find guides and documentation to help you use the E-Invoice Portal effectively.</p>
+  </div>
+
+  <div class="settings-content">
+    <!-- Left Sidebar - Help Navigation -->
+    <div class="settings-nav-card">
+      <h6 class="settings-nav-title">
+        <i class="fas fa-book"></i>
+        Help Topics
+      </h6>
+      
+      <div class="settings-nav-items">
+        <a href="#getting-started" class="settings-nav-item active" data-section="getting-started">
+          <div class="settings-nav-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Getting Started</h4>
+            <p>Quick guide to get started</p>
+          </div>
+        </a>
+
+        <a href="#dashboard" class="settings-nav-item" data-section="dashboard">
+          <div class="settings-nav-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Dashboard Guide</h4>
+            <p>Complete portal overview</p>
+          </div>
+        </a>
+
+        <a href="#tutorials" class="settings-nav-item" data-section="tutorials">
+          <div class="settings-nav-icon">
+            <i class="fas fa-video"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Video Tutorials</h4>
+            <p>Step-by-step video guides</p>
+          </div>
+        </a>
+
+        <a href="#support" class="settings-nav-item" data-section="support">
+          <div class="settings-nav-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Support</h4>
+            <p>Get help when you need it</p>
+          </div>
+        </a>
+
+        <a href="#faq" class="settings-nav-item" data-section="faq">
+          <div class="settings-nav-icon">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>FAQ</h4>
+            <p>Common questions answered</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Content - Help Content -->
+    <div class="settings-form-section">
+      <!-- Getting Started -->
+      <div class="settings-form" id="getting-started">
+        <h3 class="settings-form-title">
+          <i class="fas fa-rocket"></i>
+          Getting Started
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i>
+            Welcome to Pinnacle e-Invoice Solution Portal! Follow these steps to get started with your account.
+          </div>
+
+          <div class="help-steps">
+            <div class="help-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4><i class="fas fa-building"></i>Complete Your Company Profile</h4>
+                <p>Set up your company profile with essential information:</p>
+                <ul>
+                  <li>Company name and registration details</li>
+                  <li>Business address and contact information</li>
+                  <li>Upload your company logo</li>
+                </ul>
+              </div>
+            </div>
+            <div class="help-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4><i class="fas fa-sliders-h"></i> Configure Settings</h4>
+                <p>Customize your system settings:</p>
+                <ul>
+                  <li>Configure API endpoints</li>
+                  <li>Set up LHDN authentication credentials</li>
+                  <li>Configure notification preferences</li>
+                </ul>
+                <p class="mt-2" style="font-size: 0.9rem; color: #666;">
+                  <i class="fas fa-info-circle"></i> Need help with configuration? 
+                  <a href="#support" style="color: #6366f1;">Contact our support team</a>
+                </p>
+              </div>
+            </div>
+
+            <div class="help-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4><i class="fas fa-users"></i> Connect Your ERP System</h4>
+                <p>Set up integration with your ERP:</p>
+                <ul>
+                  <li>Configure ERP connection settings</li>
+                  <li>Test connectivity</li>
+                  <li>Validate data synchronization</li>
+                  <li>Monitor integration status</li>
+                </ul>
+                <p class="mt-2" style="font-size: 0.9rem; color: #666;">
+                  <i class="fas fa-info-circle"></i> For custom ERP integration, please  <a href="#support" style="color: #6366f1;">Contact our support team</a>
+                </p>
+              </div>
+            </div>
+
+            <div class="help-step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h4><i class="fas fa-file-invoice"></i> Start Processing Invoices</h4>
+                <p>Begin processing LHDN e-Invoices through the middleware:</p>
+                <ul>
+                  <li>Monitor invoice transmission</li>
+                  <li>Track processing status</li>
+                  <li>View validation results</li>
+                  <li>Access transaction logs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Guide -->
+      <div class="settings-form" id="dashboard">
+        <h3 class="settings-form-title">
+          <i class="fas fa-chart-line"></i>
+          Dashboard Guide
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i>
+            Your dashboard provides real-time insights and access to all key features.
+          </div>
+
+          <div class="help-steps">
+            <div class="help-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4><i class="fas fa-chart-bar"></i> Overview</h4>
+                <p>Your dashboard provides real-time insights into your invoice activities:</p>
+                <ul>
+                  <li>View total invoices processed</li>
+                  <li>Monitor recent activities</li>
+                  <li>Track invoice status</li>
+                  <li>Access quick actions</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="help-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4><i class="fas fa-paper-plane"></i> Managing Outbound Invoices</h4>
+                <p>Send and manage outgoing invoices efficiently:</p>
+                <ul>
+                  <li>Upload new invoices in Excel format</li>
+                  <li>Track the status of sent invoices</li>
+                  <li>View delivery confirmations</li>
+                  <li>Generate reports and summaries</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="help-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4><i class="fas fa-inbox"></i> Managing Inbound Invoices</h4>
+                <p>Handle incoming invoices effectively:</p>
+                <ul>
+                  <li>Review received invoices</li>
+                  <li>Process and approve invoices</li>
+                  <li>Download invoice documents</li>
+                  <li>Track payment status</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="help-step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h4><i class="fas fa-cog"></i> Configuring Your Portal</h4>
+                <p>Customize your portal settings:</p>
+                <ul>
+                  <li>Update profile information</li>
+                  <li>Manage company details</li>
+                  <li>Configure notifications</li>
+                  <li>Set user permissions</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="settings-form" id="support">
+        <h3 class="settings-form-title">
+          <i class="fas fa-headset"></i>
+          Support
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> 
+            Our support team is here to help you with any questions or issues.
+          </div>
+          
+          <div class="contact-support">
+            <div class="contact-method">
+              <i class="fas fa-envelope"></i>
+              <div class="contact-method-details">
+                <h5>Email Support</h5>
+                <p>support@pixelcareconsulting.com</p>
+              </div>
+            </div>
+            
+            <div class="contact-method">
+              <i class="fas fa-phone"></i>
+              <div class="contact-method-details">
+                <h5>Phone Support</h5>
+                <p>+60 (03) 7890-1234</p>
+              </div>
+            </div>
+            
+            <div class="contact-method">
+              <i class="fas fa-clock"></i>
+              <div class="contact-method-details">
+                <h5>Business Hours</h5>
+                <p>Mon-Fri, 9 AM - 6 PM MYT</p>
+              </div>
+            </div>
+            
+            <div class="contact-method">
+              <i class="fas fa-comments"></i>
+              <div class="contact-method-details">
+                <h5>Live Chat</h5>
+                <p>Available during business hours</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="settings-form" id="faq">
+        <h3 class="settings-form-title">
+          <i class="fas fa-question-circle"></i>
+          Frequently Asked Questions
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i>
+            Find answers to commonly asked questions about using Pinnacle e-Invoice Solution LHDN Middleware. 
+          </div>
+
+          <div class="faq-list">
+            <div class="faq-item">
+              <h4>Can I customize invoice templates?</h4>
+              <p>Yes, Pinnacle e-Invoice Solution LHDN Middleware offers multiple invoice templates that you can customize. You can modify colors, add your logo, and adjust layouts through the Settings > Invoice Settings menu. <a href="#" target="_blank" style="color: #6366f1; font-weight: bold; font-size: 12px;"><i class="fas fa-exclamation-triangle" style="color: #f59e0b; margin-left: 13rem;"></i>(This feature is in experimental stage and under active development)</a></p>
+            </div>
+
+            <div class="faq-item">
+              <h4>How do I generate reports?</h4>
+              <p>Navigate to the Inbound page in the dashboard or top navigation bar. Select your desired invoice type, set the date range and filters, then click "View Details". Reports can be exported in PDF but we will support more formats soon such as Excel, or CSV formats.</p>
+            </div>
+
+
+            <div class="faq-item">
+              <h4>How do I add multiple users?</h4>
+              <p>Administrators can add users through the Settings > User Management menu. Each user can be assigned specific roles and permissions to control their access levels.</p>
+            </div>
+
+            <div class="faq-item">
+              <h4>Is my data secure?</h4>
+              <p>Yes, Pinnacle e-Invoice Solution LHDN Middleware employs industry-standard security measures including encryption, secure data centers, and regular backups. We comply with data protection regulations and maintain strict privacy policies.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Tutorials -->
+      <div class="settings-form" id="tutorials">
+        <h3 class="settings-form-title">
+          <i class="fas fa-video"></i>
+          Video Tutorials
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i>
+            Watch our step-by-step video tutorials to learn how to use the portal effectively.
+          </div>
+
+          <div class="video-tutorials">
+            <div class="video-item">
+              <h4><i class="fas fa-play-circle"></i> 1. Getting Started</h4>
+              <div class="video-wrapper">
+                <video controls>
+                  <source src="/uploads/video/1. Login.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <p>Learn how to log in and access your account</p>
+            </div>
+
+            <div class="video-item">
+              <h4><i class="fas fa-play-circle"></i> 2. Submitting Invoices</h4>
+              <div class="video-wrapper">
+                <video controls>
+                  <source src="/uploads/video/2. Submit Invoice Document to LHDN.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <p>Step-by-step guide to submit invoice documents to LHDN</p>
+            </div>
+
+            <div class="video-item">
+              <h4><i class="fas fa-play-circle"></i> 3. Checking LHDN Response</h4>
+              <div class="video-wrapper">
+                <video controls>
+                  <source src="/uploads/video/3. After Submit Success Check Inbound LHDN Response.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <p>How to check and verify LHDN responses after submission</p>
+            </div>
+
+            <div class="video-item">
+              <h4><i class="fas fa-play-circle"></i> 4. Validation Results</h4>
+              <div class="video-wrapper">
+                <video controls>
+                  <source src="/uploads/video/4. Check Validation Result for Invalid Documents Response from IRBM.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <p>Understanding validation results for invalid document responses</p>
+            </div>
+
+            <div class="video-item">
+              <h4><i class="fas fa-play-circle"></i> 5. Audit Trail</h4>
+              <div class="video-wrapper">
+                <video controls>
+                  <source src="/uploads/video/5. Check Audit Trail Activity Logs for Portal Users.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <p>How to check and monitor audit trail activity logs</p>
+            </div>
+
+            <div class="video-item">
+              <h4><i class="fas fa-play-circle"></i> 6. User Management</h4>
+              <div class="video-wrapper">
+                <video controls>
+                  <source src="/uploads/video/7. User Page - Manage your Portal Users.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <p>Managing portal users and permissions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/pages/help.js"></script>
+{% endblock %} 

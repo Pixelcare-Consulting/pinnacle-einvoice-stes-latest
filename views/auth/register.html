@@ -1,0 +1,249 @@
+{% extends "auth/auth.layout.html" %}
+
+{% block head %}
+<style>
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    background: #f8f9fa;
+}
+.auth-card {
+    max-width: 400px;
+    width: 100%;
+    margin: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+.logo img {
+    max-height: 120px;
+    width: auto;
+}
+.credits {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-4">
+                <div class="text-center mb-4">
+                    <a href="/" class="logo">
+                        <img src="/assets/img/Logo4.png" alt="e-Invoice Portal Logo">
+                    </a>
+                </div>
+                
+                <div class="auth-card">
+                    <div class="card-body p-4">
+                        <h4 class="text-center mb-1">Create Account</h4>
+                        <p class="text-center text-muted small mb-4">Fill in your details to register</p>
+
+                        <form id="registerForm" action="/auth/register" method="POST" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text">@</span>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="username" 
+                                           name="username" 
+                                           required 
+                                           autocomplete="username"
+                                           minlength="3">
+                                    <div class="invalid-feedback">Please enter a valid username (min 3 characters).</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       required>
+                                <div class="invalid-feedback">Please enter a valid email address.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tin" class="form-label">TIN</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="tin" 
+                                       name="tin" 
+                                       required>
+                                <div class="invalid-feedback">Please enter your TIN.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="idType" class="form-label">ID Type</label>
+                                <select class="form-select" 
+                                        id="idType" 
+                                        name="idType" 
+                                        required>
+                                    <option value="">Select ID Type</option>
+                                    <option value="NID">National ID</option>
+                                    <option value="PASSPORT">Passport</option>
+                                    <option value="DRIVING">Driving License</option>
+                                </select>
+                                <div class="invalid-feedback">Please select an ID type.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="idValue" class="form-label">ID Number</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="idValue" 
+                                       name="idValue" 
+                                       required>
+                                <div class="invalid-feedback">Please enter your ID number.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group has-validation">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           name="password" 
+                                           required 
+                                           minlength="6">
+                                    <button class="btn btn-outline-secondary" 
+                                            type="button" 
+                                            id="togglePassword" 
+                                            aria-label="Toggle password visibility">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <div class="invalid-feedback">Password must be at least 6 characters.</div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100" id="registerButton">
+                                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                <span class="btn-text">Register</span>
+                            </button>
+
+                            <div class="text-center mt-3">
+                                <p class="mb-0">Already have an account? <a href="/auth/login">Login here</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="credits">
+                    Designed by <a href="https://pixelcareconsulting.com/" class="text-decoration-none">Pixelcare Consulting</a>
+                    <p class="mt-2 mb-0 text-muted">Version 2.1.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    const registerButton = document.getElementById('registerButton');
+    const spinner = registerButton?.querySelector('.spinner-border');
+    const buttonText = registerButton?.querySelector('.btn-text');
+
+    registerForm?.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        this.classList.remove('was-validated');
+        
+        if (!this.checkValidity()) {
+            event.stopPropagation();
+            this.classList.add('was-validated');
+            return;
+        }
+
+        if (registerButton && spinner && buttonText) {
+            registerButton.disabled = true;
+            spinner.classList.remove('d-none');
+            buttonText.textContent = 'Registering...';
+        }
+
+        try {
+            const formData = new FormData(this);
+            const data = {
+                username: formData.get('username')?.trim(),
+                password: formData.get('password'),
+                email: formData.get('email')?.trim(),
+                tin: formData.get('tin')?.trim(),
+                idType: formData.get('idType'),
+                idValue: formData.get('idValue')?.trim()
+            };
+
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Registration Successful!',
+                    text: 'You can now login to your account.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                window.location.href = '/auth/login';
+            } else {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Registration Failed',
+                    text: result.message || 'An error occurred during registration'
+                });
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Connection Error',
+                text: 'Unable to connect to the server. Please try again.'
+            });
+        } finally {
+            if (registerButton && spinner && buttonText) {
+                registerButton.disabled = false;
+                spinner.classList.add('d-none');
+                buttonText.textContent = 'Register';
+            }
+        }
+    });
+
+    // Password toggle
+    const togglePassword = document.getElementById('togglePassword');
+    togglePassword?.addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        const icon = this.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+});
+</script>
+{% endblock %} 

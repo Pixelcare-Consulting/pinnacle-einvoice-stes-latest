@@ -1,0 +1,109 @@
+/* Submission Error Dialog Styles */
+.error-dialog {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.error-icon {
+    margin-bottom: 1rem;
+}
+
+.error-icon i {
+    color: #f7b84b !important;
+}
+
+.error-title {
+    color: #405189;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.file-info {
+    background: rgba(64, 81, 137, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.file-name {
+    color: #405189;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    word-break: break-all;
+}
+
+.validation-errors {
+    text-align: left;
+}
+
+.alert-warning {
+    background-color: #fff8e6;
+    border: 1px solid #ffeeba;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.alert-heading {
+    color: #856404;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.error-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.error-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.error-item:last-child {
+    border-bottom: none;
+}
+
+.error-item strong {
+    color: #dc2626;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.error-description {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.error-message {
+    color: #4b5563;
+    font-size: 1rem;
+    margin: 1rem 0;
+}
+
+/* SweetAlert2 overrides */
+.swal2-icon {
+    border: none !important;
+    margin: 1rem auto !important;
+}
+
+.swal2-warning {
+    color: #f7b84b !important;
+}
+
+.swal2-title {
+    color: #405189 !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    margin: 0 0 1rem 0 !important;
+    padding: 0 !important;
+}
+
+.swal2-confirm {
+    background: linear-gradient(135deg, #405189 0%, #3a4a7e 100%) !important;
+    padding: 0.625rem 2rem !important;
+    font-size: 0.9rem !important;
+    border-radius: 8px !important;
+} 

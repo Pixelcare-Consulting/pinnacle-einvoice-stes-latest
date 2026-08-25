@@ -1,0 +1,167 @@
+{% extends '../../layout.html' %}
+
+{% block head %}
+<title>Notification Settings - eInvoice Portal</title>
+<link href="/assets/css/pages/settings.css" rel="stylesheet">
+<link href="/assets/css/pages/profile.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+  <!-- Header -->
+  <div class="profile-welcome-card">
+    <h2>
+      <i class="fas fa-bell"></i>
+      Notification Settings
+    </h2>
+    <p>Manage your notification preferences and alert settings</p>
+  </div>
+
+  <!-- Settings Content -->
+  <div class="settings-content">
+    <div class="settings-grid">
+      <!-- Email Notifications -->
+      <section class="settings-section">
+        <h2>
+          <i class="fas fa-envelope me-2"></i>
+          Email Notifications
+        </h2>
+        <div class="settings-form">
+          <div class="form-group">
+            <label>Notification Email</label>
+            <input type="email" id="notificationEmail" class="form-control" placeholder="your@email.com">
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="emailNewInvoice">
+              New Invoice Received
+            </label>
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="emailStatusUpdate">
+              Invoice Status Updates
+            </label>
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="emailPaymentReceived">
+              Payment Received
+            </label>
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="emailDailyDigest">
+              Daily Activity Digest
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Notifications -->
+      <section class="settings-section">
+        <h2>
+          <i class="fas fa-desktop me-2"></i>
+          System Notifications
+        </h2>
+        <div class="settings-form">
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="browserNotifications">
+              Enable Browser Notifications
+            </label>
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="soundNotifications">
+              Enable Sound Notifications
+            </label>
+          </div>
+          <div class="form-group">
+            <label>Desktop Alert Duration (seconds)</label>
+            <input type="number" id="alertDuration" class="form-control" min="1" max="30">
+          </div>
+        </div>
+      </section>
+
+      <!-- Mobile Notifications -->
+      <section class="settings-section">
+        <h2>
+          <i class="fas fa-mobile-alt me-2"></i>
+          Mobile Notifications
+        </h2>
+        <div class="settings-form">
+          <div class="form-group">
+            <label>Mobile Number</label>
+            <div class="input-group">
+              <input type="tel" id="mobileNumber" class="form-control" placeholder="+60 12-345-6789">
+              <button class="btn btn-outline-primary" type="button" onclick="verifyMobile()">
+                Verify
+              </button>
+            </div>
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="smsNotifications">
+              Enable SMS Notifications
+            </label>
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="pushNotifications">
+              Enable Push Notifications
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notification Schedule -->
+      <section class="settings-section">
+        <h2>
+          <i class="fas fa-clock me-2"></i>
+          Notification Schedule
+        </h2>
+        <div class="settings-form">
+          <div class="form-group">
+            <label>Quiet Hours Start</label>
+            <input type="time" id="quietHoursStart" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Quiet Hours End</label>
+            <input type="time" id="quietHoursEnd" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Time Zone</label>
+            <select id="timezone" class="form-control">
+              <option value="Asia/Kuala_Lumpur">Malaysia (UTC+8)</option>
+            </select>
+          </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="workdaysOnly">
+              Send Notifications on Workdays Only
+            </label>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Save Button -->
+    <div class="settings-actions">
+      <button type="button" class="btn btn-secondary" onclick="resetSettings()">
+        <i class="fas fa-undo me-2"></i>
+        Reset
+      </button>
+      <button type="button" class="btn btn-primary" onclick="saveNotificationSettings()">
+        <i class="fas fa-save me-2"></i>
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/pages/settings/notifications.js"></script>
+{% endblock %} 

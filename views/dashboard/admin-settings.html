@@ -1,0 +1,1283 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<title>Account Settings - LHDN e-Invoice Portal</title>
+<link href="/assets/css/components/tooltip.css" rel="stylesheet">
+<link href="/assets/css/pages/settings.css" rel="stylesheet">
+<link href="/assets/css/pages/admin-settings.css" rel="stylesheet">
+<link href="/assets/css/pages/certificate-management.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4 px-lg-5">
+  <!-- Header -->
+  <div class="profile-welcome-card">
+    <h2>
+      <i class="fas fa-user-cog"></i>
+      Settings
+    </h2>
+    <p>Manage your personal account settings, e-invoice integration settings and notification preferences</p>
+  </div>
+
+  <div class="settings-content">
+    <!-- Left Sidebar - Settings Navigation -->
+    <div class="settings-nav-card">
+      <h4 class="settings-nav-title">
+        <i class="fas fa-user-cog"></i>
+        Account Settings
+      </h4>
+      
+      <div class="settings-nav-items">
+        <a href="#personal-info" class="settings-nav-item active" data-section="personal-info">
+          <div class="settings-nav-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Personal Information</h4>
+            <p>Update your profile details</p>
+          </div>
+        </a>
+
+        <a href="#password" class="settings-nav-item" data-section="password">
+          <div class="settings-nav-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Change Password</h4>
+            <p>Update your password</p>
+          </div>
+        </a>
+
+<!--         
+        <a href="#security" class="settings-nav-item" data-section="security">
+          <div class="settings-nav-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Security Settings</h4>
+            <p>Configure security preferences</p>
+          </div>
+        </a>
+
+        <a href="#notifications" class="settings-nav-item" data-section="notifications">
+          <div class="settings-nav-icon">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Notifications</h4>
+            <p>Manage your preferences</p>
+          </div>
+        </a> -->
+<!-- 
+        <a href="#invoice-settings" class="settings-nav-item" data-section="invoice-settings">
+          <div class="settings-nav-icon">
+            <i class="fas fa-file-invoice"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Invoice Settings</h4>
+            <p>Manage your Invoice</p>
+          </div>
+        </a> -->
+
+        <!-- System Integration   -->
+       <h4 class="settings-nav-title mt-4">
+          <i class="fas fa-network-wired"></i>
+          E-Invoice Integration
+        </h4> 
+
+       <a href="#sap-settings" class="settings-nav-item" data-section="sap-settings">
+          <div class="settings-nav-icon">
+            <i class="fas fa-laptop"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>ERP Configuration</h4>
+            <p>Manage ERP Integration</p>
+          </div>
+        </a> 
+
+        <a href="#lhdn-settings" class="settings-nav-item" data-section="lhdn-settings">
+          <div class="settings-nav-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>LHDN Configuration</h4>
+            <p>Configure LHDN middleware</p>
+          </div>
+        </a> 
+
+       <!-- <a href="#digital-cert-settings" class="settings-nav-item" data-section="digital-cert-settings">
+          <div class="settings-nav-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Digital Certificate</h4>
+            <p>Manage Digital Signing Certificate</p>
+          </div>
+        </a>  -->
+         
+      </div>
+   
+    </div>
+
+    <!-- Right Content - Settings Forms -->
+    <div class="settings-form-section">
+      <!-- Personal Information -->
+      <div class="settings-form active" id="personal-info">
+        <h3 class="settings-form-title">
+          <i class="fas fa-user"></i>
+          Personal Information
+        </h3>
+        <div class="settings-form-content">
+          <div class="profile-header">
+            <div class="profile-avatar">
+              <div class="avatar-container" id="avatarContainer" style="cursor: pointer;">
+                <img src="/assets/img/default-avatar.png" alt="Profile Picture" id="profileAvatar">
+                <div class="avatar-overlay">
+                  <i class="fas fa-camera"></i>
+                  <span>Change Photo</span>
+                </div>
+                <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+              </div>
+            </div>
+            <div class="profile-status">
+              <div class="status-badge" id="accountStatus">
+                <i class="fas fa-check-circle"></i>
+                <span>Active</span>
+              </div>
+              <div class="last-login">
+                Last Login: <span id="lastLoginTime">Loading...</span>
+              </div>
+              <div class="last-updated text-muted">
+                <i class="fas fa-clock"></i> Last Updated: <span id="lastUpdatedTime">Never</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <div class="row g-3">
+              <!-- Basic Information -->
+              <div class="col-md-6">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="fullName" class="form-control" placeholder="Your full name">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Username</label>
+                <input type="text" id="username" class="form-control" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="email" class="form-control" placeholder="Your email address">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="phone" class="form-control" placeholder="Your phone number">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Role</label>
+                <input type="text" id="userRole" class="form-control" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Account Created</label>
+                <input type="text" id="accountCreated" class="form-control" readonly>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="profile-actions mt-4 text-end">
+            <button type="button" class="btn btn-primary" onclick="savePersonalInfo()">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Change -->
+      <div class="settings-form" id="password">
+        <h3 class="settings-form-title">
+          <i class="fas fa-lock"></i>
+          Change Password
+        </h3>
+        <div class="settings-form-content">
+          <!-- <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i>
+            Make sure your new password is secure and not used on other websites.
+          </div> -->
+          
+          <div class="password-form">
+            <div class="form-group">
+              <label>Current Password</label>
+              <div class="input-group">
+                <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('currentPassword')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>New Password</label>
+              <div class="input-group">
+                <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('newPassword')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <div class="input-group">
+                <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('confirmPassword')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="password-requirements mt-4">
+              <h5 class="mb-3"><i class="fas fa-shield-alt text-primary"></i> Password Requirements</h5>
+              <div class="requirements-list">
+                <div class="requirement-item" id="length-check">
+                  <span class="requirement-icon">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                  <span class="requirement-text">At least 8 characters long</span>
+                </div>
+                <div class="requirement-item" id="uppercase-check">
+                  <span class="requirement-icon">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                  <span class="requirement-text">Contains uppercase letter</span>
+                </div>
+                <div class="requirement-item" id="lowercase-check">
+                  <span class="requirement-icon">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                  <span class="requirement-text">Contains lowercase letter</span>
+                </div>
+                <div class="requirement-item" id="number-check">
+                  <span class="requirement-icon">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                  <span class="requirement-text">Contains number</span>
+                </div>
+                <div class="requirement-item" id="special-check">
+                  <span class="requirement-icon">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                  <span class="requirement-text">Contains special character</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="password-actions mt-4 text-end">
+              <button type="button" class="btn btn-primary" onclick="changePassword()">
+                <i class="fas fa-key"></i> Update Password
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Security Settings -->
+        <div class="settings-form" id="security">
+          <h3 class="settings-form-title">
+            <i class="fas fa-shield-alt"></i>
+            Security Settings
+          </h3>
+          
+          <div class="settings-form-content">
+            <div class="alert alert-warning" role="alert">
+              <i class="fas fa-exclamation-triangle"></i>
+              This feature is in experimental stage and under active development!
+            </div>
+            <div class="admin-security-container">
+              <!-- Authentication -->
+              <div class="admin-security-section">
+                <div class="admin-section-header">
+                  <i class="fas fa-key"></i>
+                  <h4 class="admin-section-title">Authentication</h4>
+                </div>
+                
+                <!-- Two-Factor Authentication -->
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Two-Factor Authentication</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="twoFactorAuth">
+                      <label class="admin-form-check-label" for="twoFactorAuth">Enable 2FA</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Add an extra layer of security to your account with SMS or authenticator app verification</div>
+                </div>
+  
+                <!-- Login Notifications -->
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Login Notifications</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="loginNotifications">
+                      <label class="admin-form-check-label" for="loginNotifications">Enable alerts</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Receive instant notifications when someone logs into your account</div>
+                </div>
+              </div>
+  
+              <!-- Access Control -->
+              <div class="admin-security-section">
+                <div class="admin-section-header">
+                  <i class="fas fa-lock"></i>
+                  <h4 class="admin-section-title">Access Control</h4>
+                </div>
+                
+                <!-- IP Restriction -->
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">IP Address Restriction</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="ipRestriction">
+                      <label class="admin-form-check-label" for="ipRestriction">Enable</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Limit access to your account from specific IP addresses only</div>
+                  <div id="ipRestrictionSettings" class="mt-3" style="display: none;">
+                    <input type="text" class="admin-form-control" id="allowedIPs" placeholder="Enter allowed IP addresses (comma-separated)">
+                  </div>
+                </div>
+  
+                <!-- Session Settings -->
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Session Security</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="singleSession">
+                      <label class="admin-form-check-label" for="singleSession">Single session</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Allow only one active session at a time</div>
+                  <select class="admin-form-control admin-select mt-3" id="sessionTimeout">
+                    <option value="15">15 minutes timeout</option>
+                    <option value="30">30 minutes timeout</option>
+                    <option value="60">1 hour timeout</option>
+                    <option value="120">2 hours timeout</option>
+                  </select>
+                </div>
+              </div>
+  
+              <!-- Invoice Security -->
+              <div class="admin-security-section">
+                <div class="admin-section-header">
+                  <i class="fas fa-file-invoice"></i>
+                  <h4 class="admin-section-title">Invoice Security</h4>
+                </div>
+                
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Approval Requirements</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="invoiceApproval">
+                      <label class="admin-form-check-label" for="invoiceApproval">Enable</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Require approval for any invoice modifications</div>
+                </div>
+  
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Audit Logging</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="auditLog">
+                      <label class="admin-form-check-label" for="auditLog">Enable</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Track all changes made to invoices with detailed logs</div>
+                </div>
+  
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Digital Signatures</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="digitalSignature" disabled>
+                      <label class="admin-form-check-label" for="digitalSignature">Disabled</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Require digital signatures for invoice approvals</div>
+                  <small class="text-muted">Note: This feature requires digital certificate</small>
+                </div>
+              </div>
+  
+              <!-- Account Security -->
+              <div class="admin-security-section">
+                <div class="admin-section-header">
+                  <i class="fas fa-user-shield"></i>
+                  <h4 class="admin-section-title">Account Security</h4>
+                </div>
+                
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Password Expiry</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="passwordExpiry">
+                      <label class="admin-form-check-label" for="passwordExpiry">Enable</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Force password change after a specified period</div>
+                  <select class="admin-form-control admin-select mt-3" id="passwordExpiryDays" style="display: none;">
+                    <option value="30">Every 30 days</option>
+                    <option value="60">Every 60 days</option>
+                    <option value="90">Every 90 days</option>
+                  </select>
+                </div>
+  
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Password History</div>
+                  </div>
+                  <div class="admin-option-description">Number of previous passwords to remember</div>
+                  <select class="admin-form-control admin-select mt-3" id="passwordHistory">
+                    <option value="3">Remember last 3 passwords</option>
+                    <option value="5">Remember last 5 passwords</option>
+                    <option value="10">Remember last 10 passwords</option>
+                  </select>
+                </div>
+  
+                <div class="admin-security-option">
+                  <div class="admin-option-header">
+                    <div class="admin-option-title">Account Recovery</div>
+                    <div class="admin-form-check">
+                      <input type="checkbox" class="admin-form-check-input" id="recoveryOptions">
+                      <label class="admin-form-check-label" for="recoveryOptions">Enable</label>
+                    </div>
+                  </div>
+                  <div class="admin-option-description">Set up additional recovery methods for your account</div>
+                  <div id="recoverySettings" style="display: none;">
+                    <input type="tel" class="admin-form-control" id="recoveryPhone" placeholder="Recovery phone number">
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="admin-actions mt-4 text-end">
+              <button type="button" class="btn btn-primary" onclick="saveSecuritySettings()">
+                <i class="fas fa-save"></i> Save Security Settings
+              </button>
+            </div>
+          </div>
+        </div>
+  
+      <!-- Notification Settings -->
+      <div class="settings-form" id="notifications">
+        <h3 class="settings-form-title">
+          <i class="fas fa-bell"></i>
+          Notification Preferences
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            This feature is in experimental stage and under active development!
+          </div>
+
+          <div class="notification-settings">
+            <div class="form-group">
+              <label>Email Notifications</label>
+              <div class="custom-control custom-switch">
+                <input type="checkbox" id="emailNotifications" class="custom-control-input">
+                <label class="custom-control-label" for="emailNotifications">Enable email notifications</label>
+              </div>
+              <small class="text-muted">Receive notifications about invoice updates via email</small>
+            </div>
+
+            <div class="form-group mt-4">
+              <label>SMS Notifications</label>
+              <div class="custom-control custom-switch">
+                <input type="checkbox" id="smsNotifications" class="custom-control-input">
+                <label class="custom-control-label" for="smsNotifications">Enable SMS notifications</label>
+              </div>
+              <small class="text-muted">Receive notifications about invoice updates via SMS</small>
+            </div>
+
+            <div class="notification-actions mt-4">
+              <button type="button" class="btn btn-primary" onclick="saveNotificationPreferences()">
+                <i class="fas fa-save"></i> Save Preferences
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAP Settings -->
+      <div class="settings-form" id="sap-settings">
+        <h3 class="settings-form-title">
+          <i class="fas fa-laptop"></i>
+          ERP Integration Settings
+        </h3>
+        <div class="settings-form-content">
+          <div class="sap-settings">
+            <h4 class="section-title">ERP Configuration</h4>
+            <small class="text-muted">Manage ERP Integration</small>
+            <div class="alert alert-info" role="alert" style="font-size: 0.875rem; height: 40px;">
+              <i class="fas fa-info-circle"></i>Having trouble configuring? Check out our comprehensive guide <a href="/help" target="_blank">Click here</a>
+            </div>
+            <div class="form-group mt-4">
+       
+              <label>ERP Network Path</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="networkPath" placeholder="\\SERVER\Share\e-Invoice\Generated">
+                <button class="btn btn-outline-secondary" type="button" onclick="copyNetworkPath()">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <small class="text-muted">Configure the path where the ERP is located</small>
+            </div>
+
+            <h4 class="section-title mt-4">Outgoing Files Path Configuration</h4>
+            <small class="text-muted">Configure the network path for outgoing files storage</small>
+            
+            <div class="form-group mt-4">
+              <label>Outgoing Network Path</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="outgoingPath" placeholder="\\SERVER\Share\Outgoing">
+                <button class="btn btn-outline-secondary" type="button" onclick="copyOutgoingPath()">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <small class="text-muted">
+                Example: \\SERVER\Share\Outgoing or C:\SFTPRoot\Outgoing
+              </small>
+            </div>
+
+            <div class="form-group mt-4">
+              <label class="form-label">Server Credentials</label>
+              <div class="server-credentials">
+                <div class="form-group mb-3">
+                  <label for="serverName" class="form-label">Server Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="fas fa-server"></i>
+                    </span>
+                    <input type="text" class="form-control" id="serverName" placeholder="PXC-SVRERP">
+                  </div>
+                  <small class="text-muted">Enter your server name or hostname</small>
+                </div>
+                
+                <div class="form-group mb-3">
+                  <label for="serverUsername" class="form-label">Username</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="fas fa-user"></i>
+                    </span>
+                    <input type="text" class="form-control" id="serverUsername" placeholder="pxcuser">
+                  </div>
+                  <small class="text-muted">Enter your server username</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="serverPassword" class="form-label">Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" class="form-control" id="serverPassword" placeholder="Enter your password">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('serverPassword')">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <small class="text-muted">Enter your server password</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="sap-actions mt-4 text-end">
+              <button type="button" class="btn btn-outline-secondary me-2" onclick="validatePaths()">
+                <i class="fas fa-check-circle"></i> Validate Paths
+              </button>
+              <button type="button" class="btn btn-primary" onclick="saveSAPConfig()">
+                <i class="fas fa-save"></i> Save Configuration
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Digital Certificate Settings -->
+      <div class="settings-form" id="digital-cert-settings">
+        <h3 class="settings-form-title">
+          <i class="fas fa-certificate"></i>
+          Digital Certificate Management
+        </h3>
+        <div class="settings-form-content">
+          <div class="digital-cert-settings">
+            <div class="alert alert-info" role="alert">
+              <i class="fas fa-info-circle"></i>
+              Digital certificates are required for e-Invoice signing. Learn more about the requirements in the 
+              <a href="https://sdk.myinvois.hasil.gov.my/signature/" target="_blank">LHDN SDK documentation</a>.
+            </div>
+
+            <!-- Certificate Upload Section -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Upload Certificate</h5>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Certificate File (.p12/.pfx)</label>
+                  <div class="input-group">
+                    <input type="file" class="form-control" id="certificateFile" accept=".p12,.pfx" style="display: none;">
+                    <input type="text" class="form-control" id="certificateFileName" placeholder="No certificate selected" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="triggerCertificateUpload()">
+                      <i class="fas fa-upload"></i> Browse
+                    </button>
+                  </div>
+                  <small class="text-muted">Upload your PKCS#12 certificate file (.p12 or .pfx format)</small>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label">Certificate Password</label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="certificatePassword" placeholder="Enter certificate password">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('certificatePassword')">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <small class="text-muted">Enter the password used to protect your certificate</small>
+                </div>
+
+                <div class="form-check mt-3">
+                  <input class="form-check-input" type="checkbox" id="lhdnRequirementsCheck">
+                  <label class="form-check-label" for="lhdnRequirementsCheck">
+                    Validate against LHDN requirements
+                  </label>
+                </div>
+
+                <div class="cert-actions mt-4">
+                  <button type="button" class="btn btn-outline-primary me-2" onclick="validateCertificate()">
+                    <i class="fas fa-check-circle"></i> Validate Certificate
+                  </button>
+                  <button type="button" class="btn btn-primary" onclick="saveCertificateConfig()" id="saveCertBtn" disabled>
+                    <i class="fas fa-save"></i> Save Configuration
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Certificate Info Section -->
+            <div id="certificateInfo" style="display: none;" class="mt-4">
+                <div class="card certificate-details-card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-certificate text-primary me-2"></i>
+                                <h5 class="mb-0">Certificate Details</h5>
+                            </div>
+                            <span id="certStatus" class="badge"></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Basic Info -->
+                        <div class="cert-section">
+                            <h6 class="section-title">
+                                <i class="fas fa-info-circle"></i>
+                                Basic Information
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="cert-field">
+                                        <label>Common Name (CN)</label>
+                                        <div id="certCN" class="cert-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="cert-field">
+                                        <label>Organization (O)</label>
+                                        <div id="certO" class="cert-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="cert-field">
+                                        <label>Country (C)</label>
+                                        <div id="certC" class="cert-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="cert-field">
+                                        <label>Organization ID (OID)</label>
+                                        <div id="certOID" class="cert-value"></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="cert-field">
+                                        <label>Serial Number</label>
+                                        <div id="certSerial" class="cert-value font-monospace"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Validity Period -->
+                        <div class="cert-section mt-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-calendar-check"></i>
+                                Validity Period
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="validity-card">
+                                        <div class="validity-icon">
+                                            <i class="fas fa-play"></i>
+                                        </div>
+                                        <div class="validity-info">
+                                            <label>Valid From</label>
+                                            <div id="certValidFrom" class="validity-date"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="validity-card">
+                                        <div class="validity-icon">
+                                            <i class="fas fa-stop"></i>
+                                        </div>
+                                        <div class="validity-info">
+                                            <label>Valid To</label>
+                                            <div id="certValidTo" class="validity-date"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LHDN Requirements -->
+                        <div class="cert-section mt-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-check-square"></i>
+                                LHDN Requirements
+                            </h6>
+                            <div id="lhdnRequirements" class="requirements-grid">
+                                <!-- Requirements will be populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Technical Details
+                        <div class="cert-section mt-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-code"></i>
+                                Technical Details
+                            </h6>
+                            <div class="accordion" id="certDetailsAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#keyUsageCollapse" aria-expanded="true">
+                                            <i class="fas fa-key me-2"></i>
+                                            Key Usage
+                                        </button>
+                                    </h2>
+                                    <div id="keyUsageCollapse" class="accordion-collapse collapse show" data-bs-parent="#certDetailsAccordion">
+                                        <div class="accordion-body">
+                                            <div id="certKeyUsage" class="tech-details"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#extKeyUsageCollapse">
+                                            <i class="fas fa-shield-alt me-2"></i>
+                                            Extended Key Usage
+                                        </button>
+                                    </h2>
+                                    <div id="extKeyUsageCollapse" class="accordion-collapse collapse" data-bs-parent="#certDetailsAccordion">
+                                        <div class="accordion-body">
+                                            <div id="certExtKeyUsage" class="tech-details"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issuerCollapse">
+                                            <i class="fas fa-certificate me-2"></i>
+                                            Issuer Information
+                                        </button>
+                                    </h2>
+                                    <div id="issuerCollapse" class="accordion-collapse collapse" data-bs-parent="#certDetailsAccordion">
+                                        <div class="accordion-body">
+                                            <div id="certIssuer" class="tech-details"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#subjectCollapse">
+                                            <i class="fas fa-user-tag me-2"></i>
+                                            Subject Details
+                                        </button>
+                                    </h2>
+                                    <div id="subjectCollapse" class="accordion-collapse collapse" data-bs-parent="#certDetailsAccordion">
+                                        <div class="accordion-body">
+                                            <div id="certSubject" class="tech-details"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last Modified Info -->
+            <div class="alert alert-info mt-3" role="alert" id="certLastModifiedInfo" style="display: none;">
+              <small>
+                <i class="fas fa-info-circle"></i>
+                Last modified by <strong id="certLastModifiedBy">-</strong> on <span id="certLastModifiedTime">-</span>
+              </small>
+            </div>
+
+            <!-- Remove Certificate Button -->
+            <div class="text-end mt-3">
+              <button type="button" class="btn btn-danger" onclick="disableCertificate()" id="disableCertBtn" style="display: none;">
+                <i class="fas fa-trash-alt"></i> Remove Certificate
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- XML Settings -->
+      <div class="settings-form" id="xml-settings">
+        <h3 class="settings-form-title">
+          <i class="fas fa-file-code"></i>
+          XML Configuration
+        </h3>
+        <div class="settings-form-content">
+          <div class="xml-settings">
+            <h4 class="section-title">XML File Path Configuration</h4>
+            <small class="text-muted">Configure the network path for XML file storage and processing</small>
+            
+            <div class="alert alert-info" role="alert" style="font-size: 0.875rem; height: 40px;">
+              <i class="fas fa-info-circle"></i>Having trouble configuring? Check out our comprehensive guide <a href="/help" target="_blank">Click here</a>
+            </div>
+
+            <div class="form-group mt-4">
+              <label>XML Network Path</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="xmlNetworkPath" placeholder="Z:\XML">
+                <button class="btn btn-outline-secondary" type="button" onclick="copyXmlNetworkPath()">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <small class="text-muted">Configure the network path where XML files will be stored and processed</small>
+            </div>
+
+            <div class="form-group mt-4">
+              <label class="form-label">Server Credentials</label>
+              <div class="server-credentials">
+                <div class="form-group mb-3">
+                  <label for="xmlServerName" class="form-label">Server Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="fas fa-server"></i>
+                    </span>
+                    <input type="text" class="form-control" id="xmlServerName" placeholder="Enter server name">
+                  </div>
+                  <small class="text-muted">Enter your XML server name or hostname</small>
+                </div>
+                
+                <div class="form-group mb-3">
+                  <label for="xmlUsername" class="form-label">Username</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="fas fa-user"></i>
+                    </span>
+                    <input type="text" class="form-control" id="xmlUsername" placeholder="Enter username">
+                  </div>
+                  <small class="text-muted">Enter your XML server username</small>
+                </div>
+                
+                <div class="form-group">
+                  <label for="xmlPassword" class="form-label">Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" class="form-control" id="xmlPassword" placeholder="Enter your password">
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('xmlPassword')">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <small class="text-muted">Enter your XML server password</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add last modified info -->
+            <div class="alert alert-info mt-3" role="alert" id="xmlLastModifiedInfo" style="display: none;">
+              <small>
+                <i class="fas fa-info-circle"></i>
+                Last modified by <strong id="xmlLastModifiedBy">-</strong> on <span id="xmlLastModifiedTime">-</span>
+              </small>
+            </div>
+
+            <div class="xml-actions mt-4 text-end">
+              <button type="button" class="btn btn-outline-secondary me-2" onclick="validateXmlPath()">
+                <i class="fas fa-check-circle"></i> Validate Path
+              </button>
+              <button type="button" class="btn btn-primary" onclick="saveXmlConfig()">
+                <i class="fas fa-save"></i> Save Configuration
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LHDN Settings -->
+      <div class="settings-form" id="lhdn-settings">
+        <h3 class="settings-form-title">
+          <i class="fas fa-globe"></i>
+          LHDN Configuration
+        </h3>
+        <div class="settings-form-content">
+          <div class="lhdn-settings">
+            <h4 class="section-title">Middleware Configuration</h4>
+            
+            <div class="form-group">
+              <label>Environment</label>
+              <select class="form-control" id="environment" onchange="updateLHDNUrl()">
+                <option value="default">Default</option>
+                <option value="sandbox">Sandbox (Testing)</option>
+                <option value="production">Production</option>
+              </select>
+            </div>
+
+          
+            <div class="alert alert-info mt-3" role="alert" id="lastModifiedInfo" style="display: none;">
+              <small>
+                <i class="fas fa-info-circle"></i>
+                Last modified by <strong id="lastModifiedBy">-</strong> on <span id="lastModifiedTime">-</span>
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label>LHDN e-Invoice BaseURL</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="middlewareUrl" readonly>
+                <button class="btn btn-outline-secondary" type="button" onclick="copyUrl()">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <small class="text-muted" style="font-style: italic;">Note: BaseURL API endpoint is automatically set based on selected environment</small>
+            </div>
+
+            <h4 class="section-title mt-4">Authentication</h4>
+            
+            <div class="form-group">
+              <label>Client ID</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="clientId" placeholder="Enter client ID">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('clientId')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Client Secret</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="clientSecret" placeholder="Enter client secret">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('clientSecret')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Generated Access Token</label>
+              <div class="input-group">
+                <textarea class="form-control" id="accessToken" rows="3" readonly style="resize: none;"></textarea>
+                <button class="btn btn-outline-secondary" type="button" onclick="copyAccessToken()">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <small id="tokenExpiryInfo" class="text-muted" style="margin-top: 10px;"></small>
+            </div>
+
+            <h4 class="section-title mt-4">Connection Settings</h4>
+            
+            <div class="form-group">
+              <label>Request Timeout</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="timeout" min="1" value="30" style="max-width: 100px;">
+                <span class="input-group-text bg-light">seconds</span>
+              </div>
+              <small class="text-muted">Maximum time to wait for middleware response</small>
+            </div>
+
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" id="retryEnabled" class="custom-control-input">
+                <label class="custom-control-label" for="retryEnabled">Enable Auto-Retry</label>
+              </div>
+              <small class="text-muted">Automatically retry failed requests</small>
+            </div>
+
+            <div class="lhdn-actions mt-4 text-end">
+              <button type="button" class="btn btn-outline-secondary me-2" onclick="testConnection()">
+                <i class="fas fa-plug"></i> Test Connection
+              </button>
+              <button type="button" class="btn btn-primary" onclick="saveLHDNConfig()">
+                <i class="fas fa-save"></i> Save Configuration
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <!-- Invoice Settings -->
+      <div class="settings-form" id="invoice-settings">
+        <h3 class="settings-form-title">
+          <i class="fas fa-file-invoice"></i>
+          Invoice Settings
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-warning" role="alert">
+            <i class="fas fa-tools me-2"></i>
+            <div>
+              <strong>Under Development</strong>
+              <p class="mb-0">This feature is currently in development. Below are the upcoming features we're working on.</p>
+            </div>
+          </div>
+
+          <div class="invoice-settings">
+            <!-- Invoice Defaults -->
+            <!-- <div class="admin-security-section">
+              <div class="admin-section-header">
+                <i class="fas fa-sliders-h"></i>
+                <h4 class="admin-section-title">Invoice Defaults</h4>
+              </div>
+              
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Default Currency</div>
+                </div>
+                <div class="admin-option-description">Set your default invoice currency</div>
+                <select class="form-control mt-3" disabled>
+                  <option>MYR - Malaysian Ringgit</option>
+                  <option>USD - US Dollar</option>
+                  <option>SGD - Singapore Dollar</option>
+                </select>
+              </div>
+
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Payment Terms</div>
+                </div>
+                <div class="admin-option-description">Default payment terms for new invoices</div>
+                <select class="form-control mt-3" disabled>
+                  <option>Net 30</option>
+                  <option>Net 60</option>
+                  <option>Due on Receipt</option>
+                </select>
+              </div>
+            </div> -->
+
+            <!-- Invoice Numbering -->
+            <!-- <div class="admin-security-section">
+              <div class="admin-section-header">
+                <i class="fas fa-hashtag"></i>
+                <h4 class="admin-section-title">Invoice Numbering</h4>
+              </div>
+              
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Number Format</div>
+                </div>
+                <div class="admin-option-description">Configure invoice number format</div>
+                <div class="input-group mt-3">
+                  <input type="text" class="form-control" placeholder="INV-{YYYY}-{MM}-{0000}" disabled>
+                  <button class="btn btn-outline-secondary" type="button" disabled>
+                    <i class="fas fa-magic"></i>
+                  </button>
+                </div>
+                <small class="text-muted">Use {YYYY} for year, {MM} for month, {0000} for sequential number</small>
+              </div>
+
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Auto Reset</div>
+                  <div class="admin-form-check">
+                    <input type="checkbox" class="admin-form-check-input" disabled>
+                    <label class="admin-form-check-label">Reset numbering monthly</label>
+                  </div>
+                </div>
+                <div class="admin-option-description">Reset sequence number at the start of each month</div>
+              </div>
+            </div> -->
+
+            <!-- Template Settings -->
+            <div class="admin-security-section">
+              <div class="admin-section-header">
+                <i class="fas fa-paint-brush"></i>
+                <h4 class="admin-section-title">Template Settings</h4>
+              </div>
+              
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Invoice Template</div>
+                </div>
+                <div class="admin-option-description">Choose your default invoice template</div>
+                <div class="row mt-3">
+                  <div class="col-md-4">
+                    <div class="card template-card">
+                      <div class="card-body text-center">
+                        <div class="template-icon">
+                          <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <h6 class="template-title">Classic</h6>
+                        <div class="template-actions">
+                          <button class="btn template-preview-btn" onclick="previewTemplate('pinnacle-classic')">
+                            <i class="fas fa-eye"></i>
+                            <span>Preview</span>
+                          </button>
+                          <button class="btn template-select-btn">
+                            <i class="fas fa-check"></i>
+                            <span>Select</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card template-card">
+                      <div class="card-body text-center">
+                        <div class="template-icon">
+                          <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <h6 class="template-title">Modern</h6>
+                        <div class="template-actions">
+                          <button class="btn template-preview-btn" onclick="previewTemplate('pinnacle-modern')">
+                            <i class="fas fa-eye"></i>
+                            <span>Preview</span>
+                          </button>
+                          <button class="btn template-select-btn">
+                            <i class="fas fa-check"></i>
+                            <span>Select</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card template-card">
+                      <div class="card-body text-center">
+                        <div class="template-icon">
+                          <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <h6 class="template-title">Professional</h6>
+                        <div class="template-actions">
+                          <button class="btn template-preview-btn" onclick="previewTemplate('pinnacle-professional')">
+                            <i class="fas fa-eye"></i>
+                            <span>Preview</span>
+                          </button>
+                          <button class="btn template-select-btn">
+                            <i class="fas fa-check"></i>
+                            <span>Select</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Template Preview Modal -->
+                <div class="modal fade" id="templatePreviewModal" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Template Preview</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body p-0">
+                        <iframe id="templatePreviewFrame" style="width: 100%; height: 80vh; border: none;"></iframe>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Company Logo</div>
+                </div>
+                <div class="admin-option-description">Upload your company logo for invoices</div>
+                <div class="mt-3">
+                  <button class="btn btn-outline-secondary" disabled>
+                    <i class="fas fa-upload me-2"></i>Upload Logo
+                  </button>
+                  <small class="text-muted d-block mt-2">Recommended size: 300x100px, Max size: 2MB</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tax Settings -->
+            <!-- <div class="admin-security-section">
+              <div class="admin-section-header">
+                <i class="fas fa-percentage"></i>
+                <h4 class="admin-section-title">Tax Settings</h4>
+              </div>
+              
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Default Tax Rate</div>
+                </div>
+                <div class="admin-option-description">Set default tax rate for new invoices</div>
+                <div class="input-group mt-3" style="max-width: 200px;">
+                  <input type="number" class="form-control" value="6" disabled>
+                  <span class="input-group-text">%</span>
+                </div>
+              </div>
+
+              <div class="admin-security-option">
+                <div class="admin-option-header">
+                  <div class="admin-option-title">Tax Number Display</div>
+                  <div class="admin-form-check">
+                    <input type="checkbox" class="admin-form-check-input" checked disabled>
+                    <label class="admin-form-check-label">Show on invoice</label>
+                  </div>
+                </div>
+                <div class="admin-option-description">Display tax registration number on invoices</div>
+              </div>
+            </div> -->
+
+            <div class="mt-4">
+              <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Coming Soon!</strong> We're working hard to bring you these features. Stay tuned for updates.
+              </div>
+              
+              <div class="text-end">
+                <button type="button" class="btn btn-primary" disabled>
+                  <i class="fas fa-save me-2"></i>Save Settings
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/config/admin-settings.js"></script>
+{% endblock %} 

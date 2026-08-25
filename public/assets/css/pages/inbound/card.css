@@ -1,0 +1,242 @@
+/* Cards Container */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+
+.welcome-datetime {
+    text-align: right;
+    padding-left: 2rem;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .current-time {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .current-date {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Icons in datetime */
+  .current-time i,
+  .current-date i {
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
+    opacity: 0.9;
+  }
+  
+  /* Welcome content styles */
+  .welcome-content h4 {
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .welcome-content p {
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+/* Base Card Styles */
+.info-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Top border designs */
+.info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    transition: opacity 0.2s ease;
+}
+
+/* Card Info Layout */
+.card-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Icon Styles */
+.card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* Count Info Styles */
+.count-info {
+    flex-grow: 1;
+}
+
+.count-info h6 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 600;
+    color: #2b2b2b;
+}
+
+.count-info span {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+
+/* Card Title */
+.card-title-new {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: right;
+}
+
+/* Card Type Specific Styles */
+/* Invoices - Original Blue */
+.invoices-card::before { background: #405189; }
+.invoices-card .card-icon {
+    background: rgba(64, 81, 137, 0.1);
+    color: #405189;
+}
+
+/* Valid - Green */
+.valid-card::before { background: #28a745; }
+.valid-card .card-icon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+/* Submitted - Light Blue */
+.submitted-card::before { background: #4dabf7; }
+.submitted-card .card-icon {
+    background: rgba(77, 171, 247, 0.1);
+    color: #4dabf7;
+}
+
+/* Pending */
+.pending-card::before { background: #fd7e14; }
+.pending-card .card-icon {
+    background: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+/* Invalid */
+.invalid-card::before { background: #dc3545; }
+.invalid-card .card-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+/* Rejected */
+.rejected-card::before { background: #dc3545; }
+.rejected-card .card-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+/* Cancelled */
+.cancelled-card::before { background: #ffc107; }
+.cancelled-card .card-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+/* Queue */
+.queue-card::before { background: #6c757d; }
+.queue-card .card-icon {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+/* Add hover effect for all cards */
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Enhance hover effect on border */
+.info-card:hover::before {
+    opacity: 0.8;
+}
+
+/* Status colors for table badges */
+.status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Status Badge Colors - Updated to match card colors */
+.status-badge.valid {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-badge.submitted {
+    background-color: rgba(77, 171, 247, 0.1);
+    color: #4dabf7;
+}
+
+.status-badge.pending {
+    background-color: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+.status-badge.invalid {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.status-badge.rejected {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.status-badge.cancelled {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.status-badge.queue {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}

@@ -1,0 +1,86 @@
+/* Session Details Popup Styles */
+.session-details-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.5rem;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-width: 250px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.session-details-popup::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    border-width: 0 8px 8px 8px;
+    border-style: solid;
+    border-color: transparent transparent white transparent;
+    filter: drop-shadow(0 -1px 1px rgba(0,0,0,0.1));
+}
+
+.session-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.session-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: #475569;
+}
+
+.session-info-row i {
+    font-size: 1rem;
+    color: #64748b;
+}
+
+.session-expiring {
+    color: #dc3545 !important;
+    animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Status Colors */
+.status-active {
+    color: #10b981;
+}
+
+.status-expired {
+    color: #dc3545;
+}
+
+.status-warning {
+    color: #f59e0b;
+} 

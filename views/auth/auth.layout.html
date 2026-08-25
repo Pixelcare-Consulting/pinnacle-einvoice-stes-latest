@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sign In | Pixel Pinnacle e-Invoice Middleware Solution{% endblock %}</title>
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/images/PXCLogo.svg" type="image/x-icon">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --input-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            --transition-speed: 0.3s;
+            --primary-color: #1e3c72;
+            --secondary-color: #2a5298;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --card-bg: #2d2d2d;
+            --input-bg: #3d3d3d;
+            --input-text: #ffffff;
+            --border-color: #404040;
+            --card-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-text: #333333;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: background var(--transition-speed), color var(--transition-speed);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 50%;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: transform var(--transition-speed);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            transition: background var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .form-control, .input-group-text {
+            background: var(--input-bg);
+            color: var(--input-text);
+            border-color: var(--border-color);
+            transition: all var(--transition-speed);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .divider-text {
+            padding: 0 1rem;
+            color: var(--text-color);
+        }
+
+        .divider-text h4 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.4);
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+
+    <!-- Core JS -->
+    <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/assets/js/utils/session-interceptor.js"></script>
+    <!-- <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const icon = themeToggle.querySelector('i');
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            icon.className = theme === 'light' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
+        }
+    </script> -->
+    <!-- Custom JS -->
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

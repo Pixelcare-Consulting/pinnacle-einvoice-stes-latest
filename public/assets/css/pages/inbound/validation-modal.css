@@ -1,0 +1,273 @@
+/* LHDN Validation Modal Styles */
+.lhdn-validation-modal .modal-dialog {
+    max-width: 1000px;
+    width: 95%;
+    margin: 1.75rem auto;
+    height: calc(100vh - 3.5rem);
+}
+
+.lhdn-validation-modal .modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(64, 81, 137, 0.15);
+    width: 100%;
+    background: #f8f9fa;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.lhdn-validation-modal .modal-header {
+    background: linear-gradient(135deg, #405189 0%, #3a4a7e 100%);
+    border-bottom: none;
+    border-radius: 16px 16px 0 0;
+    padding: 1.5rem;
+}
+
+.lhdn-validation-modal .modal-title {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.lhdn-validation-modal .modal-title i {
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.lhdn-validation-modal .btn-close {
+    color: #ffffff;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.lhdn-validation-modal .btn-close:hover {
+    opacity: 1;
+}
+
+.lhdn-validation-modal .modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Custom scrollbar styling */
+.lhdn-validation-modal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.lhdn-validation-modal .modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.lhdn-validation-modal .modal-body::-webkit-scrollbar-thumb {
+    background: #405189;
+    border-radius: 4px;
+}
+
+.lhdn-validation-modal .modal-body::-webkit-scrollbar-thumb:hover {
+    background: #3a4a7e;
+}
+
+.lhdn-validation-content {
+    width: 100%;
+}
+
+/* Validation Steps */
+.lhdn-validation-step {
+    background: #ffffff;
+    border: 1px solid rgba(64, 81, 137, 0.1);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    overflow: hidden;
+}
+
+.lhdn-validation-step:hover {
+    border-color: rgba(64, 81, 137, 0.2);
+    box-shadow: 0 4px 12px rgba(64, 81, 137, 0.08);
+    transform: translateY(-1px);
+}
+
+.lhdn-step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem;
+    cursor: pointer;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.lhdn-step-header:hover {
+    background-color: rgba(64, 81, 137, 0.02);
+}
+
+.lhdn-step-title {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    font-weight: 500;
+    color: #405189;
+    font-size: 1.1rem;
+}
+
+.lhdn-step-title i {
+    font-size: 1.25rem;
+}
+
+.lhdn-step-valid .lhdn-step-title i {
+    color: #10b981;
+}
+
+.lhdn-step-invalid .lhdn-step-title i {
+    color: #ef4444;
+}
+
+.lhdn-step-status {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.375rem 1rem;
+    border-radius: 50px;
+    transition: all 0.2s ease;
+}
+
+.lhdn-step-valid .lhdn-step-status {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.lhdn-step-invalid .lhdn-step-status {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Validation Content */
+.lhdn-step-content {
+    border-top: 1px solid rgba(64, 81, 137, 0.1);
+    background-color: #ffffff;
+}
+
+.lhdn-validation-message {
+    padding: 1.5rem;
+}
+
+.lhdn-error-location,
+.lhdn-error-message,
+.lhdn-error-code {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem;
+    background: rgba(64, 81, 137, 0.03);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+}
+
+.lhdn-error-location strong,
+.lhdn-error-message strong,
+.lhdn-error-code strong {
+    min-width: 120px;
+    color: #405189;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.lhdn-error-location span,
+.lhdn-error-message span,
+.lhdn-error-code span {
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.lhdn-inner-error {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed rgba(64, 81, 137, 0.15);
+}
+
+.lhdn-validation-success {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #10b981;
+    font-weight: 500;
+    padding: 1.5rem;
+}
+
+.lhdn-validation-success i {
+    font-size: 1.25rem;
+}
+
+/* Modal Footer */
+.lhdn-validation-modal .modal-footer {
+    margin-top: auto;
+    background-color: #ffffff;
+    border-top: 1px solid rgba(64, 81, 137, 0.1);
+    border-radius: 0 0 16px 16px;
+    padding: 1.25rem 1.5rem;
+}
+
+.lhdn-validation-modal .btn-secondary {
+    background: linear-gradient(135deg, #405189 0%, #3a4a7e 100%);
+    border: none;
+    color: #ffffff;
+    padding: 0.625rem 1.5rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.lhdn-validation-modal .btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(64, 81, 137, 0.2);
+}
+
+/* Error Alerts */
+.lhdn-validation-modal .alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #dc2626;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.lhdn-validation-modal .alert-danger i {
+    color: #dc2626;
+}
+
+.lhdn-validation-modal .text-danger {
+    color: #dc2626 !important;
+}
+
+.lhdn-error-message strong,
+.lhdn-error-code strong {
+    color: #374151;
+}
+
+.error-summary {
+    border-top: 1px dashed rgba(239, 68, 68, 0.2);
+    padding-top: 1.25rem;
+}
+
+.error-count {
+    font-size: 0.875rem;
+    color: #dc2626;
+    margin-left: 0.5rem;
+    font-weight: 500;
+}
+
+/* Enhance error message display */
+.lhdn-error-message span,
+.lhdn-error-code span {
+    font-weight: 500;
+}
+
+.lhdn-validation-message .alert {
+    margin-bottom: 1.25rem;
+} 

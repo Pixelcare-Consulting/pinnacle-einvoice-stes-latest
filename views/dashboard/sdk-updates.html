@@ -1,0 +1,519 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<!-- Set page title -->
+<title>MyInvois SDK Updates</title>
+
+<!-- Styles for SDK updates feed -->
+<style>
+  .sdk-updates-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .sdk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .sdk-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .sdk-actions {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .sdk-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #4361ee;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .sdk-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #2ec4b6;
+  }
+  
+  .sdk-date {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+    padding-right: 100px; /* Make room for the ribbon */
+  }
+  
+  .sdk-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .sdk-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4361ee;
+    margin-bottom: 0.75rem;
+  }
+  
+  .sdk-section-items {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .sdk-section-items li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+  
+  .sdk-section-items li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #4361ee;
+    font-weight: bold;
+  }
+  
+  .sdk-alert {
+    background-color: rgba(67, 97, 238, 0.1);
+    border-left: 4px solid #4361ee;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .sdk-alert p {
+    margin-bottom: 0;
+  }
+  
+  /* Loading styles */
+  .sdk-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+  }
+  
+  .sdk-loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .sdk-ribbon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    overflow: hidden;
+    width: 150px;
+    height: 150px;
+  }
+  
+  .sdk-ribbon-text {
+    position: absolute;
+    top: 35px;
+    right: -35px;
+    transform: rotate(45deg);
+    width: 170px;
+    background: #ff5722;
+    text-align: center;
+    line-height: 30px;
+    letter-spacing: 1px;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 0.5);
+  }
+  
+  .sdk-ribbon-text.new {
+    background: linear-gradient(45deg, #2ec4b6, #26a69a);
+    box-shadow: 0 3px 10px rgba(38, 166, 154, 0.3);
+  }
+  
+  .sdk-ribbon-text.recent {
+    background: linear-gradient(45deg, #4361ee, #3949ab);
+    box-shadow: 0 3px 10px rgba(57, 73, 171, 0.3);
+  }
+  
+  /* Filter styles */
+  .sdk-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .sdk-filter-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .sdk-filter-btn:hover {
+    background-color: #e9ecef;
+  }
+  
+  .sdk-filter-btn.active {
+    background-color: #4361ee;
+    color: #fff;
+    border-color: #4361ee;
+  }
+
+  .error-container {
+    text-align: center;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .error-icon {
+    font-size: 4rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+  }
+
+  .retry-btn {
+    margin-top: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-welcome-card">
+  <div class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center">
+      <div class="welcome-icon">
+        <i class="bi bi-rss"></i>
+      </div>
+      <div class="welcome-content">
+        <h4 class="mb-1">MyInvois SDK Updates</h4>
+        <p class="mb-0">Stay up-to-date with the latest MyInvois SDK releases and updates from LHDN.</p>
+      </div>
+    </div>
+    <div class="welcome-datetime">
+      <div class="current-time">
+        <i class="bi bi-clock"></i>
+        <span id="currentTime">00:00:00 AM</span>
+      </div>
+      <div class="current-date">
+        <i class="bi bi-calendar3"></i>
+        <span id="currentDate">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sdk-updates-container">
+  <div class="sdk-header">
+    <h1 class="sdk-title">SDK Updates</h1>
+    <div class="sdk-actions">
+      <a href="/api/rss" class="btn btn-lhdn btn-sm">
+        <i class="bi bi-rss me-2"></i>
+        RSS Feed
+      </a>
+      <a href="https://sdk.myinvois.hasil.gov.my/sdk-1-0-release/" target="_blank" class="btn btn-lhdn">
+        <i class="bi bi-box-arrow-up-right me-2"></i>
+        Visit LHDN SDK Portal
+      </a>
+    </div>
+  </div>
+  
+  <div class="sdk-alert">
+    <p><strong>Note:</strong> This page shows the latest updates from the MyInvois SDK. The information is refreshed every 30 minutes. You can subscribe to the RSS feed to receive automatic updates.</p>
+  </div>
+  
+  <div class="sdk-filters">
+    <button class="sdk-filter-btn active" data-filter="all">All Updates</button>
+    <button class="sdk-filter-btn" data-filter="api">API Documentation</button>
+    <button class="sdk-filter-btn" data-filter="validation">Validations</button>
+    <button class="sdk-filter-btn" data-filter="new">New Additions</button>
+    <button class="sdk-filter-btn" data-filter="other">Other Updates</button>
+  </div>
+  
+  <!-- Loading state -->
+  <div id="sdk-loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading SDK updates...</p>
+  </div>
+  
+  <!-- Error state -->
+  <div id="sdk-error" class="error-container" style="display: none;">
+    <div class="error-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+    <h3>Failed to load SDK updates</h3>
+    <p id="error-message">There was a problem loading the latest SDK updates.</p>
+    <button class="btn btn-primary retry-btn" onclick="loadSdkUpdates()">
+      <i class="bi bi-arrow-clockwise me-2"></i>Try Again
+    </button>
+  </div>
+  
+  <!-- Content container -->
+  <div id="sdk-content" class="sdk-content" style="display: none;">
+    <!-- Updates will be loaded here dynamically -->
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Function to update date and time
+  function updateDateTime() {
+    const timeElement = document.getElementById('currentTime');
+    const dateElement = document.getElementById('currentDate');
+    
+    function update() {
+      const now = new Date();
+      
+      // Update time
+      timeElement.textContent = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+      
+      // Update date
+      dateElement.textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    
+    // Update immediately and then every second
+    update();
+    setInterval(update, 1000);
+  }
+  
+  // Function to check if an update is recent (within last 7 days)
+  function isRecentUpdate(dateStr) {
+    const updateDate = new Date(dateStr);
+    const currentDate = new Date();
+    const diffTime = Math.abs(currentDate - updateDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  }
+  
+  // Function to check if an update is new (within last 3 days)
+  function isNewUpdate(dateStr) {
+    const updateDate = new Date(dateStr);
+    const currentDate = new Date();
+    const diffTime = Math.abs(currentDate - updateDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 3;
+  }
+  
+  // Function to get update ribbon
+  function getUpdateRibbon(dateStr) {
+    if (isNewUpdate(dateStr)) {
+      return '<div class="sdk-ribbon"><span class="sdk-ribbon-text new"><i class="bi bi-stars me-1"></i>New</span></div>';
+    } else if (isRecentUpdate(dateStr)) {
+      return '<div class="sdk-ribbon"><span class="sdk-ribbon-text recent"><i class="bi bi-clock-history me-1"></i>Recent</span></div>';
+    }
+    return '';
+  }
+  
+  // Function to parse update date
+  function parseUpdateDate(dateStr) {
+    const months = {
+      'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
+      'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
+    };
+    
+    const parts = dateStr.split(' ');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0]);
+      const month = months[parts[1]];
+      const year = parseInt(parts[2]);
+      
+      if (!isNaN(day) && month !== undefined && !isNaN(year)) {
+        return new Date(year, month, day);
+      }
+    }
+    
+    return new Date(); // Fallback
+  }
+  
+  // Function to determine the category of a section
+  function getSectionCategory(title) {
+    const titleLower = title.toLowerCase();
+    
+    if (titleLower.includes('api') || titleLower.includes('documentation')) {
+      return 'api';
+    } else if (titleLower.includes('validation')) {
+      return 'validation';
+    } else if (titleLower.includes('new addition') || titleLower.includes('new feature')) {
+      return 'new';
+    } else {
+      return 'other';
+    }
+  }
+  
+  // Function to show loading state
+  function showLoading() {
+    document.getElementById('sdk-loading').style.display = 'flex';
+    document.getElementById('sdk-content').style.display = 'none';
+    document.getElementById('sdk-error').style.display = 'none';
+  }
+  
+  // Function to show content
+  function showContent() {
+    document.getElementById('sdk-loading').style.display = 'none';
+    document.getElementById('sdk-content').style.display = 'block';
+    document.getElementById('sdk-error').style.display = 'none';
+  }
+  
+  // Function to show error
+  function showError(message) {
+    document.getElementById('sdk-loading').style.display = 'none';
+    document.getElementById('sdk-content').style.display = 'none';
+    document.getElementById('sdk-error').style.display = 'block';
+    
+    if (message) {
+      document.getElementById('error-message').textContent = message;
+    }
+  }
+  
+  // Function to load SDK updates
+  async function loadSDKUpdates() {
+    showLoading();
+    
+    try {
+      const response = await fetch('/api/rss/updates');
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.updates && data.updates.length > 0) {
+        const contentElement = document.getElementById('sdk-content');
+        
+        // Sort updates by date (newest first)
+        data.updates.sort((a, b) => {
+          const dateA = parseUpdateDate(a.date);
+          const dateB = parseUpdateDate(b.date);
+          return dateB - dateA;
+        });
+        
+        // Generate HTML for each update
+        let html = '';
+        
+        data.updates.forEach(update => {
+          const updateDate = parseUpdateDate(update.date).toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          });
+          
+          // Collect all categories for this update
+          const updateCategories = new Set();
+          update.sections.forEach(section => {
+            updateCategories.add(getSectionCategory(section.title));
+          });
+          
+          // Add categories as data attributes
+          const categoryClasses = Array.from(updateCategories).map(cat => `category-${cat}`).join(' ');
+          
+          html += `
+            <div class="sdk-card ${categoryClasses}" data-categories="${Array.from(updateCategories).join(',')}">
+              ${getUpdateRibbon(update.date)}
+              <div class="sdk-date">${updateDate}</div>
+              ${update.sections.map(section => `
+                <div class="sdk-section" data-category="${getSectionCategory(section.title)}">
+                  <h3 class="sdk-section-title">${section.title}</h3>
+                  <ul class="sdk-section-items">
+                    ${section.items.map(item => `<li>${item}</li>`).join('')}
+                  </ul>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        });
+        
+        // Update the content
+        contentElement.innerHTML = html;
+        
+        // Show content and hide loading
+        showContent();
+        
+        // Initialize filter functionality
+        initFilters();
+      } else {
+        showError('No SDK updates found. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error loading SDK updates:', error);
+      showError(error.message || 'Failed to load SDK updates. Please try again later.');
+    }
+  }
+  
+  // Function to initialize filter functionality
+  function initFilters() {
+    const filterButtons = document.querySelectorAll('.sdk-filter-btn');
+    const updateCards = document.querySelectorAll('.sdk-card');
+    
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Update active button
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        const filter = button.getAttribute('data-filter');
+        
+        // Apply filtering
+        updateCards.forEach(card => {
+          if (filter === 'all') {
+            card.style.display = 'block';
+          } else {
+            const categories = card.getAttribute('data-categories').split(',');
+            if (categories.includes(filter)) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          }
+        });
+      });
+    });
+  }
+  
+  // Initialize when the document is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    updateDateTime();
+    loadSDKUpdates();
+    
+    // Set up auto-refresh every 30 minutes
+    setInterval(loadSDKUpdates, 30 * 60 * 1000);
+  });
+</script>
+{% endblock %} 

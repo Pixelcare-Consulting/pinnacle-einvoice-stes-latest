@@ -1,0 +1,123 @@
+# ================================
+# SECURE .GITIGNORE FOR eINVOICE
+# ================================
+
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# ================================
+# SENSITIVE CONFIGURATION FILES
+# ================================
+.env*
+!.env.template
+!.env.example
+*.p12
+*.pem
+*.key
+*.crt
+*.pfx
+AuthorizeToken.ini
+
+# ================================
+# DATABASE & MIGRATION FILES
+# ================================
+*.sqlite
+*.sqlite3
+
+# ================================
+# LOGS & TEMPORARY FILES
+# ================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+sessions/
+temp/
+generated/
+output/
+uploads/
+public/temp/
+public/uploads/
+rules/
+ssl/
+docs/
+
+# ================================
+# BUILD & DISTRIBUTION
+# ================================
+dist/
+build/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+
+# ================================
+# DEVELOPMENT FILES
+# ================================
+docs/
+scripts/
+test-*.html
+check-config.js
+*.bak
+*.backup
+*.old
+nodemon.json*
+.nodemonignore
+.cursor/plans
+.cursor/*
+.cursor/plans/*
+.cursor/plans/
+
+# ================================
+# ARCHIVE & BACKUP FILES
+# ================================
+*.rar
+*.zip
+*.tar.gz
+*.7z
+*backup*
+*_backup*
+*_old*
+*OLD*
+
+# ================================
+# IDE & EDITOR FILES
+# ================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.windsurfrules
+.codebuddy/
+
+# ================================
+# OS SPECIFIC FILES
+# ================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ================================
+# SECURITY & TESTING
+# ================================
+coverage/
+.nyc_output/
+.coverage/
+*.lcov
+security-report.json
+vulnerability-report.json

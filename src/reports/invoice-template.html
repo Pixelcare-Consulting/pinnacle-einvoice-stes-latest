@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Invoice</title>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 16px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      width: 150px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .e-invoice-text {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+    }
+
+    td {
+      border: 1px solid #000;
+      padding: 4px 8px;
+      vertical-align: top;
+    }
+
+    td.empty-cell {
+      border: none;
+    }
+
+    .label-cell {
+      width: 150px;
+      font-weight: normal;
+    }
+
+    .items-table th {
+      padding: 4px 8px;
+      text-align: left;
+      background-color: #fff;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .payment-info {
+      margin-top: 25px;
+      border: 1px solid #000;
+      padding: 10px;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 20px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="{{:CompanyLogo}}" alt="{{:CompanyName}} Logo" class="logo" onerror="this.onerror=null; this.src='{{:CompanyLogo}}';" style="max-width: 150px; max-height: 80px; object-fit: contain;">
+      <div class="e-invoice-text">E-INVOICE</div>
+      <img src="{{:QRCode}}" alt="Invoice QR Code" style="width: 100px; height: 100px; object-fit: contain;" />
+    </div>
+
+    <!-- Supplier Info -->
+    <table>
+      <tr>
+        <td class="label-cell">Supplier's Name:</td>
+        <td>{{:SupplierName}}</td>
+        <td class="label-cell">Supplier's Tourism Tax Registration No:</td>
+        <td>{{:SupplierTourismTaxNo}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Address:</td>
+        <td colspan="3">{{:SupplierAddress}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Supplier's Contact No:</td>
+        <td>{{:SupplierContactNo}}</td>
+        <td class="label-cell">Supplier's MSIC Code:</td>
+        <td>{{:SupplierMSICCode}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Supplier's Email:</td>
+        <td>{{:SupplierEmail}}</td>
+        <td class="label-cell">Supplier's Business Activity:</td>
+        <td>{{:SupplierBusinessActivity}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell empty-cell"></td>
+        <td class="empty-cell"></td>
+        <td class="label-cell">Supplier's Registration No:</td>
+        <td>{{:SupplierRegistrationNo}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell empty-cell"></td>
+        <td class="empty-cell"></td>
+        <td class="label-cell">Supplier's SST No:</td>
+        <td>{{:SupplierSSTNo}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell empty-cell"></td>
+        <td class="empty-cell"></td>
+        <td class="label-cell">Supplier's TIN:</td>
+        <td>{{:SupplierTIN}}</td>
+      </tr>
+    </table>
+
+    <!-- Buyer Info -->
+    <table>
+      <tr>
+        <td class="label-cell">Buyer's Name:</td>
+        <td>{{:BuyerName}}</td>
+        <td class="label-cell">Buyer's MSIC Code:</td>
+        <td>{{:BuyerMSICCode}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Address:</td>
+        <td colspan="3">{{:BuyerAddress}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Buyer's Contact No:</td>
+        <td>{{:BuyerContactNo}}</td>
+        <td class="label-cell">Buyer's Registration No:</td>
+        <td>{{:BuyerRegistrationNo}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Buyer's Email:</td>
+        <td>{{:BuyerEmail}}</td>
+        <td class="label-cell">Buyer's SST No:</td>
+        <td>{{:BuyerSSTNo}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Attention:</td>
+        <td>{{:BuyerAttention}}</td>
+        <td class="label-cell">Buyer's TIN:</td>
+        <td>{{:BuyerTIN}}</td>
+      </tr>
+    </table>
+
+    <table style="width: 100%; margin: 15px 0; border: 1px solid black; border-right: none; border-top: none; border-bottom: none;">
+      <tr>
+        <td style="width: 45%; border: 1px solid black; padding: 0;">
+          <div style="padding: 5px;">
+            <div style="text-align: center; border: 1px solid black; background-color: #f5f5f5; margin-bottom: 12px;  font-size: 12px;">
+              <strong>PROJECT TITLE</strong>
+            </div>
+            <div style="line-height: 1.5; font-size: 13px;">
+              {{:ProjectTitle}}
+            </div>
+          </div>
+        </td>
+        <td style="width: 55%; vertical-align: top; padding-left: 10px; border: 1px solid black; border-left: none; border-top: none; border-bottom: none; border-right: none;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="width: 35%; border: 1px solid black; padding: 4px 8px;">e-Invoice Type:</td>
+              <td style="border: 1px solid black; padding: 4px 8px;">{{:InvoiceType}}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid black; padding: 4px 8px;">e-Invoice Version:</td>
+              <td style="border: 1px solid black; padding: 4px 8px;">{{:InvoiceVersion}}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid black; padding: 4px 8px;">e-Invoice Number:</td>
+              <td style="border: 1px solid black; padding: 4px 8px;">{{:InvoiceNumber}}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid black; padding: 4px 8px;">Original e-Invoice Ref No.:</td>
+              <td style="border: 1px solid black; padding: 4px 8px;">{{:OriginalInvoiceRefNo}}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid black; padding: 4px 8px;">e-Invoice Date:</td>
+              <td style="border: 1px solid black; padding: 4px 8px;">{{:InvoiceDate}}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid black; padding: 4px 8px;">Invoice Currency:</td>
+              <td style="border: 1px solid black; padding: 4px 8px;">{{:InvoiceCurrency}}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid black; padding: 4px 8px;">Currency Exchange Rate:</td>
+              <td style="border: 1px solid black; padding: 4px 8px;">{{:CurrencyExchangeRate}}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Line Items -->
+    <table class="items-table" style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <th style="padding: 8px; border: 1px solid #000;">Classification</th>
+        <th style="padding: 8px; border: 1px solid #000;">Description</th>
+        <th style="padding: 8px; border: 1px solid #000;" class="text-right">Unit Price</th>
+        <th style="padding: 8px; border: 1px solid #000;" class="text-right">Amount</th>
+      </tr>
+      {{for items}}
+      <tr>
+        <td style="padding: 8px;">{{:Classification}}</td>
+        <td style="padding: 8px;">{{:Description}}</td>
+        <td style="padding: 8px;" class="text-right">{{:UnitPrice}}</td>
+        <td style="padding: 8px;" class="text-right">{{:Amount}}</td>
+      </tr>
+      {{/for}}
+    </table>
+
+    <!-- Tax Details -->
+    <table>
+      <tr>
+        <td class="label-cell">Details of Tax Exemption:</td>
+        <td colspan="3">{{:TaxExemptionDetails}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell">Amount Tax Exemption:</td>
+        <td>{{:AmountTaxExemption}}</td>
+        <td class="label-cell">Tax Type:</td>
+        <td>{{:TaxType}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell"></td>
+        <td></td>
+        <td class="label-cell">Tax Rate:</td>
+        <td>{{:TaxRate}}</td>
+      </tr>
+    </table>
+
+    <!-- Totals -->
+    <table style="margin-bottom: 15px; width: 100%; border-collapse: collapse;">
+      <tr>
+        <td class="label-cell" style="border: 1px solid #000; padding: 8px; width: 70%;">Total Excluding Tax</td>
+        <td class="text-right" style="border: 1px solid #000; padding: 8px;">{{:TotalExcludingTax}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell" style="border: 1px solid #000; padding: 8px;">Tax Amount</td>
+        <td class="text-right" style="border: 1px solid #000; padding: 8px;">{{:TaxAmount}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell" style="border: 1px solid #000; padding: 8px;">Total Including Tax</td>
+        <td class="text-right" style="border: 1px solid #000; padding: 8px;">{{:TotalIncludingTax}}</td>
+      </tr>
+      <tr>
+        <td class="label-cell" style="border: 1px solid #000; padding: 8px; font-weight: bold;">Total Payable Amount</td>
+        <td class="text-right" style="border: 1px solid #000; padding: 8px; font-weight: bold;">{{:TotalPayableAmount}}</td>
+      </tr>
+    </table>
+
+    <!-- Payment Details -->
+    <div class="payment-info">
+      <p style="margin: 0"><strong>Please remit the payment to:</strong></p>
+      <p style="margin: 0">
+        MIB-HSS ENGINEERING SDN BHD<br>
+        MAYBANK ISLAMIC BERHAD "Collection Account"<br>
+        102-6, Jalan Midah Satu,<br>
+        Taman Midah, Cheras,<br>
+        56000 Kuala Lumpur.<br>
+        Account No.: 5147 0751 0991<br>
+        Swift Code: MBBEMYKL (where applicable)
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-text">
+      This is a computer generated invoice with no signature required
+    </div>
+  </div>
+</body>
+</html>

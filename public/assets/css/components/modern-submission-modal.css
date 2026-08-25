@@ -1,0 +1,516 @@
+/* Modern Submission Modal Styles - Enhanced Design */
+/* High priority CSS to override any conflicting styles */
+.modern-submission-container {
+    background: white !important;
+    border-radius: 16px !important;
+    padding: 0 !important;
+    max-width: 600px !important; /* Increased from 520px for wider modal */
+    margin: 0 auto !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    z-index: 9999 !important;
+}
+
+/* Ensure no conflicting styles from other CSS files */
+.swal2-popup .modern-submission-container {
+    background: white !important;
+    border-radius: 16px !important;
+    padding: 0 !important;
+    max-width: 600px !important; /* Increased from 520px for wider modal */
+    margin: 0 auto !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* SweetAlert2 Override for Submission Modal */
+.swal2-popup.modern-submission-popup {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+.swal2-popup.modern-submission-popup .swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    max-height: none !important;
+    font-size: inherit !important;
+}
+
+/* Force override any conflicting styles */
+.swal2-popup.modern-submission-popup * {
+    box-sizing: border-box !important;
+}
+
+/* Ensure submission steps use correct colors - Override any conflicting styles */
+.modern-submission-container .modern-step.processing,
+.swal2-popup .modern-submission-container .modern-step.processing {
+    border-color: #3b82f6 !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
+}
+
+.modern-submission-container .modern-step.processing .modern-step-circle,
+.swal2-popup .modern-submission-container .modern-step.processing .modern-step-circle {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.modern-submission-container .modern-step.processing .modern-step-status,
+.swal2-popup .modern-submission-container .modern-step.processing .modern-step-status {
+    color: #3b82f6 !important;
+}
+
+/* Override any orange/yellow processing styles */
+.modern-submission-container .modern-step.processing {
+    border-color: #3b82f6 !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+}
+
+.modern-submission-container .modern-step.processing .modern-step-circle {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    border-color: #3b82f6 !important;
+}
+
+/* Force override any amber/orange colors */
+.modern-submission-container .modern-step {
+    border-color: #e5e7eb !important;
+    background: white !important;
+}
+
+.modern-submission-container .modern-step.processing {
+    border-color: #3b82f6 !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+}
+
+/* Submission Header - Consistent with Version Modal */
+.submission-header {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    color: white !important;
+    padding: 2rem !important;
+    text-align: center !important;
+    position: relative !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+.submission-icon {
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.submission-icon .icon-wrapper {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.submission-icon .icon-wrapper i {
+    font-size: 1.5rem;
+    color: #3b82f6;
+}
+
+.submission-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.submission-subtitle {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Progress Steps - Enhanced Design */
+.progress-steps {
+    padding: 0.75rem;
+    background: white;
+    position: relative;
+}
+
+/* Submission Messages Section */
+.submission-messages {
+    padding: 1rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+    .submission-messages {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+.modern-submission-steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* Enhanced Progress Information */
+.progress-info-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.progress-info-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.5rem;
+}
+
+.progress-info-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progress-info-item {
+    flex: 1;
+    text-align: center;
+}
+
+.progress-info-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.progress-info-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* Estimated Time Display */
+.estimated-time {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.estimated-time-label {
+    font-size: 0.75rem;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.estimated-time-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1d4ed8;
+}
+
+/* Tips Section */
+.submission-tips {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.submission-tips-title {
+    font-size: 0.75rem;
+    color: #059669;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.submission-tips-content {
+    font-size: 0.8125rem;
+    color: #047857;
+    line-height: 1.4;
+}
+
+.modern-step {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    position: relative !important;
+    z-index: 2 !important;
+    padding: 1.25rem !important;
+    border-radius: 12px !important;
+    border: 2px solid #e5e7eb !important;
+    background: white !important;
+    transition: all 0.3s ease !important;
+}
+
+.modern-step-circle {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    font-size: 1.25rem !important;
+    transition: all 0.3s ease !important;
+    background: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    border: 2px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
+}
+
+.modern-step-content {
+    flex: 1;
+}
+
+.modern-step-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #374151;
+    line-height: 1.3;
+}
+
+.modern-step-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+
+/* Modern Step States - Consistent Design */
+.modern-step.completed {
+    border-color: #059669 !important;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15) !important;
+}
+
+.modern-step.completed .modern-step-circle {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border-color: #059669 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3) !important;
+}
+
+.modern-step.completed .modern-step-title {
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+}
+
+.modern-step.completed .modern-step-status {
+    color: #059669 !important;
+}
+
+.modern-step.processing {
+    border-color: #3b82f6 !important;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
+}
+
+.modern-step.processing .modern-step-circle {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    animation: pulse 2s infinite !important;
+}
+
+.modern-step.processing .modern-step-title {
+    color: #1f2937 !important;
+    font-weight: 600 !important;
+}
+
+.modern-step.processing .modern-step-status {
+    color: #3b82f6 !important;
+}
+
+.modern-step.error {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.modern-step.error .modern-step-circle {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-color: #ef4444;
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.modern-step.error .modern-step-title {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.modern-step.error .modern-step-status {
+    color: #ef4444;
+}
+
+/* Modern Spinner */
+.modern-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Consistent Animations */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modern-submission-container {
+        max-width: 95%;
+        margin: 1rem auto;
+    }
+
+    .submission-header {
+        padding: 1.5rem;
+    }
+
+    .submission-icon .icon-wrapper {
+        width: 56px;
+        height: 56px;
+    }
+
+    .submission-icon .icon-wrapper i {
+        font-size: 1.25rem;
+    }
+
+    .submission-title {
+        font-size: 1.125rem;
+    }
+
+    .submission-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .progress-steps {
+        padding: 0.75rem;
+    }
+
+    .modern-step {
+        padding: 1rem;
+    }
+
+    .modern-step-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .modern-step-title {
+        font-size: 0.875rem;
+    }
+
+    .modern-step-status {
+        font-size: 0.6875rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .submission-header {
+        padding: 1.25rem;
+    }
+
+    .submission-icon .icon-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+
+    .submission-icon .icon-wrapper i {
+        font-size: 1.125rem;
+    }
+
+    .submission-title {
+        font-size: 1rem;
+    }
+
+    .progress-steps {
+        padding: 0.5rem;
+    }
+
+    .modern-step {
+        padding: 0.875rem;
+    }
+
+    .modern-step-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 0.875rem;
+    }
+}

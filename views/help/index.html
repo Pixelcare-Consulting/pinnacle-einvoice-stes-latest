@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+    <style>
+        .help-section {
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .help-section h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        .help-card {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .help-card h3 {
+            color: #3498db;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        .step-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .step-list li {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+        .step-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../partials/header') %>
+
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Help & Support</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                    <li class="breadcrumb-item active">Help & Support</li>
+                </ol>
+            </nav>
+        </div>
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Getting Started Section -->
+                    <div class="help-section">
+                        <h2><i class="bi bi-rocket-takeoff"></i> Getting Started</h2>
+                        <div class="help-card">
+                            <h3>Welcome to the E-Invoice Portal</h3>
+                            <p>This portal helps you manage your electronic invoices efficiently. Here's what you need to know to get started:</p>
+                            <ul class="step-list">
+                                <li>Log in using your provided credentials</li>
+                                <li>Navigate through different sections using the top navigation bar</li>
+                                <li>Access your profile and settings through the profile dropdown menu</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Section -->
+                    <div class="help-section">
+                        <h2><i class="bi bi-grid-1x2"></i> Using the Dashboard</h2>
+                        <div class="help-card">
+                            <h3>Dashboard Overview</h3>
+                            <p>The dashboard provides a quick overview of your invoice activities:</p>
+                            <ul class="step-list">
+                                <li>View recent invoice statistics</li>
+                                <li>Monitor pending actions</li>
+                                <li>Access quick links to common tasks</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Outbound Section -->
+                    <div class="help-section">
+                        <h2><i class="bi bi-send"></i> Managing Outbound Invoices</h2>
+                        <div class="help-card">
+                            <h3>Sending Invoices</h3>
+                            <p>Learn how to manage outgoing invoices:</p>
+                            <ul class="step-list">
+                                <li>Create and send new invoices</li>
+                                <li>Track sent invoice status</li>
+                                <li>View delivery confirmations</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Inbound Section -->
+                    <div class="help-section">
+                        <h2><i class="bi bi-download"></i> Managing Inbound Invoices</h2>
+                        <div class="help-card">
+                            <h3>Receiving Invoices</h3>
+                            <p>Handle incoming invoices effectively:</p>
+                            <ul class="step-list">
+                                <li>View received invoices</li>
+                                <li>Process and approve invoices</li>
+                                <li>Download invoice documents</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Support Section -->
+                    <div class="help-section">
+                        <h2><i class="bi bi-question-circle"></i> Need More Help?</h2>
+                        <div class="help-card">
+                            <h3>Contact Support</h3>
+                            <p>If you need additional assistance:</p>
+                            <ul class="step-list">
+                                <li>Email: support@example.com</li>
+                                <li>Phone: +1 (XXX) XXX-XXXX</li>
+                                <li>Support Hours: Monday - Friday, 9 AM - 5 PM</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html> 

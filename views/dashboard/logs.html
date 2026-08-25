@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs - eInvoice System</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/assets/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/dashboard.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="dashboard-body">
+    <!-- Include the sidebar -->
+    <div id="sidebar-container"></div>
+    
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <!-- Include the header -->
+        <div id="header-container"></div>
+        
+        <!-- Page Content -->
+        <div class="container-fluid px-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-flex align-items-center justify-content-between">
+                        <h4 class="mb-0">System Logs</h4>
+                        
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Logs</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabs for different log types -->
+            <div class="row">
+                <div class="col-12">
+                    <ul class="nav nav-tabs" id="logsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="outbound-logs-tab" data-bs-toggle="tab" data-bs-target="#outbound-logs" type="button" role="tab" aria-controls="outbound-logs" aria-selected="true">
+                                <i class="fas fa-file-export"></i> Outbound Logs
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="system-logs-tab" data-bs-toggle="tab" data-bs-target="#system-logs" type="button" role="tab" aria-controls="system-logs" aria-selected="false">
+                                <i class="fas fa-cogs"></i> System Logs
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="security-logs-tab" data-bs-toggle="tab" data-bs-target="#security-logs" type="button" role="tab" aria-controls="security-logs" aria-selected="false">
+                                <i class="fas fa-shield-alt"></i> Security Logs
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="logsTabContent">
+                        <!-- Outbound Logs Tab -->
+                        <div class="tab-pane fade show active" id="outbound-logs" role="tabpanel" aria-labelledby="outbound-logs-tab">
+                            <div id="outboundLogsContainer" class="mt-4"></div>
+                        </div>
+                        
+                        <!-- System Logs Tab -->
+                        <div class="tab-pane fade" id="system-logs" role="tabpanel" aria-labelledby="system-logs-tab">
+                            <div class="mt-4">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> System logs will be available in a future update.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Security Logs Tab -->
+                        <div class="tab-pane fade" id="security-logs" role="tabpanel" aria-labelledby="security-logs-tab">
+                            <div class="mt-4">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> Security logs will be available in a future update.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="/assets/js/jquery-3.6.0.min.js"></script>
+    
+    <!-- Common Scripts -->
+    <script src="/assets/js/common.js"></script>
+    
+    <!-- Log Viewer Script -->
+    <script src="/assets/js/modules/logs/outbound-logs.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Load sidebar and header
+            $("#sidebar-container").load("/components/sidebar.html", function() {
+                // Highlight the active menu item
+                $("#logs-menu").addClass("active");
+            });
+            $("#header-container").load("/components/header.html");
+            
+            // Initialize the outbound logs viewer
+            const outboundLogViewer = new LogViewer('outboundLogsContainer');
+        });
+    </script>
+</body>
+</html>

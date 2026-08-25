@@ -1,0 +1,312 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id @default(uuid()) @db.NVarChar(36)
+  sid       String   @unique @db.NVarChar(255)
+  data      String   @db.NVarChar(Max)
+  expires   DateTime @db.DateTime
+  createdAt DateTime @default(now()) @db.DateTime
+  updatedAt DateTime @default(now()) @updatedAt @db.DateTime
+
+  @@index([expires], map: "idx_session_expires")
+  @@index([sid], map: "idx_session_sid")
+}
+
+model WP_ADMIN_SETTINGS {
+  ID           Int       @id(map: "PK__WP_ADMIN__3214EC27A76C4CE2") @default(autoincrement())
+  SettingKey   String    @unique(map: "UQ_WP_ADMIN_SETTINGS_SettingKey") @db.NVarChar(255)
+  SettingValue String    @db.NText
+  SettingGroup String    @db.NVarChar(100)
+  Description  String?   @db.NVarChar(500)
+  IsActive     Boolean?  @default(true, map: "DF__WP_ADMIN___IsAct__440B1D61")
+  CreatedBy    String?   @db.NVarChar(255)
+  UpdatedBy    String?   @db.NVarChar(255)
+  CreateTS     DateTime? @default(now(), map: "DF__WP_ADMIN___Creat__44FF419A") @db.DateTime
+  UpdateTS     DateTime? @default(now(), map: "DF__WP_ADMIN___Updat__45F365D3") @db.DateTime
+
+  @@index([IsActive], map: "IX_WP_ADMIN_SETTINGS_IsActive")
+  @@index([SettingGroup], map: "IX_WP_ADMIN_SETTINGS_SettingGroup")
+}
+
+model WP_COMPANY_SETTINGS {
+  ID           Int     @id(map: "PK__WP_COMPA__3214EC27D59FCF90") @default(autoincrement())
+  CompanyImage String? @db.VarChar(255)
+  CompanyName  String? @db.VarChar(255)
+  Industry     String? @db.VarChar(255)
+  Country      String? @db.VarChar(255)
+  TIN          String? @db.VarChar(255)
+  BRN          String? @db.VarChar(255)
+  About        String? @db.Text
+  Address      String? @db.VarChar(255)
+  Phone        String? @db.VarChar(255)
+  Email        String? @db.VarChar(255)
+  ValidStatus  String? @db.VarChar(255)
+  UserID       String? @db.VarChar(255)
+}
+
+model WP_CONFIGURATION {
+  ID       Int      @id(map: "PK__WP_CONFI__3214EC27B0AA7610") @default(autoincrement())
+  Type     String   @db.VarChar(50)
+  UserID   String   @db.VarChar(255)
+  Settings String   @db.NVarChar(Max)
+  IsActive Boolean? @default(true, map: "DF__WP_CONFIG__IsAct__2D27B809")
+  CreateTS DateTime @db.DateTime
+  UpdateTS DateTime @db.DateTime
+}
+
+model WP_FLATFILE {
+  id               Int       @id(map: "PK__WP_FLATF__3213E83F3B2E347A") @default(autoincrement())
+  supplier_name    String    @db.VarChar(255)
+  supplier_tin     String    @db.VarChar(50)
+  supplier_brn     String?   @db.VarChar(50)
+  supplier_msic    String?   @db.VarChar(20)
+  supplier_sst     String?   @db.VarChar(50)
+  buyer_name       String    @db.VarChar(255)
+  buyer_tin        String    @db.VarChar(50)
+  buyer_brn        String?   @db.VarChar(50)
+  buyer_sst        String?   @db.VarChar(50)
+  invoice_no       String    @db.VarChar(50)
+  invoice_date     DateTime  @db.Date
+  currency_code    String?   @default("MYR", map: "DF__WP_FLATFI__curre__787EE5A0") @db.VarChar(3)
+  exchange_rate    Decimal?  @default(1.0000, map: "DF__WP_FLATFI__excha__797309D9") @db.Decimal(10, 4)
+  item_description String?   @db.Text
+  classification   String?   @db.VarChar(10)
+  tax_type         String?   @db.VarChar(10)
+  tax_rate         Decimal?  @db.Decimal(5, 2)
+  tax_amount       Decimal?  @db.Decimal(15, 2)
+  total_excl_tax   Decimal   @db.Decimal(15, 2)
+  total_incl_tax   Decimal   @db.Decimal(15, 2)
+  status           String?   @default("Pending", map: "DF__WP_FLATFI__statu__7A672E12") @db.VarChar(20)
+  is_mapped        Boolean?  @default(false, map: "DF__WP_FLATFI__is_ma__7B5B524B")
+  mapping_details  String?   @db.NVarChar(Max)
+  upload_date      DateTime? @default(now(), map: "DF__WP_FLATFI__uploa__7C4F7684") @db.DateTime
+  processed_date   DateTime? @db.DateTime
+  processed_by     String?   @db.VarChar(50)
+  submission_id    String?   @db.VarChar(50)
+  lhdn_response    String?   @db.NVarChar(Max)
+  uuid             String?   @unique(map: "UQ__WP_FLATF__7F427931935AC3F5") @db.VarChar(36)
+
+  @@index([buyer_tin], map: "idx_buyer_tin")
+  @@index([invoice_date], map: "idx_invoice_date")
+  @@index([invoice_no], map: "idx_invoice_no")
+  @@index([is_mapped], map: "idx_is_mapped")
+  @@index([status], map: "idx_status")
+  @@index([supplier_tin], map: "idx_supplier_tin")
+  @@index([upload_date], map: "idx_upload_date")
+}
+
+model WP_INBOUND_STATUS {
+  uuid                  String   @id(map: "PK__WP_INBOU__7F42793064BFCB78") @db.VarChar(100)
+  submissionUid         String?  @db.VarChar(100)
+  longId                String?  @db.VarChar(100)
+  internalId            String?  @db.VarChar(50)
+  typeName              String?  @db.VarChar(50)
+  typeVersionName       String?  @db.VarChar(50)
+  issuerTin             String?  @db.VarChar(50)
+  issuerName            String?  @db.VarChar(255)
+  receiverId            String?  @db.VarChar(50)
+  receiverName          String?  @db.VarChar(255)
+  dateTimeReceived      String?  @db.VarChar(100)
+  dateTimeValidated     String?  @db.VarChar(100)
+  status                String?  @db.VarChar(50)
+  documentStatusReason  String?  @db.VarChar(500)
+  cancelDateTime        String?  @db.VarChar(100)
+  rejectRequestDateTime String?  @db.VarChar(100)
+  createdByUserId       String?  @db.VarChar(100)
+  dateTimeIssued        String?  @db.VarChar(100)
+  totalSales            Decimal? @db.Decimal(18, 2)
+  totalExcludingTax     Decimal? @db.Decimal(18, 2)
+  totalDiscount         Decimal? @db.Decimal(18, 2)
+  totalNetAmount        Decimal? @db.Decimal(18, 2)
+  totalPayableAmount    Decimal? @db.Decimal(18, 2)
+  last_sync_date        String?  @db.VarChar(100)
+  sync_status           String?  @db.VarChar(50)
+  documentDetails       String?  @db.Text
+  validationResults     String?  @db.Text
+  document              String?  @db.Text
+  documentCurrency      String?  @db.VarChar(10)
+  created_at            DateTime @default(now()) @db.DateTime
+  updated_at            DateTime @default(now()) @db.DateTime
+
+  @@index([dateTimeReceived(sort: Desc)], map: "IX_WP_INBOUND_STATUS_dateTimeReceived")
+  @@index([issuerTin], map: "IX_WP_INBOUND_STATUS_issuerTin")
+  @@index([last_sync_date], map: "IX_WP_INBOUND_STATUS_last_sync_date")
+  @@index([status], map: "IX_WP_INBOUND_STATUS_status")
+}
+
+model WP_LOGS {
+  ID          Int     @id(map: "PK__WP_LOGS__3214EC279D2627EB") @default(autoincrement())
+  Description String? @db.VarChar(255)
+  CreateTS    String? @db.VarChar(255)
+  LoggedUser  String? @db.VarChar(255)
+  IPAddress   String? @db.VarChar(255)
+  LogType     String? @db.VarChar(255)
+  Module      String? @db.VarChar(255)
+  Action      String? @db.VarChar(255)
+  Status      String? @db.VarChar(255)
+  UserID      Int?
+}
+
+model WP_OUTBOUND_STATUS {
+  id                  Int       @id(map: "PK__WP_OUTBO__3213E83FE0938CCA") @default(autoincrement())
+  UUID                String?   @db.VarChar(255)
+  submissionUid       String    @db.VarChar(255)
+  company             String?   @db.VarChar(255)
+  supplier            String?   @db.VarChar(255)
+  receiver            String?   @db.VarChar(255)
+  fileName            String    @db.VarChar(255)
+  filePath            String    @unique(map: "UQ__WP_OUTBO__B1C86A949B85C631") @db.VarChar(255)
+  invoice_number      String    @db.VarChar(255)
+  source              String?   @db.VarChar(255)
+  amount              String?   @db.VarChar(255)
+  document_type       String?   @db.VarChar(255)
+  status              String    @default("Pending", map: "DF__WP_OUTBOU__statu__6754599E") @db.VarChar(50)
+  date_submitted      DateTime? @db.DateTime
+  date_sync           DateTime? @db.DateTime
+  date_cancelled      DateTime? @db.DateTime
+  cancelled_by        String?   @db.VarChar(255)
+  cancellation_reason String?   @db.VarChar(Max)
+  created_at          DateTime  @default(now(), map: "DF__WP_OUTBOU__creat__68487DD7") @db.DateTime
+  updated_at          DateTime  @default(now(), map: "DF__WP_OUTBOU__updat__693CA210") @db.DateTime
+  submitted_by        String?   @db.VarChar(255)
+
+  @@index([invoice_number], map: "IX_WP_OUTBOUND_STATUS_INVOICE_NUMBER")
+  @@index([UUID], map: "IX_WP_OUTBOUND_STATUS_UUID")
+}
+
+model WP_SFTP_CONFIG {
+  id                         Int      @id(map: "PK__WP_SFTP___3213E83F1C4C692F") @default(autoincrement())
+  host                       String   @db.VarChar(255)
+  port                       String?  @default("22", map: "DF__WP_SFTP_CO__port__34C8D9D1") @db.VarChar(10)
+  username                   String   @db.VarChar(255)
+  password                   String   @db.VarChar(255)
+  root_path                  String?  @default("/eInvoiceFTP", map: "DF__WP_SFTP_C__root___35BCFE0A") @db.VarChar(255)
+  incoming_manual_template   String?  @db.VarChar(255)
+  incoming_schedule_template String?  @db.VarChar(255)
+  outgoing_manual_template   String?  @db.VarChar(255)
+  outgoing_schedule_template String?  @db.VarChar(255)
+  is_active                  Boolean? @default(true, map: "DF__WP_SFTP_C__is_ac__36B12243")
+  createdAt                  String   @default("format(getdate(),'yyyy-MM-dd HH:mm:ss')", map: "DF__WP_SFTP_C__creat__37A5467C") @db.VarChar(50)
+  updatedAt                  String   @default("format(getdate(),'yyyy-MM-dd HH:mm:ss')", map: "DF__WP_SFTP_C__updat__38996AB5") @db.VarChar(50)
+
+  @@unique([host, username], map: "UQ_SFTP_HOST_USERNAME")
+}
+
+model WP_SUBMISSION_STATUS {
+  DocNum           String    @id(map: "PK_WP_SUBMISSION_STATUS") @db.VarChar(255)
+  UUID             String?   @db.VarChar(255)
+  SubmissionUID    String?   @db.VarChar(255)
+  SubmissionStatus String?   @db.VarChar(255)
+  DateTimeSent     DateTime? @db.DateTime
+  DateTimeUpdated  DateTime? @db.DateTime
+  RejectionDetails String?   @db.Text
+  FileName         String?   @unique(map: "UQ_WP_SUBMISSION_STATUS_FILENAME") @db.VarChar(255)
+}
+
+model WP_USER_REGISTRATION {
+  ID                       Int       @id(map: "PK__WP_USER___3214EC2734F875D6") @default(autoincrement())
+  FullName                 String?   @db.VarChar(255)
+  Email                    String?   @unique(map: "UQ__WP_USER___A9D10534353262BA") @db.VarChar(255)
+  Username                 String?   @unique(map: "UQ__WP_USER___536C85E42E91CB0A") @db.VarChar(255)
+  Password                 String?   @db.VarChar(255)
+  UserType                 String?   @db.VarChar(255)
+  TIN                      String?   @db.VarChar(255)
+  IDType                   String?   @db.VarChar(255)
+  IDValue                  String?   @db.VarChar(255)
+  ClientID                 String?   @db.VarChar(255)
+  ClientSecret             String?   @db.VarChar(255)
+  DigitalSignaturePath     String?   @db.VarChar(255)
+  DigitalSignatureFileName String?   @db.VarChar(255)
+  Admin                    Int?
+  CreateTS                 DateTime? @db.DateTime
+  Phone                    String?   @db.VarChar(50)
+  ValidStatus              String?   @default("1", map: "DF__WP_USER_R__Valid__267ABA7A") @db.Char(1)
+  LastLoginTime            DateTime? @db.DateTime
+  ProfilePicture           String?   @db.VarChar(255)
+  TwoFactorEnabled         Boolean?  @default(false, map: "DF__WP_USER_R__TwoFa__276EDEB3")
+  NotificationsEnabled     Boolean?  @default(false, map: "DF__WP_USER_R__Notif__286302EC")
+  UpdateTS                 DateTime? @db.DateTime
+}
+
+model LHDN_TOKENS {
+  id           Int      @id @default(autoincrement())
+  access_token String   @db.VarChar(4000)
+  expiry_time  DateTime @db.DateTime
+  created_at   DateTime @default(now()) @db.DateTime
+
+  @@index([expiry_time], map: "idx_lhdn_tokens_expiry")
+}
+
+model WP_NOTIFICATIONS {
+  id              Int       @id @default(autoincrement())
+  title           String    @db.VarChar(255)
+  message         String    @db.Text
+  type            String    @db.VarChar(50) // 'system', 'lhdn', 'announcement', 'alert'
+  priority        String    @default("normal") @db.VarChar(20) // 'low', 'normal', 'high', 'urgent'
+  target_user_id  Int?      // null for all users, specific ID for targeted notifications
+  target_role     String?   @db.VarChar(50) // 'admin', 'user', null for all
+  is_read         Boolean   @default(false)
+  is_global       Boolean   @default(false) // true for announcements visible to all
+  source_type     String?   @db.VarChar(50) // 'internal', 'lhdn_api', 'system'
+  source_id       String?   @db.VarChar(255) // reference to source record
+  metadata        String?   @db.Text // JSON metadata
+  expires_at      DateTime? @db.DateTime
+  created_by      Int?
+  created_at      DateTime  @default(now()) @db.DateTime
+  updated_at      DateTime  @default(now()) @updatedAt @db.DateTime
+
+  @@index([target_user_id], map: "idx_notifications_user")
+  @@index([type], map: "idx_notifications_type")
+  @@index([is_read], map: "idx_notifications_read")
+  @@index([created_at], map: "idx_notifications_created")
+  @@index([expires_at], map: "idx_notifications_expires")
+}
+
+model WP_ANNOUNCEMENTS {
+  id              Int       @id @default(autoincrement())
+  title           String    @db.VarChar(255)
+  content         String    @db.Text
+  summary         String?   @db.VarChar(500)
+  type            String    @default("general") @db.VarChar(50) // 'general', 'maintenance', 'feature', 'security'
+  priority        String    @default("normal") @db.VarChar(20) // 'low', 'normal', 'high', 'urgent'
+  status          String    @default("draft") @db.VarChar(20) // 'draft', 'published', 'archived'
+  target_audience String    @default("all") @db.VarChar(50) // 'all', 'admin', 'users'
+  is_pinned       Boolean   @default(false)
+  is_popup        Boolean   @default(false) // show as popup on login
+  publish_at      DateTime? @db.DateTime
+  expires_at      DateTime? @db.DateTime
+  created_by      Int
+  updated_by      Int?
+  created_at      DateTime  @default(now()) @db.DateTime
+  updated_at      DateTime  @default(now()) @updatedAt @db.DateTime
+
+  @@index([status], map: "idx_announcements_status")
+  @@index([type], map: "idx_announcements_type")
+  @@index([publish_at], map: "idx_announcements_publish")
+  @@index([created_at], map: "idx_announcements_created")
+}
+
+model WP_USER_NOTIFICATION_SETTINGS {
+  id                    Int     @id @default(autoincrement())
+  user_id               Int     @unique
+  email_notifications   Boolean @default(true)
+  browser_notifications Boolean @default(true)
+  system_alerts         Boolean @default(true)
+  lhdn_notifications    Boolean @default(true)
+  announcement_popup    Boolean @default(true)
+  digest_frequency      String  @default("daily") @db.VarChar(20) // 'none', 'daily', 'weekly'
+  quiet_hours_start     String? @db.VarChar(5) // HH:MM format
+  quiet_hours_end       String? @db.VarChar(5) // HH:MM format
+  created_at            DateTime @default(now()) @db.DateTime
+  updated_at            DateTime @default(now()) @updatedAt @db.DateTime
+
+  @@index([user_id], map: "idx_user_notification_settings_user")
+}

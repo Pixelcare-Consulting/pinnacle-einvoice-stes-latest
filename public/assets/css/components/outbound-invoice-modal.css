@@ -1,0 +1,18 @@
+.semi-minimal-confirm {
+  background: #405189; color: white; border-color: #405189; box-shadow: 0 2px 4px rgba(64, 81, 137, 0.15);
+}
+
+.semi-minimal-confirm:hover {
+  opacity: 0.9 !important;
+  transform: translateY(-1px) !important;
+}
+
+.semi-minimal-cancel {
+  color: white;
+  
+}
+
+.semi-minimal-cancel:hover {
+  opacity: 0.9 !important;
+  transform: translateY(-1px) !important;
+}

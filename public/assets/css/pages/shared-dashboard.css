@@ -1,0 +1,475 @@
+/* Welcome Section */
+.welcome-section {
+    margin-bottom: 1rem;
+}
+
+.welcome-card {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards Container */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+/* Base Card Styles */
+.info-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Top border designs */
+.info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    transition: opacity 0.2s ease;
+}
+
+/* Card Info Layout */
+.card-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Icon Styles */
+.card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* Count Info Styles */
+.count-info {
+    flex-grow: 1;
+}
+
+.count-info h6 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 600;
+    color: #2b2b2b;
+}
+
+.count-info span {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+
+/* Card Title */
+.card-title-new {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: right;
+}
+
+/* Card Type Specific Styles */
+/* Invoices - Original Blue */
+.invoices-card::before { background: #405189; }
+.invoices-card .card-icon {
+    background: rgba(64, 81, 137, 0.1);
+    color: #405189;
+}
+
+/* Valid - Green */
+.valid-card::before { background: #28a745; }
+.valid-card .card-icon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+/* Submitted - Light Blue */
+.submitted-card::before { background: #4dabf7; }
+.submitted-card .card-icon {
+    background: rgba(77, 171, 247, 0.1);
+    color: #4dabf7;
+}
+
+/* Pending */
+.pending-card::before { background: #fd7e14; }
+.pending-card .card-icon {
+    background: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+/* Invalid */
+.invalid-card::before { background: #dc3545; }
+.invalid-card .card-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+/* Rejected */
+.rejected-card::before { background: #dc3545; }
+.rejected-card .card-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+/* Cancelled */
+.cancelled-card::before { background: #ffc107; }
+.cancelled-card .card-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+/* Queue */
+.queue-card::before { background: #6c757d; }
+.queue-card .card-icon {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+/* Add hover effect for all cards */
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Enhance hover effect on border */
+.info-card:hover::before {
+    opacity: 0.8;
+}
+
+/* Status colors for table badges */
+.status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Status Badge Colors - Updated to match card colors */
+.status-badge.valid {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-badge.submitted {
+    background-color: rgba(77, 171, 247, 0.1);
+    color: #4dabf7;
+}
+
+.status-badge.pending {
+    background-color: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+.status-badge.invalid {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.status-badge.rejected {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.status-badge.cancelled {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.status-badge.queue {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+
+
+/* Welcome DateTime */
+.welcome-datetime {
+    text-align: right;
+    color: #fff;
+}
+
+.current-time {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.current-date {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .count-info h6 {
+        font-size: 1.25rem;
+    }
+
+    .welcome-datetime {
+        font-size: 1.5rem;
+    }
+} 
+
+
+/* Update the status badge to match */
+.status-badge.invoices {
+    background-color: rgba(64, 81, 137, 0.1);
+    color: #405189;
+} 
+
+/* Cancellation Period Badges */
+.badge-cancellation {
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Match the existing color scheme */
+.badge-cancellation.success {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.badge-cancellation.warning {
+    background-color: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+.badge-cancellation.danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.badge-cancellation.expired {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.badge-cancellation.not-applicable {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+/* Keep consistent with existing hover effects */
+.badge-cancellation i {
+    font-size: 0.9em;
+} 
+
+/* Status Badge Styles */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-badge.status-invalid {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.status-badge i {
+  font-size: 1rem;
+}
+
+/* UUID styling */
+.uuid-text {
+  font-family: monospace;
+  font-size: 13px;
+  color: #2563eb;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.uuid-text:hover {
+  background: #e2e8f0;
+  color: #1d4ed8;
+}
+
+/* Date cell styling */
+.date-cell {
+  text-align: center;
+  line-height: 1.2;
+}
+
+.date-cell .date {
+  font-size: 13px;
+  color: #1f2937;
+}
+
+.date-cell .time {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Toast Notification */
+.toast-mini {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: #ffffff;
+  color: #405189;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(64, 81, 137, 0.2);
+  border: 1px solid rgba(64, 81, 137, 0.15);
+  min-width: 280px;
+}
+
+.toast-mini.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-mini-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-mini i {
+  font-size: 18px;
+  color: #0ab39c;
+}
+
+.toast-mini span {
+  font-weight: 500;
+  font-size: 14px;
+  color: #364574;
+}
+
+/* Remove old toast styles */
+.toast-notification {
+  display: none;
+}
+
+/* Update or add these button styles if not already present */
+.btn-outline-primary {
+    color: #405189;
+    border-color: #405189;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #405189;
+    border-color: #405189;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Make sure table buttons are consistent */
+.table .btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+
+/* Add these styles to make the table more compact */
+.table td, .table th {
+  padding: 0.5rem !important;
+  font-size: 12px;
+}
+
+.table .btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 11px;
+}
+
+/* Make text truncate with ellipsis */
+.text-truncate {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Add or update badge styles */
+.badge-invoice {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  background: #f0f9ff;
+  color: #0369a1;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid rgba(3, 105, 161, 0.1);
+}
+
+.badge-invoice i {
+  font-size: 0.875rem;
+}
+
+/* Update type badge styles */
+.badge.bg-info {
+  background-color: #0ea5e9 !important;
+}
+
+.badge.bg-light {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #e2e8f0;
+}

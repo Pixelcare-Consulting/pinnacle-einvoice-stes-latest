@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Invoice</title>
+    <style>
+        :root {
+            --primary-blue: #1e3a8a;
+            --secondary-blue: #2563eb;
+            --light-bg: #f8fafc;
+            --border-color: #e5e7eb;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .info-section {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: var(--primary-blue);
+            font-size: 18px;
+            margin: 0 0 15px 0;
+        }
+
+        p {
+            margin: 5px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+
+        th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .amount-box {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            margin-left: auto;
+        }
+
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .total-row {
+            border-top: 2px solid var(--border-color);
+            margin-top: 8px;
+            padding-top: 8px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            padding: 8px;
+            background: var(--light-bg);
+            border-radius: 8px;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="/assets/img/Logo4.png" alt="Company Logo" class="logo">
+            <h1>{{companyName}}</h1>
+            <p>{{companyAddress}}</p>
+            <p>{{companyPhone}} | {{companyEmail}}</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-section">
+                <h2>Supplier Information</h2>
+                <p><strong>Pixelcare Consulting</strong></p>
+                    <p><strong>SST ID:</strong> {{supplierSSTID}}</p>
+                    <p><strong>TIN:</strong> C15845XXX00</p>
+                    <p><strong>BRN:</strong> 2054033105XX0</p>
+                    <p><strong>MSIC Code:</strong> {{supplierMSICCode}}</p>
+            </div>
+            <div class="info-section">
+                <h2>Invoice Details</h2>
+                <p><strong>Invoice No:</strong> {{invoiceNo}}</p>
+                <p><strong>Date:</strong> {{invoiceDate}}</p>
+                <p><strong>Due Date:</strong> {{dueDate}}</p>
+                <p><strong>Payment Terms:</strong> {{paymentTerms}}</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>Bill To</h2>
+            <p><strong>{{buyerName}}</strong></p>
+            <p>{{buyerAddress}}</p>
+            <p><strong>TIN:</strong> C25845XXX00</p>
+            <p><strong>BRN:</strong> 20200145XXXX</p>
+            <p><strong>Contact:</strong> {{buyerPhone}}</p>
+        </div>
+
+        <table>
+            <thead>
+                <th>Classification</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Amount</th>
+                <th>Tax Rate</th>
+                <th>Tax Amount</th>
+                <th>Total</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>022</td>
+                    <td>Sample Description</td>
+                    <td class="text-right">1</td>
+                    <td class="text-right">MYR 100.00</td>
+                    <td class="text-right">6.00%</td>
+                    <td class="text-right">MYR 106.00</td>
+                    <td class="text-right">MYR 106.00</td>
+                    <td class="text-right">MYR 106.00</td>
+                </tr>
+                <tr>
+                    <td>022</td>
+                    <td>Sample Description</td>
+                    <td class="text-right">1</td>
+                    <td class="text-right">MYR 100.00</td>
+                    <td class="text-right">6.00%</td>
+                    <td class="text-right">MYR 106.00</td>
+                    <td class="text-right">MYR 106.00</td>
+                    <td class="text-right">MYR 106.00</td>
+                </tr>
+                <tr>
+                    <td>022</td>
+                    <td>Sample Description</td>
+                    <td class="text-right">1</td>
+                    <td class="text-right">MYR 100.00</td>
+                    <td class="text-right">6.00%</td>
+                    <td class="text-right">MYR 106.00</td>
+                    <td class="text-right">MYR 106.00</td>
+                    <td class="text-right">MYR 106.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="amount-box">
+            <div class="amount-row">
+                <span><strong>Subtotal (Excluding Tax):</strong></span>
+                <span>MYR {{subtotal}}</span>
+            </div>
+            <div class="amount-row">
+                <span><strong>Total Tax:</strong></span>
+                <span>MYR {{sstTotal}}</span>
+            </div>
+            <div class="amount-row">
+                <span><strong>Total Amount (Including Tax):</strong></span>
+                <span>MYR {{totalAmount}}</span>
+            </div>
+            <div class="amount-row">
+                <span><strong>Total Payable Amount:</strong></span>
+                <span>MYR {{totalAmount}}</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                <p>Digital Signature: {{digitalSignature}}</p>
+                <p>This is a computer-generated invoice. No signature is required.</p>
+            </div>
+            <img class="qr-code" src="/images/PXCQR.png" alt="QR Code">
+        </div>
+    </div>
+</body>
+</html>

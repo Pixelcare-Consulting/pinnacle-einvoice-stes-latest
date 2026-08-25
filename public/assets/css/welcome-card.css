@@ -1,0 +1,76 @@
+/* Welcome Card Styles */
+
+/* Welcome card container - full width */
+.welcome-section {
+  padding: 1rem 2.5rem 0 2.5rem;
+  margin: 0;
+}
+
+.welcome-card::before {
+  display: none;
+}
+
+.welcome-datetime {
+  text-align: right;
+  padding-left: 2rem;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.current-time {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-shadow: none;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.current-date {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Icons in datetime */
+.current-time i,
+.current-date i {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  opacity: 0.9;
+}
+
+/* Welcome content styles */
+.welcome-content h4 {
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-content p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* Welcome icon */
+.welcome-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.welcome-icon i {
+  font-size: 1.5rem;
+  color: #fff;
+} 

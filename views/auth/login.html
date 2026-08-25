@@ -1,0 +1,1089 @@
+{% extends "auth/auth.layout.html" %}
+
+{% block head %}
+<style>
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 65%);
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.auth-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* Login success notification */
+.login-success {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120px);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    padding: 16px 20px;
+    z-index: 9999;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    max-width: 350px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+}
+
+.login-success::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: linear-gradient(to bottom, #28a745, #20c997);
+}
+
+.login-success::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, #28a745, #20c997, transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 3s linear;
+}
+
+.login-success.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.login-success.show::after {
+    transform: scaleX(1);
+}
+
+.success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(40, 167, 69, 0.1);
+    border-radius: 50%;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.success-icon i {
+    font-size: 22px;
+    color: #28a745;
+    filter: drop-shadow(0 2px 4px rgba(40, 167, 69, 0.2));
+}
+
+.success-content {
+    flex-grow: 1;
+}
+
+.success-content h5 {
+    font-weight: 600;
+    font-size: 16px;
+    color: #212529;
+}
+
+.success-content p {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.success-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(to right, #28a745, #20c997);
+    transform-origin: left;
+    animation: progress 3s linear forwards;
+}
+
+@keyframes progress {
+    0% { transform: scaleX(1); }
+    100% { transform: scaleX(0); }
+}
+
+.loading-dots {
+    display: inline-block;
+    overflow: hidden;
+    animation: loadingDots 1.5s infinite;
+}
+
+@keyframes loadingDots {
+    0% { width: 0; }
+    25% { width: 3px; }
+    50% { width: 6px; }
+    75% { width: 9px; }
+    100% { width: 12px; }
+}
+
+/* Session reconnection notification */
+.session-reconnect {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120px);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 18px 24px;
+    border-radius: 16px;
+    z-index: 9999;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    max-width: 420px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+}
+
+.session-reconnect.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.session-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: rgba(13, 110, 253, 0.1);
+    border-radius: 50%;
+    margin-right: 18px;
+    flex-shrink: 0;
+}
+
+.session-icon i {
+    font-size: 22px;
+    color: #0d6efd;
+    filter: drop-shadow(0 2px 4px rgba(13, 110, 253, 0.2));
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.session-reconnect-content {
+    flex-grow: 1;
+}
+
+.session-reconnect-content h5 {
+    margin-bottom: 6px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #1e3c72;
+}
+
+.session-reconnect-content p {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #6c757d;
+    line-height: 1.4;
+}
+
+.session-reconnect-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.session-reconnect-actions .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.session-reconnect-actions .btn-outline-secondary {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.session-reconnect-actions .btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+.session-reconnect-actions .btn-outline-secondary.active {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    color: #495057;
+    transform: translateY(1px);
+}
+
+.session-reconnect-actions .btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    box-shadow: 0 4px 6px rgba(30, 60, 114, 0.15);
+}
+
+.session-reconnect-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(30, 60, 114, 0.2);
+}
+
+/* Loading spinner for login button */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading .spinner-border {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.btn-loading span {
+    opacity: 0;
+}
+
+/* Remember me checkbox styling */
+.form-check-input:checked {
+    background-color: #0a3d8a;
+    border-color: #0a3d8a;
+}
+
+.auth-card {
+    max-width: 400px;
+    width: 100%;
+    margin: auto;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+
+.logo img {
+    max-height: 120px;
+    width: auto;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.form-control {
+    height: 48px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--input-shadow);
+}
+
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+
+    background: var(--input-bg);
+}
+
+.btn-primary {
+    height: 48px;
+    background: var(--primary-gradient);
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.credits {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.credits a {
+    color: #6B73FF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.credits a:hover {
+    color: #000DFF;
+}
+
+/* Loading animation */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spinner-border {
+    animation: rotate 1s linear infinite;
+}
+
+/* Form validation styling */
+.was-validated .form-control:valid {
+    border-color: #198754;
+    background-image: none;
+}
+
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    opacity: 0;
+    will-change: opacity;
+    transition: opacity 0.15s ease-out;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+}
+
+.modal-container {
+    background: white;
+    border-radius: 24px !important;
+    padding: 2rem !important;
+    max-width: 90%;
+    width: 360px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.modal-overlay.visible .modal-container {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-header {
+    text-align: left !important;
+    margin-bottom: 1.5rem !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+    position: relative;
+}
+
+.modal-header::before {
+    content: '';
+    position: absolute;
+    top: -2rem;
+    left: -2rem;
+    right: -2rem;
+    height: 8rem;
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+    border-radius: 24px 24px 50% 50%;
+    z-index: -1;
+}
+
+.modal-header .bi-info-circle {
+    font-size: 1.75rem !important;
+    color: #4F46E5 !important;
+    margin-top: 0.2rem !important;
+    filter: drop-shadow(0 2px 4px rgba(79, 70, 229, 0.2));
+}
+
+.modal-title {
+    font-size: 1.375rem !important;
+    font-weight: 600 !important;
+    color: #1F2937 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.375rem !important;
+}
+
+.modal-header p {
+    font-size: 0.9375rem !important;
+    color: #6B7280 !important;
+    margin: 0 !important;
+}
+
+.modal-body {
+    padding: 0 !important;
+    margin: 0 -0.5rem !important;
+}
+
+.modal-body .space-y-3 > div {
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.9375rem !important;
+    color: #374151 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    border-radius: 12px !important;
+    transition: all 0.2s ease-in-out !important;
+    cursor: pointer !important;
+}
+
+.modal-body .space-y-3 > div:hover {
+    background: #F9FAFB !important;
+    transform: translateX(4px) !important;
+}
+
+.modal-body i {
+    font-size: 1.25rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* Enhanced icon styles */
+.modal-body i.bi-file-earmark-text {
+    color: #3B82F6 !important;
+    background: #EFF6FF !important;
+}
+.modal-body i.bi-shield-check {
+    color: #10B981 !important;
+    background: #ECFDF5 !important;
+}
+.modal-body i.bi-globe {
+    color: #3B82F6 !important;
+    background: #EFF6FF !important;
+}
+.modal-body i.bi-fingerprint {
+    color: #8B5CF6 !important;
+    background: #F5F3FF !important;
+}
+.modal-body i.bi-people {
+    color: #F59E0B !important;
+    background: #FFFBEB !important;
+}
+.modal-body i.bi-clock-history {
+    color: #ff00ae !important;
+    background: #fdecf5 !important;
+}
+.modal-body i.bi-megaphone-fill {
+    color: #7f0707 !important;
+    background: #fdecf5 !important;
+}
+.modal-body .space-y-3 > div:hover i {
+    transform: scale(1.1) !important;
+}
+
+.modal-footer {
+    margin-top: 1.5rem !important;
+    padding-top: 1.5rem !important;
+    border-top: 1px solid #E5E7EB !important;
+}
+
+.modal-btn-primary {
+    width: 100% !important;
+    background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%) !important;
+    color: white !important;
+    font-weight: 500 !important;
+    font-size: 0.9375rem !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1) !important;
+}
+
+.modal-btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2) !important;
+    background: linear-gradient(135deg, #4338CA 0%, #3730A3 100%) !important;
+}
+
+/* Divider line style */
+.modal-body .space-y-3 > div:not(:last-child) {
+    border-bottom: 1px solid #F3F4F6 !important;
+}
+
+/* Smooth entrance animation for list items */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.modal-body .space-y-3 > div {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.modal-body .space-y-3 > div:nth-child(1) { animation-delay: 0.1s; }
+.modal-body .space-y-3 > div:nth-child(2) { animation-delay: 0.2s; }
+.modal-body .space-y-3 > div:nth-child(3) { animation-delay: 0.3s; }
+.modal-body .space-y-3 > div:nth-child(4) { animation-delay: 0.4s; }
+
+/* Session Error Modal specific styles */
+.modal-header.session-error {
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+    display: block !important;
+    padding-top: 1rem !important;
+}
+
+.modal-header.session-error::before {
+    content: '';
+    position: absolute;
+    top: -2rem;
+    left: -2rem;
+    right: -2rem;
+    height: 7rem;
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+    border-radius: 24px 24px 50% 50%;
+    z-index: -1;
+}
+
+.session-error .warning-icon {
+    width: 48px;
+    height: 48px;
+    background: #FEF3F2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.session-error .warning-icon i {
+    font-size: 24px;
+    color: #DC2626;
+}
+
+.session-error .modal-title {
+    color: #1F2937;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.session-error-body {
+    text-align: center;
+    color: #6B7280;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.session-error-footer {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.session-error-footer .modal-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+}
+
+.session-error-footer .modal-btn-secondary {
+    background: #F3F4F6;
+    color: #374151;
+    border: none;
+}
+
+.session-error-footer .modal-btn-secondary:hover {
+    background: #E5E7EB;
+    transform: translateY(-1px);
+}
+
+.session-error-footer .modal-btn-primary {
+    background: #4F46E5;
+    color: white;
+    border: none;
+}
+
+.session-error-footer .modal-btn-primary:hover {
+    background: #4338CA;
+    transform: translateY(-1px);
+}
+
+.modal-help {
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #E5E7EB;
+}
+
+.modal-help a {
+    color: #4F46E5;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.modal-help a:hover {
+    color: #4338CA;
+    text-decoration: underline;
+}
+
+/* Already Logged In Modal specific styles */
+.modal-header.already-logged-in {
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+    display: block !important;
+    padding-top: 1rem !important;
+}
+
+.modal-header.already-logged-in::before {
+    content: '';
+    position: absolute;
+    top: -2rem;
+    left: -2rem;
+    right: -2rem;
+    height: 7rem;
+    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    border-radius: 24px 24px 50% 50%;
+    z-index: -1;
+}
+
+.already-logged-in .info-icon {
+    width: 48px;
+    height: 48px;
+    background: #F0FDF4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.already-logged-in .info-icon i {
+    font-size: 24px;
+    color: #16A34A;
+}
+
+.already-logged-in .modal-title {
+    color: #1F2937;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.already-logged-in-body {
+    text-align: left;
+    color: #6B7280;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.already-logged-in-body .options-list {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.already-logged-in-body .options-list li {
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.already-logged-in-body .options-list li strong {
+    color: #1F2937;
+}
+
+.already-logged-in-footer {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.already-logged-in-footer .btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.already-logged-in-footer .btn-outline-secondary {
+    background: #F3F4F6;
+    color: #374151;
+    border: 1px solid #D1D5DB;
+}
+
+.already-logged-in-footer .btn-outline-secondary:hover {
+    background: #E5E7EB;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.already-logged-in-footer .btn-success {
+    background: #16A34A;
+    color: white;
+}
+
+.already-logged-in-footer .btn-success:hover {
+    background: #15803D;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+}
+
+.already-logged-in-footer .btn-primary {
+    background: #4F46E5;
+    color: white;
+}
+
+.already-logged-in-footer .btn-primary:hover {
+    background: #4338CA;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+@media (max-width: 480px) {
+    .already-logged-in-footer {
+        flex-direction: column;
+    }
+
+    .already-logged-in-footer .btn {
+        flex: none;
+        width: 100%;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.animate-shimmer {
+    background: linear-gradient(
+        90deg,
+        rgba(255,255,255, 0) 0%,
+        rgba(255,255,255, 0.4) 50%,
+        rgba(255,255,255, 0) 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 8s infinite linear;
+}
+
+.phase-info-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6366F1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+}
+
+.phase-info-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    border-color: #6366F1;
+}
+
+.phase-info-btn .status-dot {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 6px;
+    height: 6px;
+}
+
+.phase-info-btn .status-dot::before,
+.phase-info-btn .status-dot::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.phase-info-btn .status-dot::before {
+    width: 18px;
+    height: 18px;
+    background-color: rgba(99, 102, 241, 0.15);
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.phase-info-btn .status-dot::after {
+    width: 6px;
+    height: 6px;
+    background-color: #6366F1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    50%, 100% { left: 100%; }
+}
+</style>
+<link rel="stylesheet" href="/assets/css/modal.css">
+{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <!-- Login Success Notification -->
+    <div class="login-success" id="loginSuccess">
+        <div class="success-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="success-content">
+            <h5 class="mb-0">Login Successful</h5>
+            <p class="mb-0 small">Redirecting to dashboard <span class="loading-dots">...</span></p>
+        </div>
+        <div class="success-progress"></div>
+    </div>
+
+    <!-- Session Reconnection Notification -->
+    <div class="session-reconnect" id="sessionReconnect">
+        <div class="session-icon">
+            <i class="bi bi-arrow-repeat"></i>
+        </div>
+        <div class="session-reconnect-content">
+            <h5>Active Session Detected</h5>
+            <p>You already have an active session. Would you like to reconnect?</p>
+            <div class="session-reconnect-actions">
+                <button class="btn btn-sm btn-outline-secondary" id="newSessionBtn">
+                    <i class="bi bi-plus-circle me-1"></i>New Session
+                </button>
+                <button class="btn btn-sm btn-primary" id="reconnectBtn">
+                    <i class="bi bi-arrow-repeat me-1"></i>Reconnect
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-5 col-lg-5">
+              <div class="text-center mb-1 fade-in">
+                <div class="text-center mb-1 fade-in">
+                  <img src="/Images/PXCLogo.svg" alt="Pixelcare Consulting Logo" width="465" height="136">
+                </div>
+              </div>
+                <div class="auth-card fade-in" style="animation-delay: 0.2s">
+                    <div class="card-body p-4">
+                        <!-- Session Error Alert -->
+                        {% if sessionError %}
+                        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <div>
+                                    <strong>Active session detected!</strong>
+                                    <p class="mb-0 small">You already have an active session. Please log out from other devices first or use the reconnect option.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+
+                        <div class="divider-text">
+                          <h4 class="text-center mb-3">Login to Pinnacle</h4>
+                          <p class="text-center text-muted small mb-4">LHDN-compliant e-Invoice solution for Malaysian enterprises</p>
+                          <div class="text-center">
+                            <button
+                            type="button"
+                            id="phaseInfoBtn"
+                            class="phase-info-btn">
+                            <span class="status-dot"></span>
+                            <span>Phase 1 Implementation Ready</span>
+                        </button>
+                          </div>
+                        </div>
+                        <form id="loginForm" action="/auth/login" method="POST" class="needs-validation" novalidate>
+                            <div class="mb-4">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="username"
+                                       name="username"
+                                       placeholder="Enter your username"
+                                       required
+                                       autocomplete="username">
+                                <div class="invalid-feedback">
+                                    Please enter your username
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <input type="password"
+                                           class="form-control"
+                                           id="password"
+                                           name="password"
+                                           placeholder="Enter your password"
+                                           required
+                                           autocomplete="current-password">
+                                    <button class="btn btn-outline-secondary"
+                                            type="button"
+                                            id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <div class="invalid-feedback">
+                                        Please enter your password
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input type="checkbox"
+                                                class="form-check-input"
+                                                id="rememberMe"
+                                                name="remember"
+                                                value="true">
+                                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden field for session reconnection -->
+                            <input type="hidden" name="reconnect" id="reconnectField" value="false">
+
+                            <button type="submit" class="btn btn-primary w-100" id="loginButton">
+                                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                <span class="btn-text">Sign In</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="credits fade-in" style="animation-delay: 0.4s">
+                    Designed by <a href="https://pixelcareconsulting.com/"  rel="noopener">Pixelcare Consulting</a>
+                    <p class="small text-muted">{{appFullVersion}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Phase Info Modal -->
+<div class="modal-overlay" id="phaseInfoModal" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <i class="bi bi-info-circle"></i>
+            <div>
+                <h4 class="modal-title">Phase 1</h4>
+                <p>Welcome to our e-Invoice implementation!</p>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="space-y-3">
+                <div class="flex items-center">
+                    <i class="bi bi-globe"></i>
+                    <span>e-Invoice Generation with PDF Viewer and QR Code Ready</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="bi bi-shield-check"></i>
+                    <span>LHDN Compliance Features</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="bi bi-fingerprint"></i>
+                    <span>Secure Authentication System</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="bi bi-people"></i>
+                    <span>User Management</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Custom ERP Integration</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary w-100" data-action="close">Got it!</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/auth/login.js"></script>
+{% endblock %}

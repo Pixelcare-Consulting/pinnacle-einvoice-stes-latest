@@ -1,0 +1,2467 @@
+/* Modern Modal System CSS
+ * Reusable modal components for professional UI
+ * Author: Augment Agent
+ * Version: 1.0
+ */
+
+/* Base Modal Styles */
+.modern-modal {
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* SweetAlert2 Modal Spacing and Size Control */
+.swal2-popup {
+    margin: 2rem auto !important;
+    max-width: 85vw !important;
+    max-height: 90vh !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.swal2-container {
+    padding: 2rem !important;
+}
+
+/* Modal Content Structure */
+.swal2-html-container {
+    overflow-y: auto !important;
+    flex: 1 !important;
+    max-height: calc(90vh - 200px) !important;
+}
+
+/* Specific sizing for different modal types */
+.swal2-popup.semi-minimal-popup {
+    max-width: 600px !important;
+    width: 90vw !important;
+}
+
+.swal2-popup.large-modal {
+    max-width: 1200px !important;
+    width: 95vw !important;
+    max-height: 90vh !important;
+}
+
+/* Two-column layout for invoice preview modal */
+.modal-content-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+    align-items: start !important;
+    margin-bottom: 2rem !important;
+}
+
+.modal-left-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+}
+
+.modal-right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+}
+
+/* Ensure modal parties (left column) takes proper space */
+.modal-parties {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    height: fit-content !important;
+}
+
+/* Ensure modal summary section (right column) takes proper space */
+.modal-summary-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    height: fit-content !important;
+}
+
+/* Three Column Layout for Invoice Preview */
+.modal-content-grid-three {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.modal-column-left,
+.modal-column-middle,
+.modal-column-right {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Invoice Summary Section - Full Width Below 3 Columns */
+.modal-invoice-summary-section {
+    margin-bottom: 1.5rem !important;
+}
+
+.invoice-summary-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+    align-items: center !important;
+}
+
+/* JSON preview section should span full width below everything */
+.json-preview-section {
+    margin-top: 1rem !important;
+}
+
+.modern-modal-content {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 1.5rem 2rem 2rem 2rem; /* Reduced top padding from 2rem to 1.5rem */
+    margin: 0;
+}
+
+/* Header Styles */
+.modal-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem; /* Reduced from 2rem to reduce top margin */
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 10px 25px rgba(30, 41, 59, 0.3);
+}
+
+.modal-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.brand-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.brand-icon i {
+    font-size: 2rem;
+    color: #60a5fa;
+}
+
+.modal-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+.modal-subtitle {
+    font-size: 0.875rem;
+    margin: 0.25rem 0 0 0;
+    opacity: 0.8;
+}
+
+.modal-meta {
+    display: flex;
+    gap: 2rem;
+}
+
+.meta-item {
+    text-align: right;
+}
+
+.meta-label {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.meta-value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Content Grid */
+.modal-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Card Components */
+.modal-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.modal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.modal-card-header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    background: inherit;
+}
+
+.modal-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.modal-card-title {
+    flex: 1;
+}
+
+.modal-card-title h3 {
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #374151;
+}
+
+.modal-card-title p {
+    font-size: 0.75rem;
+    margin: 0.25rem 0 0 0;
+    color: #6b7280;
+}
+
+.modal-card-content {
+    padding: 1.5rem;
+}
+
+/* Color Themes */
+.theme-primary .modal-card-header {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.theme-primary .modal-card-icon {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.theme-success .modal-card-header {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.theme-success .modal-card-icon {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.theme-warning .modal-card-header {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.theme-warning .modal-card-icon {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.theme-info .modal-card-header {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.theme-info .modal-card-icon {
+    background: rgba(14, 165, 233, 0.1);
+    color: #0284c7;
+}
+
+.theme-gray .modal-card-header {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.theme-gray .modal-card-icon {
+    background: rgba(75, 85, 99, 0.1);
+    color: #4b5563;
+}
+
+/* Modal Parties and Summary Sections */
+.modal-parties {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modal-summary-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Invoice Number Section */
+.invoice-number-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.invoice-number-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.invoice-number-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Financial Details */
+.financial-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.financial-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.financial-row.total-row {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.financial-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.financial-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.total-amount {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #d97706;
+}
+
+/* Address Text */
+.address-text {
+    white-space: pre-line;
+    line-height: 1.4;
+}
+
+/* JSON Preview Section */
+.json-preview-section {
+    margin-top: 2rem;
+}
+
+.json-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.json-viewer {
+    display: flex;
+    flex-direction: column;
+}
+
+.json-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #f1f5f9;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.json-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.json-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.json-code-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 0 0 16px 16px;
+}
+
+.json-code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #374151;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-align: left !important;
+}
+
+/* JSON Syntax Highlighting */
+.json-key {
+    color: #0969da;
+    font-weight: 600;
+}
+
+.json-string {
+    color: #0a3069;
+}
+
+.json-number {
+    color: #0550ae;
+}
+
+.json-boolean {
+    color: #8250df;
+    font-weight: 600;
+}
+
+.json-null {
+    color: #656d76;
+    font-style: italic;
+}
+
+/* JSON Loading Animation - Horizontal */
+.json-loading-animation {
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.loading-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Force horizontal layout for JSON loading steps */
+.loading-steps.horizontal-steps {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.loading-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+}
+
+.loading-step.active {
+    opacity: 1;
+}
+
+.loading-step.processing {
+    opacity: 1;
+}
+
+.step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.loading-step.active .step-icon {
+    background: #22c55e;
+    color: white;
+}
+
+.loading-step.processing .step-icon {
+    background: #3b82f6;
+    color: white;
+}
+
+.loading-step.processing .step-icon .spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.125em;
+}
+
+.step-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.25rem;
+    text-align: center;
+}
+
+.step-status {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: center;
+    font-weight: 500;
+}
+
+.loading-connector {
+    flex: 1;
+    height: 3px;
+    background: rgba(156, 163, 175, 0.3);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.loading-connector.active {
+    background: linear-gradient(90deg, #22c55e, #3b82f6);
+}
+
+/* Enhanced horizontal layout for JSON loading */
+.json-loading-animation .loading-steps.horizontal-steps {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    max-width: 100% !important;
+    padding: 1rem 0 !important;
+}
+
+.json-loading-animation .loading-step {
+    flex: 0 0 auto !important;
+    min-width: 80px !important;
+    max-width: 120px !important;
+}
+
+.json-loading-animation .loading-connector {
+    flex: 1 1 auto !important;
+    min-width: 30px !important;
+    height: 3px !important;
+    margin: 0 0.5rem !important;
+}
+
+/* Button States */
+.modern-btn-success-active {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    color: white !important;
+}
+
+/* Button Sizing Fixes */
+/* Make submit buttons larger */
+.swal2-confirm, .modern-btn.modern-btn-success {
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    min-width: 160px !important;
+    height: 48px !important;
+}
+
+.swal2-cancel, .modern-btn.modern-btn-secondary {
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    min-width: 140px !important;
+    height: 48px !important;
+}
+
+/* Make JSON preview buttons smaller */
+.json-copy-btn, .modern-btn.modern-btn-info {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    min-width: 80px !important;
+    height: 36px !important;
+}
+
+/* JSON controls container */
+.json-controls {
+    display: flex !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+}
+
+.json-controls .modern-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    height: 36px !important;
+}
+
+/* Spinner for loading animation */
+.spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    border: 0.125em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+.spinner-border-sm {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-width: 0.125em;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 768px) {
+    .swal2-popup {
+        margin: 1rem auto !important;
+        max-width: 95vw !important;
+        width: 95vw !important;
+    }
+
+    .swal2-container {
+        padding: 1rem !important;
+    }
+
+    .version-card {
+        padding: 1rem;
+    }
+
+    .version-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .version-number {
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .version-status {
+        font-size: 0.6875rem;
+        padding: 0.125rem 0.5rem;
+    }
+
+    .field-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        padding: 0.5rem 0;
+    }
+
+    .field-label {
+        min-width: auto;
+        font-weight: 600;
+    }
+
+    .field-value {
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .content-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .loading-steps:not(.horizontal-steps) {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .loading-steps:not(.horizontal-steps) .loading-connector {
+        display: none;
+    }
+
+    /* Keep horizontal layout for JSON loading even on mobile */
+    .loading-steps.horizontal-steps {
+        flex-direction: row !important;
+        gap: 0.75rem !important;
+    }
+
+    .loading-steps.horizontal-steps .loading-connector {
+        display: block !important;
+        flex: 1 !important;
+        min-width: 20px !important;
+    }
+
+    .loading-steps.horizontal-steps .loading-step {
+        min-width: 60px !important;
+    }
+
+    .loading-steps.horizontal-steps .step-title {
+        font-size: 0.75rem !important;
+    }
+
+    .loading-steps.horizontal-steps .step-status {
+        font-size: 0.65rem !important;
+    }
+}
+
+/* Debug styles to ensure visibility */
+.json-loading-animation {
+    border: 2px solid #e5e7eb !important;
+    background: #ffffff !important;
+    min-height: 120px !important;
+}
+
+.loading-steps.horizontal-steps,
+.invoice-loading-steps.horizontal-steps {
+    border: 1px dashed #cbd5e1 !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+    border-radius: 8px !important;
+}
+
+/* Invoice-specific loading step styles */
+.invoice-loading-step,
+.invoice-json-loading-step {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    min-width: 80px !important;
+    padding: 0.75rem 0.5rem !important;
+}
+
+/* Invoice JSON loading steps - unique styles */
+.invoice-json-loading-steps {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+    border-radius: 8px !important;
+    border: 1px dashed #cbd5e1 !important;
+}
+
+.invoice-json-loading-step {
+    position: relative !important;
+    transition: all 0.3s ease !important;
+}
+
+.invoice-json-loading-step.active {
+    color: #10b981 !important;
+}
+
+.invoice-json-loading-step.processing {
+    color: #3b82f6 !important;
+}
+
+.invoice-json-step-icon {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 0.5rem !important;
+    background: #f3f4f6 !important;
+    border: 2px solid #e5e7eb !important;
+    transition: all 0.3s ease !important;
+}
+
+.invoice-json-loading-step.active .invoice-json-step-icon {
+    background: #10b981 !important;
+    border-color: #10b981 !important;
+    color: white !important;
+}
+
+.invoice-json-loading-step.processing .invoice-json-step-icon {
+    background: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+}
+
+.invoice-json-step-title {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+.invoice-json-step-status {
+    font-size: 0.625rem !important;
+    color: #6b7280 !important;
+    font-weight: 500 !important;
+}
+
+.invoice-json-loading-connector {
+    flex: 1 !important;
+    height: 2px !important;
+    background: #e5e7eb !important;
+    margin: 0 0.5rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.invoice-json-loading-connector.active {
+    background: #10b981 !important;
+}
+
+.invoice-step-icon {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 0.5rem !important;
+    background: #e5e7eb !important;
+    color: #6b7280 !important;
+    font-size: 0.875rem !important;
+}
+
+.invoice-loading-step.active .invoice-step-icon {
+    background: #10b981 !important;
+    color: white !important;
+}
+
+.invoice-loading-step.processing .invoice-step-icon {
+    background: #3b82f6 !important;
+    color: white !important;
+}
+
+.invoice-step-title {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.invoice-step-status {
+    font-size: 0.625rem !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+.invoice-loading-connector {
+    height: 2px !important;
+    background: #e5e7eb !important;
+    margin: 0 0.5rem !important;
+    flex: 1 !important;
+    align-self: center !important;
+    margin-top: -1rem !important;
+}
+
+.invoice-loading-connector.active {
+    background: #10b981 !important;
+}
+
+/* Initial Message for JSON Preview */
+.json-initial-message {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 120px !important;
+    background: #f8fafc !important;
+    border: 2px dashed #cbd5e1 !important;
+    border-radius: 8px !important;
+    margin: 1rem 0 !important;
+}
+
+.initial-message-content {
+    text-align: center !important;
+    color: #6b7280 !important;
+}
+
+.initial-message-content i {
+    font-size: 2rem !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+}
+
+.initial-message-content p {
+    margin: 0 !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
+
+/* Animation for modal entrance */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.swal2-popup {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Modern Modal Header */
+.swal2-title {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    margin-bottom: 0.5rem !important;
+    text-align: center !important;
+}
+
+.swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+}
+
+/* Compact Font Sizes for Modal Content */
+.modern-modal-content .modal-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.modern-modal-content .modal-subtitle {
+    font-size: 0.8rem !important;
+    color: #6b7280 !important;
+    margin-bottom: 1rem !important;
+}
+
+.modern-modal-content .brand-info h1 {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+.modern-modal-content .brand-info p {
+    font-size: 0.75rem !important;
+    margin: 0 !important;
+}
+
+.modern-modal-content .meta-label {
+    font-size: 0.7rem !important;
+    font-weight: 500 !important;
+}
+
+.modern-modal-content .meta-value {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+.modern-modal-content .version-title {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.modern-modal-content .version-description {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+    color: #6b7280 !important;
+}
+
+.modern-modal-content .version-number {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+}
+
+.modern-modal-content .version-status {
+    font-size: 0.7rem !important;
+    font-weight: 500 !important;
+}
+
+.modern-modal-content .field-label {
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+}
+
+.modern-modal-content .field-value {
+    font-size: 0.8rem !important;
+    font-weight: 400 !important;
+}
+
+.modern-modal-content .content-title {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+}
+
+.modern-modal-content .modal-card-title h3 {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+.modern-modal-content .modal-card-title p {
+    font-size: 0.7rem !important;
+    margin: 0 !important;
+    color: #6b7280 !important;
+}
+
+.modern-modal-content .detail-label span {
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+}
+
+.modern-modal-content .detail-value {
+    font-size: 0.8rem !important;
+    font-weight: 400 !important;
+}
+
+.modern-modal-content .financial-label span {
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+}
+
+.modern-modal-content .financial-value {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+}
+
+.modern-modal-content .total-amount {
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+}
+
+.modern-modal-content .invoice-number-label {
+    font-size: 0.7rem !important;
+    font-weight: 500 !important;
+}
+
+.modern-modal-content .invoice-number-value {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+}
+
+/* Additional compact styles for SweetAlert modals */
+.swal2-popup {
+    font-size: 0.85rem !important;
+}
+
+.swal2-popup .swal2-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.swal2-popup .swal2-html-container {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+}
+
+.swal2-popup .swal2-actions button {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 1.2rem !important;
+}
+
+/* Compact styles for version selection modal */
+.version-options .version-card {
+    padding: 1rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.version-options .version-header {
+    margin-bottom: 0.5rem !important;
+}
+
+.version-options .version-number {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+}
+
+.version-options .version-status {
+    font-size: 0.7rem !important;
+    padding: 0.2rem 0.5rem !important;
+}
+
+.version-options .version-title {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.version-options .version-description {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+    color: #6b7280 !important;
+}
+
+/* Modern Button Styling */
+.swal2-actions {
+    margin-top: 0 !important;
+    gap: 1rem !important;
+    justify-content: center !important;
+    padding: 1.5rem 2rem !important;
+    background: #f8fafc !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.6) !important;
+    border-radius: 0 0 16px 16px !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 20 !important;
+    flex-shrink: 0 !important;
+}
+
+.swal2-confirm {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 2rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: white !important;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25) !important;
+    transition: all 0.2s ease !important;
+    min-width: 120px !important;
+}
+
+.swal2-confirm:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 12px rgba(59, 130, 246, 0.35) !important;
+}
+
+.swal2-cancel {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 2rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: white !important;
+    transition: all 0.2s ease !important;
+    min-width: 120px !important;
+}
+
+.swal2-cancel:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
+    border-color: #9ca3af !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Modern Cancel Button Class */
+.modern-btn-cancel {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+    border: 1px solid #d1d5db !important;
+    color: white !important;
+}
+
+.modern-btn-cancel:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
+    color: white !important;
+}
+
+/* Large button variant */
+.modern-btn-large {
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+}
+
+/* Success Button Variant */
+.swal2-confirm.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25) !important;
+}
+
+.swal2-confirm.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.35) !important;
+}
+
+.theme-gray .modal-card-header {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.theme-gray .modal-card-icon {
+    background: rgba(75, 85, 99, 0.1);
+    color: #4b5563;
+}
+
+/* Version Selection Modal Styles */
+.version-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.version-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.version-card:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+}
+
+.version-card.selected {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.version-card.disabled {
+    background: #f9fafb;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.version-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.version-number {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    min-width: 3rem;
+    text-align: center;
+}
+
+.version-card.selected .version-number {
+    background: #3b82f6;
+    color: white;
+}
+
+.version-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.version-status.available {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.version-status.coming-soon {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.version-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.version-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* Confirmation Dialog Styles */
+.content-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.content-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.content-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    font-size: 1.125rem;
+}
+
+.content-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f9fafb;
+}
+
+.field-row:last-child {
+    border-bottom: none;
+}
+
+.field-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    min-width: 120px;
+}
+
+.field-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1f2937;
+    text-align: right;
+    word-break: break-word;
+}
+
+/* Detail Rows */
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.detail-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    min-width: 120px;
+}
+
+.detail-label i {
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+.detail-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+    text-align: right;
+    flex: 1;
+    max-width: 200px;
+}
+
+/* Version Selection Styles */
+.version-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.version-option {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    position: relative;
+}
+
+.version-option:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.version-option.selected {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.version-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.version-number {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.version-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin-left: 0.5rem;
+}
+
+.version-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-available {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-coming-soon {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.version-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* Action Buttons */
+.modern-actions {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 1rem !important;
+    padding: 1.5rem 2rem !important;
+    background: #f8fafc !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.6) !important;
+    margin: 2rem -2rem -2rem -2rem;
+}
+
+.modern-btn {
+    padding: 1.25rem 2.5rem !important;
+    border-radius: 16px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    border: none !important;
+    cursor: pointer;
+    min-width: 160px !important;
+    justify-content: center !important;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.modern-btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+}
+
+.modern-btn-success {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3) !important;
+}
+
+.modern-btn-success:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4) !important;
+}
+
+.modern-btn-secondary {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+    color: #475569 !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1) !important;
+}
+
+.modern-btn-secondary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(148, 163, 184, 0.2) !important;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%) !important;
+}
+
+.modern-btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+.modern-btn-danger:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* Progress/Loading Animation Styles */
+.progress-container {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    margin: 1.5rem 0;
+}
+
+.progress-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    transition: all 0.3s ease;
+    background: #f1f5f9;
+    color: #94a3b8;
+    border: 2px solid #e2e8f0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.25rem 0;
+}
+
+.step-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.step-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+
+/* Step States */
+.progress-step.active .step-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.progress-step.active .step-title {
+    color: #1f2937;
+}
+
+.progress-step.active .step-status {
+    color: #3b82f6;
+}
+
+.progress-step.processing .step-icon {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border-color: #f59e0b;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    animation: pulse 2s infinite;
+}
+
+.progress-step.processing .step-title {
+    color: #1f2937;
+}
+
+.progress-step.processing .step-status {
+    color: #f59e0b;
+}
+
+.progress-step.completed .step-icon {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    border-color: #059669;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.progress-step.completed .step-title {
+    color: #1f2937;
+}
+
+.progress-step.completed .step-status {
+    color: #059669;
+}
+
+/* Progress Connectors */
+.progress-connector {
+    position: absolute;
+    left: 23px;
+    top: 48px;
+    width: 2px;
+    height: calc(100% - 48px);
+    background: #e2e8f0;
+    transition: all 0.5s ease;
+    z-index: 1;
+}
+
+.progress-connector.active {
+    background: linear-gradient(to bottom, #3b82f6, #059669);
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Auto-close notification */
+.auto-close-notification {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(243, 244, 246, 0.5);
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+}
+
+.auto-close-notification i {
+    color: #3b82f6;
+}
+
+/* Logging Notification Styles - Enhanced Positioning */
+.logging-notification {
+    position: fixed;
+    top: 20px; /* Positioned at the top center */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000; /* Higher than modal z-index */
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    padding: 16px 20px;
+    max-width: 420px; /* Slightly larger for better visibility */
+    width: calc(100% - 40px);
+    margin: 0 20px;
+    animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #4caf50; /* Green accent border */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logging-notification-content {
+    align-items: center;
+}
+
+.logging-notification-icon {
+    background-color: #4caf50;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.logging-notification-message {
+    flex-grow: 1;
+}
+
+.logging-notification-message strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.logging-notification-message p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.logging-notification-close {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 8px;
+}
+
+.logging-notification-close:hover {
+    color: #333;
+}
+
+/* Enhanced slideDown animation */
+@keyframes slideDown {
+    from {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments for notifications */
+@media (max-width: 768px) {
+    .logging-notification {
+        top: 20px;
+        max-width: 340px;
+        padding: 14px 16px;
+        gap: 10px;
+    }
+
+    .logging-notification-message strong {
+        font-size: 0.875rem;
+    }
+
+    .logging-notification-message p {
+        font-size: 0.8125rem;
+    }
+
+    .logging-notification-icon {
+        width: 36px;
+        height: 36px;
+        margin-right: 12px;
+    }
+}
+
+
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -20px) scale(0.95);
+    }
+}
+
+/* Step Card Styles */
+.step-card {
+    transform: translateY(10px);
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+}
+
+.step-card.processing {
+    transform: translateY(0);
+    opacity: 1;
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.step-card.completed {
+    opacity: 1;
+    border-color: var(--success);
+    background: var(--success-light);
+}
+
+.step-card.error {
+    opacity: 1;
+    border-color: var(--error);
+    background: var(--error-light);
+}
+
+.step-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.step-card.processing .step-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.step-card.completed .step-badge {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.step-card.error .step-badge {
+    background: var(--error-light);
+    color: var(--error);
+}
+
+.step-badge.spinning::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary);
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: block;
+}
+
+.step-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.step-title {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.step-status {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Enhanced Modal Integration */
+.modern-submission-popup,
+.enhanced-submission-modal,
+.enhanced-success-modal {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.modern-submission-popup .swal2-html-container,
+.enhanced-submission-modal .swal2-html-container,
+.enhanced-success-modal .swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Enhanced positioning for better centering */
+.enhanced-submission-modal,
+.enhanced-success-modal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    background: white !important;
+}
+
+/* Submission Modal Consistent Border Styling */
+.modern-submission-container {
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    background: white !important;
+    max-width: 580px !important;
+    margin: 0 auto !important;
+}
+
+.modern-submission-container .modal-header {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%) !important;
+    color: white !important;
+    padding: 20px 24px !important;
+    border-bottom: none !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+.modern-submission-container .modal-body {
+    padding: 24px !important;
+    background: white !important;
+    border-radius: 0 0 16px 16px !important;
+}
+
+/* Modern Error Modal Integration */
+.modern-error-popup {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.modern-error-popup .swal2-html-container {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Summary Details Positioning Fix */
+.modal-summary-section {
+    order: 1 !important;
+    margin-bottom: 2rem !important;
+}
+
+.json-preview-section {
+    order: 2 !important;
+}
+
+.modern-actions {
+    order: 3 !important;
+}
+
+/* Scrollbar Positioning Fix */
+.modal-scrollable-content {
+    max-height: 400px !important;
+    overflow-y: auto !important;
+    padding-right: 1rem !important;
+    margin-right: -1rem !important;
+}
+
+.modal-scrollable-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-scrollable-content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.modal-scrollable-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.modal-scrollable-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Enhanced Error Modal Styles */
+.error-code-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #dc2626;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #fca5a5;
+}
+
+.error-code-badge i {
+    font-size: 1rem;
+}
+
+.error-message h6 {
+    color: #dc2626;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.error-message p {
+    color: #374151;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.error-list-container {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.error-group {
+    margin-bottom: 1rem;
+}
+
+.error-group:last-child {
+    margin-bottom: 0;
+}
+
+.error-group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #dc2626;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #fca5a5;
+}
+
+.error-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.error-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background: #ffffff;
+    border-radius: 6px;
+    border-left: 3px solid #dc2626;
+}
+
+.error-item:last-child {
+    margin-bottom: 0;
+}
+
+.error-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: #dc2626;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.error-text {
+    color: #374151;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.error-suggestion {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 1px solid #3b82f6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.error-suggestion h6 {
+    color: #1d4ed8;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.error-suggestion p {
+    color: #1e40af;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.suggestion-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.suggestion-step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #1e40af;
+    font-size: 0.875rem;
+}
+
+.suggestion-step i {
+    color: #059669;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.error-information {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #0ea5e9;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.error-information h6 {
+    color: #0369a1;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.error-information p {
+    color: #0369a1;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-content-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .modal-header-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .modal-meta {
+        justify-content: center;
+    }
+
+    .modern-actions {
+        flex-direction: column;
+    }
+
+    .modern-btn {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .modern-submission-container {
+        max-width: 95% !important;
+        margin: 1rem auto !important;
+    }
+
+    .error-item {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: left;
+    }
+
+    .error-number {
+        align-self: flex-start;
+    }
+
+    .suggestion-steps {
+        gap: 0.5rem;
+    }
+
+    .suggestion-step {
+        font-size: 0.8rem;
+    }
+}
+
+/* Error Modal Specific Styles for Consistent Design */
+.enhanced-error-modal {
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    max-width: 580px !important;
+    margin: 0 auto !important;
+    background: white !important;
+}
+
+.enhanced-error-modal .modal-header {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%) !important;
+    color: white !important;
+    padding: 20px 24px !important;
+    border-bottom: none !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+.enhanced-error-modal .modal-body {
+    padding: 24px !important;
+    background: white !important;
+    border-radius: 0 0 16px 16px !important;
+}
+
+.error-code-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.error-message {
+    background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+    border: 2px solid #fecaca;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.error-message h6 {
+    color: #dc2626;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.error-message p {
+    color: #7f1d1d;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.error-list-container {
+    margin-bottom: 1.5rem;
+}
+
+.error-group {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.error-group-header {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+.error-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.error-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.error-item:last-child {
+    border-bottom: none;
+}
+
+.error-number {
+    background: #ef4444;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.error-text {
+    color: #374151;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.error-suggestion {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 2px solid #fde68a;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.error-suggestion h6 {
+    color: #d97706;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.error-suggestion p {
+    color: #92400e;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.error-information {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 2px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.error-information h6 {
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.error-information p {
+    color: #1e40af;
+    margin: 0;
+    line-height: 1.5;
+}

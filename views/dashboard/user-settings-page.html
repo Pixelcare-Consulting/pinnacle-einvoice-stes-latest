@@ -1,0 +1,161 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<title>Account Settings - LHDN e-Invoice Portal</title>
+<link href="/assets/css/components/tooltip.css" rel="stylesheet">
+<link href="/assets/css/pages/user-settings.css" rel="stylesheet">
+<link href="/assets/css/pages/profile.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4 px-lg-5">
+  <!-- Header -->
+  <div class="profile-welcome-card">
+    <h2>
+      <i class="fas fa-user-cog"></i>
+      Account Settings
+    </h2>
+    <p>Manage your personal account settings</p>
+  </div>
+
+  <div class="settings-content">
+    <!-- Left Sidebar - Settings Navigation -->
+    <div class="settings-nav-card">
+      <h6 class="settings-nav-title">
+        <i class="fas fa-cog"></i>
+        Settings Menu
+      </h6>
+      
+      <div class="settings-nav-items">
+        <a href="#personal-info" class="settings-nav-item active" data-section="personal-info">
+          <div class="settings-nav-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Personal Information</h4>
+            <p>Update your profile details</p>
+          </div>
+        </a>
+
+        <a href="#password" class="settings-nav-item" data-section="password">
+          <div class="settings-nav-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Change Password</h4>
+            <p>Update your security settings</p>
+          </div>
+        </a>
+
+        <a href="#notifications" class="settings-nav-item" data-section="notifications">
+          <div class="settings-nav-icon">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="settings-nav-details">
+            <h4>Notifications</h4>
+            <p>Manage your preferences</p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Content - Settings Forms -->
+    <div class="settings-form-section">
+      <!-- Personal Information -->
+      <div class="settings-form" id="personal-info" >
+        <h3 class="settings-form-title">
+          <i class="fas fa-user"></i>
+          Personal Information
+        </h3>
+        <div class="settings-form-content">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="fullName" class="form-control" placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" class="form-control" placeholder="Your email address">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Your phone number">
+          </div>
+          <button type="button" class="btn btn-primary" style="float: right;" onclick="savePersonalInfo()">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+      </div>
+
+      <!-- Password Change -->
+      <div class="settings-form" id="password">
+        <h3 class="settings-form-title">
+          <i class="fas fa-lock"></i>
+          Change Password
+        </h3>
+        <div class="settings-form-content">
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i>
+            Make sure your new password is secure and not used on other websites.
+          </div>
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+          </div>
+          <button type="button" class="btn btn-primary" style="float: right;" onclick="changePassword()">
+            <i class="fas fa-key"></i> Update Password
+          </button>
+        </div>
+      </div>
+
+      <!-- Notification Settings -->
+      <div class="settings-form" id="notifications">
+        <h3 class="settings-form-title">
+          <i class="fas fa-bell"></i>
+          Notification Preferences 
+        </h3>
+        
+        <div class="settings-form-content">
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i>
+            Choose how you want to receive notifications about your invoices and account activity.
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input type="checkbox" id="emailNotifications" class="form-check-input">
+              <label for="emailNotifications" class="form-check-label">Email Notifications</label>
+            </div>
+            <small class="form-text text-muted">Receive notifications about invoice updates via email</small>
+          </div>
+          <div class="form-group">
+            <div class="form-check">
+              <input type="checkbox" id="smsNotifications" class="form-check-input">
+              <label for="smsNotifications" class="form-check-label">SMS Notifications</label>
+            </div>
+            <small class="form-text text-muted">Receive notifications about invoice updates via SMS</small>
+          </div>
+          <div class="alert alert-warning" role="alert" style="font-size: 0.75rem;">
+            <i class="fas fa-exclamation-triangle fa-spin text-warning me-1"></i>
+            This feature is in experimental stage and under active development!
+          </div>
+          <button type="button" class="btn btn-primary" style="float: right;" onclick="saveNotificationPreferences()">
+            <i class="fas fa-save"></i> Save Preferences
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/pages/user-settings.js"></script>
+{% endblock %} 

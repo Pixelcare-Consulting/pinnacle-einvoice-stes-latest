@@ -1,0 +1,167 @@
+.lhdn-notice-banner {
+    border-left: 4px solid #0dcaf0;
+    background-color: rgba(13, 202, 240, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    margin: 1rem 0;
+    animation: slideDown 0.5s ease-out forwards;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.lhdn-notice-banner:hover {
+    background-color: rgba(13, 202, 240, 0.08);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.notice-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-right: 2rem; /* Space for close button */
+}
+
+.notice-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0dcaf0;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.notice-icon {
+    font-size: 1.25rem;
+    animation: pulse 2s infinite, rotate 0.5s ease-out;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(-180deg) scale(0);
+    }
+    to {
+        transform: rotate(0) scale(1);
+    }
+}
+
+.notice-body {
+    padding-left: 1.75rem;
+    animation: fadeInUp 0.7s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.notice-message {
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.notice-details {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.notice-details i {
+    font-size: 0.9rem;
+    animation: wiggle 2s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.lhdn-notice-banner .btn-close {
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    transform-origin: center;
+}
+
+.lhdn-notice-banner .btn-close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animation for the notice banner */
+.lhdn-notice-banner.fade {
+    transition: all 0.3s ease-in-out;
+}
+
+.lhdn-notice-banner.fade.show {
+    opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .lhdn-notice-banner {
+        margin: 0.75rem;
+        padding: 0.75rem;
+    }
+    
+    .notice-body {
+        padding-left: 1.5rem;
+    }
+    
+    .notice-message {
+        font-size: 0.9rem;
+    }
+    
+    .notice-details {
+        font-size: 0.8rem;
+    }
+} 

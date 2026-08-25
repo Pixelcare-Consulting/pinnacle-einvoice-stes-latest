@@ -1,0 +1,27 @@
+.action-dropdown-btn {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: none;
+}
+
+.action-dropdown-btn:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.dropdown-menu {
+  min-width: 200px;
+  padding: 0.5rem 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+}
+
+.badge {
+  font-weight: 500;
+}
+
+.text-truncate {
+  max-width: 150px;
+}

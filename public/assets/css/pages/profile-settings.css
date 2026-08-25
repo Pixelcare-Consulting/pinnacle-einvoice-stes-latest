@@ -1,0 +1,253 @@
+.settings-form-content{
+    padding: 1.125rem;
+}
+
+.profile-avatar {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 20px;
+}
+
+.avatar-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+}
+
+.avatar-container:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-overlay i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.profile-status {
+    text-align: right;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.status-badge i {
+    margin-right: 0.5rem;
+}
+
+.last-login {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+/* Profile Grid */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.profile-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+/* Status Colors */
+.status-active {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.status-warning {
+    background-color: #fffbeb;
+    color: #d97706;
+}
+
+.status-error {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.status-default {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Token Expiry Info */
+#tokenExpiryInfo {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-status {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.password-requirements {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+  
+.requirements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+  
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+  
+.requirement-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+  
+.requirement-icon i {
+    font-size: 8px;
+    transition: all 0.3s ease;
+}
+  
+.requirement-text {
+    font-size: 0.9rem;
+}
+  
+/* States */
+.requirement-item.valid {
+    color: #198754;
+}
+  
+.requirement-item.valid .requirement-icon i {
+    color: #198754;
+    font-size: 14px;
+    content: '\f00c';
+}
+  
+.requirement-item.invalid {
+    color: #dc3545;
+}
+  
+.requirement-item.invalid .requirement-icon i {
+    color: #dc3545;
+}
+  
+/* Hover effect */
+.requirement-item:hover {
+    transform: translateX(5px);
+}
+
+.input-group .form-control[type="number"] {
+    text-align: right;
+    padding-right: 10px;
+}
+
+.input-group-text.bg-light {
+    min-width: 70px;
+    justify-content: center;
+}
+
+.text-end {
+    text-align: right !important;
+}

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: #444444;
+            margin: 0;
+            padding: 0.10rem;
+            background-color: #ffffff;
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 1rem 0;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        /* Modified Company Info styles */
+        .company-info {
+            width: 100%;
+            margin-bottom: 15px;
+            /* Reduced from 30px */
+        }
+
+        .company-info p {
+            margin: 1px 0;
+        }
+
+        .company-info img {
+            max-width: 150px;
+            margin-bottom: 5px;
+            height: auto;
+        }
+
+        .company-name {
+            font-weight: bold;
+        }
+
+        .email-link {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* Modified Invoice Header styles */
+        .invoice-header {
+            position: relative;
+            text-align: right;
+            margin-top: 0;
+            /* Remove top margin */
+        }
+
+        .invoice-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .invoice-details {
+            text-align: right;
+
+        }
+
+        .invoice-details p {
+            margin: 1px 0;
+        }
+
+        .invoice-details-eInvoice{
+            margin-top: 10px;
+            text-align: right;
+            font-size: 12px;
+            gap: 10px;
+        }
+        .invoice-details-eInvoice p{
+            margin: 1px 0;
+        }
+
+        /* UUID Section */
+        .uuid-section {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            text-align: right;
+            font-size: 10px;
+        }
+
+        .main-content {
+            clear: both;
+            margin-top: 20px;
+        }
+        /* Buyer section specific styling */
+        .buyer-section {
+            margin-top: 15px;
+        }
+
+        .buyer-section .info-row {
+            margin: 1px 0;
+        }
+
+        .two-column {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            /* Reduced from 30px */
+        }
+
+        .column {
+            width: 55%;
+        }
+
+        .info-row {
+            margin: 2px 0;
+        }
+
+        .info-label {
+            font-weight: bold;
+        }
+        p {
+            white-space: normal;
+        }
+
+        /* Dashed border */
+        hr.dashed {
+            border-top: 3px dashed #bbb;
+        }
+
+        /* Dotted border */
+        hr.dotted {
+            border-top: 3px dotted #bbb;
+        }
+
+        /* Solid border */
+        hr.solid {
+            border-top: 1px solid #000;
+        }
+
+        /* Rounded border */
+        hr.rounded {
+            border-top: 8px solid #bbb;
+            border-radius: 5px;
+        }
+
+        .details-table-line-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10px;
+            min-width: 100px;
+            text-align: left;
+            border: 1px solid #000;
+            padding: 3px;
+            gap: 10px;
+        }
+
+        .details-table-line-items th,
+        .details-table-line-items td {
+            border: 1px solid #000;
+            padding: 1px;
+            text-align: left;
+        }
+        
+        .details-table-line-items th {
+            background-color: #333333;
+            color: #fff;
+            font-weight: bold;
+            padding: 2px 4px;
+            height: 8px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        /* Ensure content is vertically centered */
+        .details-table-line-items td {
+            height: 15px;
+            vertical-align: middle;
+            padding: 1px 4px;
+        }
+
+        /* Table Styles */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10px;
+            gap: 10px;
+        }
+
+    .details-table th,
+    .details-table td {
+        border: 1px solid #000;
+        padding: 4px;
+        /*text-align: left;*/
+    }
+    
+    .details-table th {
+        background-color: #333333;
+        color: #fff;
+        font-weight: bold;
+        font-size: 10px;
+       
+    }
+    
+    /* Add this class for the Description column */
+        .w-100 {
+            width: 15%;
+            min-width: 120px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+    
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        /* Tax Summary Table */
+        .tax-summary-table {
+            width: auto;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10px;
+        }
+
+        .tax-summary-table th,
+        .tax-summary-table td {
+            border: 1px solid #000;
+            padding: 4px 8px;
+            text-align: left;
+            min-width: 80px;
+        }
+
+        .tax-summary-table th {
+            background-color: #000;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Currency Section */
+        .currency-section {
+            margin: 15px 0;
+            width: 250px;
+        }
+
+        .currency-section table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .currency-section td {
+            padding: 4px;
+            border: 1px solid #000;
+        }
+
+        /* Totals Section */
+        .totals-table {
+            width: 250px;
+            margin-left: auto;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .totals-table tr td {
+            padding: 4px 8px;
+            border: 1px solid #000;
+        }
+
+        .totals-table tr:last-child {
+            font-weight: bold;
+        }
+
+        .total-label {
+            text-align: right;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .total-amount {
+            text-align: right;
+            width: 100px;
+            background-color: #f9f9f9;
+        }
+
+        .total-amount.final {
+            background-color: #e9e9e9;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+            position: relative;
+            min-height: 100px;
+            font-size: 10px;
+        }
+
+        .signature-block {
+            width: calc(100% - 120px);
+        }
+
+        .signature-block p {
+            margin: 1px 0;
+        }
+
+        .signature-title {
+            font-weight: bold;
+        }
+
+        .qr-code {
+            position: relative;
+            /* Changed from fixed to relative */
+            float: right;
+            /* Float right to align with right column */
+            width: 100px;
+            height: 100px;
+        }
+
+        .qr-container {
+            clear: right;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .line-items-note {
+            font-size: 9px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .url-footer {
+            font-size: 8px;
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .col-no {
+            width: 20px;
+            min-width: 20px;
+            max-width: 20px;
+        }
+
+        .col-class-code {
+            width: 35px;
+            min-width: 35px;
+            max-width: 35px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="two-column">
+            <!-- Left Column: Company Info -->
+            <div class="column">
+                <div class="company-info">
+                    {{if CompanyLogo}}
+                    <img src="{{:CompanyLogo}}" alt="Company Logo">
+                    {{/if}}
+                    <p class="company-name">{{:companyName}}</p>
+                    <p>{{:SupplierTIN}}</p>
+                    <p>{{:SupplierIdType}}/{{:SupplierIdNumber}}</p>
+                    <p>{{:SupplierSSTID}}</p>
+                    <p>{{:companyAddress}}</p>
+                    <p>{{:companyPhone}}</p>
+                    <p><a href="mailto:{{:companyEmail}}" class="email-link">{{:companyEmail}}</a></p>
+                    <p>MSIC Code: {{:SupplierMSICCode}}</p>
+                    <p>Business Activity: {{:SupplierBusinessActivity}}</p>
+                </div>
+
+                <!-- Buyer Section moved inside left column -->
+                <div class="buyer-section">
+                    <div class="info-row"><span class="info-label">TO:</span></div>
+                    <div class="info-row"><span class="info-label">Name:</span> {{:BuyerName}}</div>
+                    <div class="info-row"><span class="info-label">Tax Identification Number (TIN):</span> {{:BuyerTIN}}
+                    </div>
+                    <div class="info-row"><span class="info-label">ID Type/Number:</span>
+                        {{:BuyerIdType}}/{{:BuyerIdNumber}}</div>
+                    <div class="info-row"><span class="info-label">SST Registration Number:</span> {{:BuyerSSTID}}
+                    </div>
+                    <div class="info-row"><span class="info-label">Address:</span> {{:BuyerAddress}}</div>
+                    <div class="info-row"><span class="info-label">Telephone Number:</span> {{:BuyerPhone}}</div>
+                    <div class="info-row"><span class="info-label">Email:</span> <a href="mailto:{{:companyEmail}}"
+                            class="email-link">{{:BuyerEmail}}</a></div>
+                    <div class="info-row"></div>
+                    <div class="info-row">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Invoice Header -->
+            <div class="column">
+                <div class="invoice-header">
+                    <div class="invoice-title">{{:InvoiceTypeName}} {{:InvoiceVersionCode}}</div>
+                    <div class="qr-container">
+                        {{if qrCode}}
+                        <img src="{{:qrCode}}" alt="QR Code" class="qr-code">
+                        {{/if}}
+                     
+                    </div>
+                    <div class="invoice-details">
+                        <p><span class="info-label">UUID:</span> {{:UniqueIdentifier}}</p>
+                        <p><span class="info-label">LONG-ID:</span> {{:LHDNlongId}}
+                        </p>
+                    </div>
+
+                    <div class="invoice-details-eInvoice">
+                        <p><span class="info-label">e-Invoice No:</span> {{:internalId}}</p>
+                        <p><span class="info-label">e-Invoice Type:</span> {{:InvoiceTypeCode}}</p>
+                        <p><span class="info-label">e-Invoice Issue Date & Time:</span> {{:OriginalInvoiceDateTime}}</p>
+                        <!-- <p><span class="info-label">e-Invoice Version:</span> {{:InvoiceVersion}}</p> -->
+                        <!-- <hr class="dotted"> -->
+                        <p><span class="info-label">Original Invoice Ref. No.:</span> {{:OriginalInvoiceRef}}</p>
+                        <!-- <p><span class="info-label">Original Invoice Start Date:</span> {{:OriginalInvoiceStartDate}}</p>
+                        <p><span class="info-label">Original Invoice End Date No:</span> {{:OriginalInvoiceEndDate}}</p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Table -->
+        <hr class="solid">
+        <table class="details-table-line-items">
+            <tr>
+                <th class="text-left col-no">No.</th>
+                <th class="text-left col-class-code">Code</th>
+                <th>Description</th>
+                <th style="text-align: center;">Qty.</th>
+                <th style="text-align: center;">UOM</th>
+                <th style="text-align: right;">U. Price <small>({{:documentCurrency}})</small></th>
+                <th style="text-align: right;">Subtotal <small>({{:documentCurrency}})</small></th>
+                <th style="text-align: right;">(A) Disc. <small>({{:documentCurrency}})</small></th>
+                <th style="text-align: right;">(B) Fee/Charges <small>({{:documentCurrency}})</small></th>
+                <th style="text-align: center;">Tax Rate</th>
+                <th style="text-align: right;">Tax Amount <small>({{:documentCurrency}})</small></th>
+                <th style="text-align: right;">Amount Exempted from Tax ({{:documentCurrency}})</th>
+                <th style="text-align: right;">Total Amount <small>({{:documentCurrency}})</small></th>
+            </tr>
+            {{for items}}
+            <tr>
+                <td class="text-center col-no" style="text-align: center;">{{:No}}</td>
+                <td class="text-center col-class-code" style="text-align: center;">{{:Cls}}</td>
+                <td class="text-left w-100">{{if Description === 'NA'}}No Description{{else}}{{:Description}}{{/if}}</td>
+                <td style="text-align: center;">{{:Quantity}}</td>
+                <td style="text-align: center;">{{:UOM}}</td>
+                <td style="text-align: right;">{{:UnitPrice}}</td>
+                <td style="text-align: right;">{{:QtyAmount}}</td>
+                <td style="text-align: right;">{{if Disc === '0.00'}}0.00{{else}}{{:Disc}}{{/if}}</td>
+                <td style="text-align: right;">{{:Charges}}</td>
+                <td class="text-center">{{:LineTaxPercent}}%</td>
+                <td style="text-align: right;">{{:LineTaxAmount}}</td>
+                <td style="text-align: right;">{{if TaxType === "Tax exemption"}}{{:HypotheticalTax}}*{{else}}-{{/if}}</td>
+                <td style="text-align: right;">{{:Total}}</td>
+            </tr>
+            {{/for}}
+        </table>
+        <!-- <div class="line-items-note">
+            Note: Classification Code, UOM - Unit of Measurement, ( ) - Additional data present, * Exempted
+            from Tax shows the tax amount that would have been charged at 8% if the item was not tax exempt.
+        </div> -->
+
+        <!-- Currency Section -->
+        <div class="currency-section">
+            <table>
+                <tr>
+                    <td>Currency Code</td>
+                    <td>{{:documentCurrency}}</td>
+                </tr>
+                <tr>
+                    <td>Exchange Rate</td>
+                    <td>{{:TaxExchangeRate}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Tax Summary Table -->
+        <table class="details-table" style="margin-top: 10px;">
+            <tr>
+                <th style="text-align: center;">Tax Type</th>
+                <th style="text-align: center;">Tax Rate</th>
+                <th style="text-align: center; ">Total Amount <small>({{:documentCurrency}})</small></th>
+                <th style="text-align: center; ">Total Tax Amount <small>({{:documentCurrency}})</small></th>
+                <th style="text-align: center; width: 120px;">Total Amount Exempted from Tax ({{:documentCurrency}})</th>
+                <th style="text-align: center; width: 250px;">Details of Tax Exemption</th>
+            </tr>
+            {{for taxSummary}}
+            <tr>
+                <td style="text-align: center; ">{{:taxType}}</td>
+                <td style="text-align: center; ">{{:taxRate}}%</td>
+                <td style="text-align: right; padding-right: 10px;">{{:totalAmount}}</td>
+                <td style="text-align: right; padding-right: 10px;">{{:totalTaxAmount}}</td>
+                <td style="text-align: right; padding-right: 10px;">{{if taxType === "Tax exemption"}}{{:hypotheticalTaxAmount}}*{{else}}-{{/if}}</td>
+                <td style="text-align: center; ">{{if LHDNtaxExemptionReason === 'NA'}}NA{{else}}{{:LHDNtaxExemptionReason}}{{/if}}</td>
+            </tr>
+            {{/for}}
+        </table>
+
+        <!-- Totals -->
+        <table class="totals-table">
+            <tr>
+                <td class="total-label">Total Tax Amount <small>({{:documentCurrency}})</small></td>
+                <td class="total-amount">{{:TotalTaxAmount}}</td>
+            </tr>
+            <tr>
+                <td class="total-label">Total Net Amount <small>({{:documentCurrency}})</small></td>
+                <td class="total-amount">{{:TotalNetAmount}}</td>
+            </tr>
+            <tr>
+                <td class="total-label">Total Excluding Tax <small>({{:documentCurrency}})</small></td>
+                <td class="total-amount">{{:TotalExcludingTax}}</td>
+            </tr>
+            <tr>
+                <td class="total-label">Total Including Tax <small>({{:documentCurrency}})</small></td>
+                <td class="total-amount">{{:TotalIncludingTax}}</td>
+            </tr>
+            <tr>
+                <td class="total-label">Prepayment Amount <small>({{:documentCurrency}})</small></td>
+                <td class="total-amount">{{:Prepayment}}</td>
+            </tr>
+            <tr>
+                <td class="total-label">Total Payable Amount <small>({{:documentCurrency}})</small></td>
+                <td class="total-amount final">{{:TotalPayableAmount}}</td>
+            </tr>
+        </table>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="signature-block">
+                <p><span class="signature-title">Signed by:</span> {{:signedBy}}</p>
+                <p><span class="signature-title">Digital Signature:</span> {{:DigitalSignature}}</p>
+                <p><span class="signature-title">Date and Time of Validation:</span> {{:validationDateTime}}</p>
+                <p>This document is a visual presentation of the e-Invoice.</p>
+            </div>
+            <div class="url-footer">
+                This document was automatically generated by Pinnacle e-Invoice Portal from Lembaga Hasil Dalam Negeri
+                Malaysia (LHDNM).
+                <br>
+                {{:lhdnLink}}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

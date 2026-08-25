@@ -1,0 +1,1215 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+
+<title>Inbound - eInvoice Portal</title>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link href="/assets/css/pages/inbound/card.css" rel="stylesheet">
+<link href="/assets/css/pages/inbound/notice.css" rel="stylesheet">
+
+<link href="/assets/css/pages/inbound/validation-modal.css" rel="stylesheet">
+<link href="/assets/css/pages/inbound/inbound-modal.css" rel="stylesheet">
+<!-- Template Main CSS Files -->
+<link href="/assets/css/pages/outbound/outbound-table.css" rel="stylesheet">
+<!-- Excel Loading Animation CSS -->
+<link href="/assets/css/pages/outbound/excel-loading.css" rel="stylesheet">
+<!-- Invoice Preview Modal Enhancements -->
+<link href="/assets/css/components/invoice-preview-modal.css" rel="stylesheet">
+
+<script src="/assets/js/config/validation-translations.js"></script>
+<script src="/assets/utils/lhdnErrorMapping.js"></script>
+
+<style>
+/* Enhanced UI Styles */
+.statistics-section .card,
+.quick-actions-section .card,
+.enhanced-filter-section .card,
+.document-preview-section .card {
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.statistics-section .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.quick-actions-section .btn {
+    transition: all 0.2s ease;
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.quick-actions-section .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.enhanced-filter-section .form-floating > .form-control,
+.enhanced-filter-section .form-floating > .form-select {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 1rem 0.75rem;
+}
+
+.enhanced-filter-section .form-floating > label {
+    padding: 1rem 0.75rem;
+}
+
+.document-preview-section .document-info {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.document-preview-section .info-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.document-preview-section .info-item:last-child {
+    border-bottom: none;
+}
+
+/* Processing Time Card Styling */
+.processing-time-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.processing-time-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.processing-time-card .card-icon i {
+    color: white;
+    font-size: 2rem;
+    opacity: 0.9;
+}
+
+.processing-time-card .avg-processing-time {
+    color: white;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.processing-time-card .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.875rem;
+}
+
+.processing-time-card .card-title-new {
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.processing-time-card .loading-spinner {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+}
+
+/* Responsive adjustments for processing time card */
+@media (max-width: 768px) {
+    .processing-time-card {
+        margin-top: 1rem;
+    }
+}
+
+/* Processing Analytics Styling */
+.processing-stats .stat-item {
+    padding: 0.5rem;
+    border-radius: 8px;
+    background: rgba(0, 123, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.processing-stats .stat-item:hover {
+    background: rgba(0, 123, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.processing-stats .stat-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.processing-stats .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* Enhanced chart container */
+#processingTimeChart {
+    border-radius: 8px;
+    background: rgba(248, 249, 250, 0.5);
+    max-height: 200px !important;
+}
+
+.document-preview-frame {
+    min-height: 300px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Animation for refresh icon */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Chart container styles */
+.statistics-section canvas {
+    max-height: 200px;
+}
+
+/* Card title styles */
+.card-title {
+    color: #495057;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick action button styles */
+.quick-actions-section .btn i {
+    font-size: 1rem;
+}
+
+/* Enhanced filter styles */
+.enhanced-filter-section .btn-link {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.enhanced-filter-section .btn-link:hover {
+    color: #495057;
+}
+
+/* Document preview styles */
+.document-preview-section .badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+}
+
+.document-preview-section .fw-medium {
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .statistics-section .card {
+        margin-bottom: 1rem;
+    }
+
+    .quick-actions-section .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .enhanced-filter-section .form-floating {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Enhanced Filter Styles */
+.filter-container {
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper .form-control {
+    padding-left: 2.5rem;
+    height: 48px;
+    border-radius: 24px;
+    border: 2px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.search-wrapper .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.15);
+}
+
+.quick-filters .btn {
+    transition: all 0.2s ease;
+    border-width: 1px;
+}
+
+.quick-filters .btn-outline-primary {
+    color: #1e40af;
+    border-color: #1e40af;
+}
+
+.quick-filters .btn-outline-primary:hover,
+.quick-filters .btn-outline-primary.active {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+}
+
+.quick-filters .btn-outline-success {
+    color: #1e40af;
+    border-color: #1e40af;
+}
+
+.quick-filters .btn-outline-success:hover,
+.quick-filters .btn-outline-success.active {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+}
+
+.quick-filters .btn-outline-danger {
+    color: #1e40af;
+    border-color: #1e40af;
+}
+
+.quick-filters .btn-outline-danger:hover,
+.quick-filters .btn-outline-danger.active {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+}
+
+.quick-filters .btn-outline-warning {
+    color: #1e40af;
+    border-color: #1e40af;
+}
+
+.quick-filters .btn-outline-warning:hover,
+.quick-filters .btn-outline-warning.active {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+}
+
+.quick-filters .btn-outline-info {
+    color: #1e40af;
+    border-color: #1e40af;
+}
+
+.quick-filters .btn-outline-info:hover,
+.quick-filters .btn-outline-info.active {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: #ffffff;
+}
+
+.quick-filters .btn-primary {
+    background-color: #1e40af;
+    border-color: #1e40af;
+}
+
+.quick-filters .btn-primary:hover {
+    background-color: #1e3a8a;
+    border-color: #1e3a8a;
+}
+
+.quick-filters .btn-light {
+    color: #1e40af;
+    background-color: #f3f4f6;
+    border-color: #e5e7eb;
+}
+
+.quick-filters .btn-light:hover {
+    color: #1e40af;
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+}
+
+.quick-filters .btn.active {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.advanced-filters-content {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.advanced-filters-content .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.advanced-filters-content .form-control,
+.advanced-filters-content .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+}
+
+.advanced-filters-content .input-group-text {
+    border: 2px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+.active-filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-tag {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-tag .close {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.filter-tag .close:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .quick-filters {
+        flex-wrap: wrap;
+    }
+
+    .quick-filters .btn {
+        flex: 1 1 auto;
+    }
+
+    .quick-filters .ms-auto {
+        width: 100%;
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .quick-filters .ms-auto .btn {
+        flex: 1;
+    }
+}
+
+/* Loading backdrop styles */
+.loading-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.loading-message {
+    margin-top: 1rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Data source toggle styles */
+.btn-group .btn-check:checked + .btn {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+.btn-group .btn-check:not(:checked) + .btn {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+</style>
+
+{% endblock %}
+{% block content %}
+<div class="container-fluid px-2 px-md-2 px-lg-2">
+<!-- Welcome Card - Full width -->
+    <div class="profile-welcome-card">
+        <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <div class="welcome-icon">
+            <i class="bi bi-box-arrow-in-left"></i>
+            </div>
+            <div class="welcome-content">
+                <h3 class="text-xl font-semibold text-white-800 md:text-2xl tracking-tight">
+                    Inbound
+                </h3>
+                        <p class="mb-0 " data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                        >
+                View and manage your inbound responses from LHDN. Track the status and results of your IRBM submissions here.
+            </p>
+            </div>
+        </div>
+        <div class="d-flex align-items-start">
+            <!-- Existing datetime section -->
+            <div class="welcome-datetime text-end">
+            <div class="current-time">
+                <i class="bi bi-clock"></i>
+                <span id="currentTime">00:00:00 AM</span>
+            </div>
+            <div class="current-date">
+                <i class="bi bi-calendar3"></i>
+                <span id="currentDate">Loading...</span>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- Content Section - With margins -->
+    <div class="content-section">
+      <!-- Cards Section -->
+      <div class="cards-container">
+          <!-- Invoices Card -->
+          <div class="info-card invoices-card">
+              <div class="card-info">
+                  <div class="card-icon position-relative">
+                      <i class="bi bi-file-earmark-text"></i>
+                  </div>
+                  <div class="count-info">
+                      <div class="spinner-border text-primary loading-spinner" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <h6 class="total-invoice-value" style="display: none;">0</h6>
+                      <span class="text-muted">Total</span>
+                  </div>
+              </div>
+              <span class="card-title-new">INVOICES</span>
+          </div>
+
+          <!-- Valid Card -->
+          <div class="info-card valid-card">
+              <div class="card-info">
+                  <div class="card-icon position-relative">
+                      <i class="bi bi-check2-circle"></i>
+                  </div>
+                  <div class="count-info">
+                      <div class="spinner-border text-success loading-spinner" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <h6 class="total-valid-value" style="display: none;">0</h6>
+                      <span class="text-muted">Total</span>
+                  </div>
+              </div>
+              <span class="card-title-new">VALID</span>
+          </div>
+
+          <!-- Invalid Card -->
+          <div class="info-card invalid-card">
+              <div class="card-info">
+                  <div class="card-icon position-relative">
+                      <i class="bi bi-file-earmark-excel-fill"></i>
+                  </div>
+                  <div class="count-info">
+                      <div class="spinner-border text-warning loading-spinner" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <h6 class="total-invalid-value" style="display: none;">0</h6>
+                      <span class="text-muted">Total</span>
+                  </div>
+              </div>
+              <span class="card-title-new">INVALID</span>
+          </div>
+
+          <!-- Cancelled Card -->
+          <div class="info-card cancelled-card">
+              <div class="card-info">
+                  <div class="card-icon position-relative">
+                      <i class="bi bi-exclamation-triangle-fill"></i>
+                  </div>
+                  <div class="count-info">
+                      <div class="spinner-border text-warning loading-spinner" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <h6 class="total-cancel-value" style="display: none;">0</h6>
+                      <span class="text-muted">Total</span>
+                  </div>
+              </div>
+              <span class="card-title-new">CANCELLED</span>
+          </div>
+
+          <!-- Queue Card -->
+          <div class="info-card queue-card">
+              <div class="card-info">
+                  <div class="card-icon position-relative">
+                      <i class="bi bi-exclamation-circle-fill"></i>
+                  </div>
+                  <div class="count-info">
+                      <div class="spinner-border text-dark loading-spinner" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <h6 class="total-queue-value" style="display: none;">0</h6>
+                      <span class="text-muted">Total</span>
+                  </div>
+              </div>
+              <span class="card-title-new">QUEUE</span>
+          </div>
+
+          <!-- Average Processing Time Card -->
+          <!-- <div class="info-card processing-time-card">
+              <div class="card-info">
+                  <div class="card-icon position-relative">
+                      <i class="bi bi-clock-history"></i>
+                  </div>
+                  <div class="count-info">
+                      <div class="spinner-border text-info loading-spinner" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <h6 class="avg-processing-time" style="display: none;"
+                         data-bs-toggle="tooltip"
+                         data-bs-placement="top"
+                         title="Average time from submission to LHDN validation">N/A</h6>
+                      <span class="text-muted">Average</span>
+                  </div>
+              </div>
+              <span class="card-title-new">PROCESSING TIME</span>
+          </div> -->
+      </div>
+
+      <!-- Statistics Section -->
+      <div class="statistics-section mb-4">
+        <div class="row">
+          <!-- Document Status Chart -->
+          <div class="col-md-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h6 class="card-title d-flex align-items-center">
+                </h6>
+
+                <canvas id="documentStatusChart" height="200"></canvas>
+                <div class="mt-0">
+                  <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Distribution of document validation statuses
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Submissions Chart -->
+          <div class="col-md-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h6 class="card-title d-flex align-items-center">
+                </h6>
+
+                <canvas id="dailySubmissionsChart" height="200"></canvas>
+                <div class="mt-0">
+                  <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Daily submission trends and patterns
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Processing Time Chart -->
+          <div class="col-md-4">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h6 class="card-title d-flex align-items-center">
+                </h6>
+
+                <canvas id="processingTimeChart" height="200"></canvas>
+                <div class="mt-0">
+                  <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Time from submission to LHDN validation
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div> 
+
+        </div>
+        
+      </div>
+
+
+   <!-- Table Section -->
+   <div class="table-container-wrapper">
+    <div class="table-card">
+        <div class="table-header">
+            <div class="table-header-content">
+                <h2 class="table-title"></h2>
+                <div class="table-actions">
+                    <!-- Data Source Toggle -->
+                    <div class="btn-group me-2" role="group" aria-label="Data source toggle">
+                        <input type="radio" class="btn-check" name="dataSource" id="liveDataSource" autocomplete="off" checked>
+                        <label class="btn outbound-action-btn submit btn-sm" for="liveDataSource">
+                            <i class="bi bi-cloud-arrow-down me-1"></i>Live LHDN Data
+                        </label>
+                    </div>
+
+                    <!-- Quick Refresh Button 
+                    <button class="btn outbound-action-btn submit btn-sm" id="refreshDataSource"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            title="Quick refresh - updates from database (Ctrl+Click for full LHDN refresh)">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Quick Refresh
+                    </button>-->
+
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="table-controls">
+            <div class="d-flex align-items-center gap-3">
+                <div class="modern-length">
+                    <!-- Length control will be inserted by DataTables -->
+                </div>
+                <div class="modern-search">
+                    <!-- Search control will be inserted by DataTables -->
+                </div>
+                <!-- Data Source Indicator -->
+                <div class="data-source-indicator">
+                    <small class="text-muted d-flex align-items-center">
+                        <i class="bi bi-database me-1"></i>
+                        <span id="dataSourceText">Database View</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-body-container">
+            <div class="responsive-table-container">
+                <div class="table-section">
+                    <div class="outbound-table-container">
+                        <!-- Replace the entire filter section with new design -->
+                        <div class="filter-container bg-white p-3 rounded-3 shadow-sm mb-3">
+                            <!-- Primary Filters Row -->
+                            <div class="row g-3 mb-3">
+                                <!-- Global Search -->
+                                <div class="col-md-4">
+                                    <div class="search-wrapper position-relative">
+                                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                        <input type="text" class="form-control form-control-lg ps-5" id="globalSearch"
+                                            placeholder="Search documents...">
+                                    </div>
+                                </div>
+
+                                <!-- Quick Filters -->
+                                <div class="col-md-8">
+                                    <div class="quick-filters d-flex gap-2">
+                                        <button class="btn outbound-action-btn submit active" data-filter="all">
+                                            <i class="bi bi-grid-3x3-gap-fill me-1"></i>All
+                                        </button>
+                                        <button class="btn outbound-action-btn submit" data-filter="valid">
+                                            <i class="bi bi-check-circle me-1 text-success"></i>Valid
+                                        </button>
+                                        <button class="btn outbound-action-btn submit" data-filter="invalid">
+                                            <i class="bi bi-x-circle me-1 text-danger"></i>Invalid
+                                        </button>
+
+                                        <button class="btn outbound-action-btn submit" data-filter="cancelled">
+                                            <i class="bi bi-exclamation-triangle-fill me-1 text-warning"></i>Cancelled
+                                        </button>
+                                        <button class="btn outbound-action-btn submit" data-filter="queue">
+                                            <i class="bi bi-clock-history me-1 text-secondary"></i>Queue
+                                        </button>
+                                        <div class="ms-auto">
+                                            <button class="btn outbound-action-btn cancel" id="clearFilters" data-bs-toggle="tooltip" title="Clear all filters">
+                                                <i class="bi bi-eraser me-1"></i>Clear
+                                            </button>
+                                            <button class="btn outbound-action-btn submit" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                                                <i class="bi bi-sliders me-1"></i>Advanced
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Filters (Collapsible) -->
+                            <div class="collapse" id="advancedFilters">
+                                <div class="advanced-filters-content border-top pt-3">
+                                    <div class="row g-3">
+                                        <!-- Date Range -->
+                                        <div class="col-md-6">
+                                            <label class="form-label d-flex align-items-center">
+                                                <i class="bi bi-calendar-range me-2"></i>Date Range
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="date" class="form-control" id="tableStartDate">
+                                                <span class="input-group-text bg-light">to</span>
+                                                <input type="date" class="form-control" id="tableEndDate">
+                                            </div>
+                                        </div>
+
+                                        <!-- Amount Range -->
+                                        <div class="col-md-6">
+                                            <label class="form-label d-flex align-items-center">
+                                                <i class="bi bi-currency-dollar me-2"></i>Amount Range
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="minAmount" placeholder="Min">
+                                                <span class="input-group-text bg-light">to</span>
+                                                <input type="number" class="form-control" id="maxAmount" placeholder="Max">
+                                            </div>
+                                        </div>
+
+                                        <!-- Company Filter -->
+                                        <div class="col-md-4">
+                                            <label class="form-label d-flex align-items-center">
+                                                <i class="bi bi-building me-2"></i>Company
+                                            </label>
+                                            <input type="text" class="form-control" id="companyFilter" placeholder="Filter by company name">
+                                        </div>
+
+                                        <!-- Document Type -->
+                                        <div class="col-md-4">
+                                            <label class="form-label d-flex align-items-center">
+                                                <i class="bi bi-file-text me-2"></i>Document Type
+                                            </label>
+                                            <select class="form-select" id="documentTypeFilter">
+                                                <option value="">All Types</option>
+                                                <option value="Invoice">Invoice</option>
+                                                <option value="Credit Note">Credit Note</option>
+                                                <option value="Debit Note">Debit Note</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Source -->
+                                        <div class="col-md-4">
+                                            <label class="form-label d-flex align-items-center">
+                                                <i class="bi bi-diagram-2 me-2"></i>Source
+                                                <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-html="true"
+                                                title="<div class='tooltip-content'>
+                                                        <div class='tooltip-row'>
+                                                            <i class='bi bi-info-circle'></i>
+                                                            <span><b>LHDN Validation:</b></span>
+                                                        </div>
+                                                        <div class='tooltip-row'>
+                                                            <i class='bi bi-check-circle text-success'></i>
+                                                            <span>Valid: Document passed validation</span>
+                                                        </div>
+                                                        <div class='tooltip-row'>
+                                                            <i class='bi bi-x-circle text-danger'></i>
+                                                            <span>Invalid: Failed validation checks</span>
+                                                        </div>
+                                                        <div class='tooltip-row'>
+                                                            <i class='bi bi-clock-history text-warning'></i>
+                                                            <span>Queue: Awaiting validation</span>
+                                                        </div>
+                                                    </div>"></i>
+                                            </label>
+                                            <select class="form-select" id="sourceFilter">
+                                                <option value="">LHDN</option>
+
+                                            </select>
+                                            <small class="text-muted mt-1 d-block">
+                                                <i class="bi bi-info-circle-fill me-1"></i>
+                                                LHDN responses include validation status and timestamps
+                                            </small>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Filter Note -->
+                                    <div class="filter-note alert alert-info mt-3" role="alert">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        <small>
+                                            Use the filters above to narrow down your results. Active filters will appear below as tags that you can easily remove. Click the 'x' on any tag to remove that filter, or use 'Clear all filters' to reset.
+                                        </small>
+                                    </div>
+
+                                    <!-- Active Filters Display -->
+                                    <div class="active-filters mt-3 pt-3 border-top">
+                                        <div class="d-flex align-items-center">
+                                            <small class="text-muted me-2">Active Filters:</small>
+                                            <div class="active-filter-tags" id="activeFilterTags">
+                                                <!-- Active filter tags will be added here dynamically -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of new filter section -->
+                        <table id="invoiceTable" class="outbound-table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="outbound-checkbox-header">
+                                            <input type="checkbox" class="outbound-checkbox" id="selectAll">
+                                        </div>
+                                    </th>
+                                    <th>#</th>
+                                    <th>UUID</th>
+                                    <th>LONG ID.</th>
+                                    <th>INTERNAL ID</th>
+                                    <th>SUPPLIER</th>
+                                    <th>RECEIVER</th>
+                                    <th>DATE INFO</th>
+                                    <th>STATUS</th>
+                                    <th>TOTAL AMOUNT</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="tableLoadingOverlay" class="table-loading-overlay d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Fetching documents...</p>
+            </div>
+        </div>
+
+
+
+        <div class="table-footer">
+             <!-- LHDN Validation Note -->
+              <div class="filter-note alert alert-warning mt-0" role="alert">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-triangle-fill  mt-0"></i>
+                    <div>
+                        <h6 class="mb-2"><strong>Note: LHDN Validation Status</strong></h6>
+                        <small>
+                            <ul class="mb-2 ps-3">
+                                <li><i class="bi bi-clock me-1"></i>Document validation is currently experiencing longer processing times (up to 24 hours)</li>
+                                <li><i class="bi bi-arrow-repeat me-1"></i>Documents in "Queue" status are being processed & validated by LHDN servers</li>
+                                <li><i class="bi bi-info-circle me-1"></i>Check document status by refreshing the page periodically</li>
+                                <li><i class="bi bi-shield-exclamation me-1"></i>We have no control over validation speed or outcome</li>
+                            </ul>
+                            <div class="mt-0">
+                                <div class="d-flex align-items-center mb-0">
+                                    <span class="badge bg-warning text-dark me-2">
+                                        <i class="bi bi-clock-history me-1"></i>Queue
+                                    </span>
+                                    <span>Please be patient while your documents are being validated.</span>
+                                </div>
+                                <div class="text-muted fst-italic">
+                                    <i class="bi bi-info-circle-fill me-1"></i>
+                                    Note: The validation process is entirely dependent on LHDN's system availability and processing capacity.
+                                </div>
+                            </div>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination-container">
+                <!-- Pagination will be inserted by DataTables -->
+            </div>
+        </div>
+         
+    </div>
+</div>
+
+    </div>
+
+    </div>
+
+</div>
+<!-- View Details Modal -->
+<div class="modal fade lhdn-inbound-modal" id="documentDetailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h5 class="modal-title mb-0">
+                            <i class="bi bi-file-text"></i>
+                            Document Details
+                        </h5>
+                        <small id="modal-invoice-number" class="text-white-50"></small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge-status me-3"></span>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <!-- Left Sidebar - Details -->
+                <div class="info-sidebar">
+                    <div class="info-section">
+                        <div class="section-header">
+                            <i class="bi bi-building"></i>
+                            <span>Supplier Information</span>
+                        </div>
+                        <div id="supplier-info-content"></div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="section-header">
+                            <i class="bi bi-person"></i>
+                            <span>Buyer Information</span>
+                        </div>
+                        <div id="buyer-info-content"></div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="section-header">
+                            <i class="bi bi-credit-card"></i>
+                            <span>Payment Details</span>
+                        </div>
+                        <div id="payment-info-content"></div>
+                    </div>
+
+                    <!-- Cancellation Details (only shown if Cancelled) -->
+                    <div class="info-section" id="cancellation-info-section" style="display:none;">
+                        <div class="section-header">
+                            <i class="bi bi-x-octagon"></i>
+                            <span>Cancellation Details</span>
+                        </div>
+                        <div id="cancellation-info-content"></div>
+                    </div>
+                </div>
+
+                <!-- Right Side - PDF Viewer -->
+                <div class="pdf-section">
+                    <div class="pdf-viewer-container">
+                        <div class="loading-container" id="loadingSpinner">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="loading-text">Loading PDF...</div>
+                        </div>
+                        <iframe id="pdfViewer" style="display: none;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Validation Results -->
+<div class="modal fade lhdn-validation-modal" id="validationResultsModal" tabindex="-1" aria-labelledby="validationResultsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="validationResultsModalLabel">
+          <i class="bi bi-shield-check"></i>
+          Validation Results
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="lhdn-validation-content">
+          <div class="lhdn-validation-steps" id="validationResults">
+            <!-- Validation results will be populated here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Replace the existing loading modal with this updated version -->
+<div class="modal" id="loadingModal" data-bs-keyboard="false" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="modal-title mb-3" id="loadingModalLabel">Refreshing Your Data</h5>
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="text-muted" id="loadingStatus">Preparing to fetch your documents...</div>
+                    <div class="small text-muted mt-2" id="loadingDetails"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="modal-title" id="loadingStatus">Loading data from LHDN...</h5>
+                    <p class="text-muted" id="loadingDetails">Please wait while we fetch your invoice data</p>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Custom Modal -->
+<div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex align-items-center">
+                    <div class="modal-icon-container me-3" id="modalHeaderIcon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <h5 class="modal-title mb-0" id="customModalLabel">Information</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-content-wrapper">
+                    <div class="text-center" id="modalIcon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div id="modalMessage" class="modal-message text-center">
+                        <!-- Message content will be inserted here -->
+                    </div>
+                    <div id="modalHtmlContent" class="modal-html-content" style="display: none;">
+                        <!-- HTML content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modalCancelBtn" data-bs-dismiss="modal" style="display: none;">Cancel</button>
+                <button type="button" class="btn btn-primary" id="modalConfirmBtn" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Connection Status Modal -->
+<div class="modal fade" id="connectionStatusModal" tabindex="-1" aria-labelledby="connectionStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+
+            </div>
+            <div class="modal-body">
+                <div class="connection-status-content">
+                    <div class="text-center mb-3">
+                        <i id="connectionStatusIcon" class="bi bi-info-circle fs-1"></i>
+                    </div>
+                    <h5 id="connectionStatusMessage" class="text-center mb-3">Checking system status...</h5>
+                    <div class="connection-details">
+                        <div class="row mb-2">
+                            <div class="col-5 fw-bold">LHDN System:</div>
+                            <div class="col-7" id="lhdnApiStatus">Checking...</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5 fw-bold">Local System:</div>
+                            <div class="col-7" id="databaseStatus">Checking...</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5 fw-bold">Last Updated:</div>
+                            <div class="col-7" id="lastUpdatedStatus">Unknown</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="retryConnection">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Retry
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Inbound Cancellation Modal -->
+<div class="modal fade" id="inboundCancelModal" tabindex="-1" aria-labelledby="inboundCancelModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #405189 0%, #3a4a7e 100%); color: #fff;">
+                <h5 class="modal-title" id="inboundCancelModalLabel">
+                    <i class="bi bi-x-circle me-2"></i>Cancel Document
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="inboundCancelForm" novalidate>
+                    <p class="text-muted mb-2">Cancellation is allowed within 72 hours of validation. Please provide a reason to proceed.</p>
+                    <div class="mb-3">
+                        <label for="cancelReasonInput" class="form-label">Cancellation Reason</label>
+                        <textarea class="form-control" id="cancelReasonInput" rows="3" required minlength="5" aria-describedby="cancelReasonHelp" aria-label="Cancellation reason"></textarea>
+                        <div id="cancelReasonHelp" class="form-text">Minimum 5 characters.</div>
+                        <div class="invalid-feedback">Please provide a reason (at least 5 characters).</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="outbound-action-btn cancel" data-bs-dismiss="modal" id="closeCancelModalBtn">
+                    <i class="bi bi-x-lg me-1"></i>Cancel
+                </button>
+                <button type="button" class="outbound-action-btn cancel" id="confirmInboundCancelBtn">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Confirm Cancellation
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<!-- Toast Notification Utility -->
+<script src="/assets/js/utils/toast.js"></script>
+<!-- Chart Options Component -->
+<script src="/assets/js/components/lhdn-chart-options.js"></script>
+<!-- Authentication and Fetch Utilities -->
+<script src="/assets/js/utils/auth-status-global.js"></script>
+<script src="/assets/js/utils/fetch-wrapper-global.js"></script>
+
+<!-- Original Inbound Excel Module (for backward compatibility) -->
+<script src="/assets/js/modules/excel/inbound-excel.js"></script>
+
+
+
+
+{% endblock %}

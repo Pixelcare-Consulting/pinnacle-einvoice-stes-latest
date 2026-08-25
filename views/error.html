@@ -1,0 +1,122 @@
+{% extends "./error-layout.html" %}
+
+{% block content %}
+<div class="d-flex align-items-center" style="min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center">
+        <!-- Floating image with hover effect -->
+       
+
+        {% if errorCode %}
+        <div class="error-code mb-3">
+          <span class="badge bg-danger fs-5 px-4 py-2" 
+                style="box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);">
+            Error {{ errorCode }}
+          </span>
+        </div>
+        {% endif %}
+
+        <h1 class="display-4 fw-bold mb-3 text-dark"
+            style="text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+          {{ title }}
+          <div class="error-image-container floating">
+            <img
+              src="/assets/images/404_Error.png"
+              alt="Error Illustration"
+              class="error-image hover-scale text-center"
+              style="margin-left: 20%; max-width: 500px; height: auto; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));"
+            >
+          </div>
+        </h1>
+
+        <p class="lead text-secondary mb-4"
+           style="font-size: 1.2rem; line-height: 1.6;">
+          {{ message }}
+        </p>
+
+        {% if details %}
+        <div class="alert alert-info mb-4 mx-auto"
+             style="max-width: 600px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <i class="fas fa-info-circle me-2 pulse"></i>
+          {{ details }}
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+          <a href="/dashboard" 
+             class="btn btn-primary btn-lg px-4 hover-scale"
+             style="border-radius: 12px;">
+            <i class="fas fa-home me-2"></i>Return to Dashboard
+          </a>
+          <a href="javascript:history.back()" 
+             class="btn btn-outline-secondary btn-lg px-4 hover-scale"
+             style="border-radius: 12px;">
+            <i class="fas fa-arrow-left me-2"></i>Go Back
+          </a>
+        </div>
+
+        <div class="mt-4">
+          <small class="support-text text-muted">
+            <i class="fas fa-headset me-2"></i>
+            If this problem persists, please contact support
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Floating animation */
+  .floating {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+  }
+
+  /* Hover effects */
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  /* Button enhancements */
+  .btn {
+    transition: all 0.3s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Support text interaction */
+  .support-text {
+    transition: color 0.3s ease;
+    cursor: pointer;
+  }
+
+  .support-text:hover {
+    color: #0d6efd !important;
+  }
+
+  /* Pulse animation for info icon */
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+</style>
+{% endblock %}

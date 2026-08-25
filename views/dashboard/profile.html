@@ -1,0 +1,377 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<title>Profile - eInvoice Portal</title>
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+<link href="/assets/css/pages/profile.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+  :root {
+      --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      --input-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      --transition-speed: 0.3s;
+      --primary-color: #1e3c72;
+      --secondary-color: #2a5298;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+  }
+
+  [data-theme="dark"] {
+      --bg-color: #1a1a1a;
+      --text-color: #ffffff;
+      --card-bg: #2d2d2d;
+      --input-bg: #3d3d3d;
+      --input-text: #ffffff;
+      --border-color: #404040;
+      --card-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  [data-theme="light"] {
+      --bg-color: #f8f9fa;
+      --text-color: #333333;
+      --card-bg: #ffffff;
+      --input-bg: #ffffff;
+      --input-text: #333333;
+      --border-color: #dee2e6;
+  }
+
+  body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: background var(--transition-speed), color var(--transition-speed);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+  }
+
+  .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      background: var(--card-bg);
+      border: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      box-shadow: var(--card-shadow);
+      cursor: pointer;
+      transition: transform var(--transition-speed);
+  }
+
+  .theme-toggle:hover {
+      transform: scale(1.1);
+  }
+
+  .auth-card {
+      background: var(--card-bg);
+      transition: background var(--transition-speed), box-shadow var(--transition-speed);
+  }
+
+  .form-control, .input-group-text {
+      background: var(--input-bg);
+      color: var(--input-text);
+      border-color: var(--border-color);
+      transition: all var(--transition-speed);
+  }
+
+  .form-control:focus {
+      border-color: var(--primary-color);
+
+  }
+
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+      animation: fadeIn 0.5s ease-out;
+  }
+
+  .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1rem 0;
+  }
+
+  .divider-text {
+      padding: 0 1rem;
+      color: var(--text-color);
+  }
+
+  .divider-text h4 {
+      margin: 0;
+      font-weight: 600;
+      color: var(--primary-color);
+  }
+
+  .btn-primary {
+      background: var(--primary-gradient);
+      border: none;
+      color: white;
+  }
+
+  .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 60, 114, 0.4);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4 px-lg-5">
+  <!-- Welcome Card -->
+  <div class="profile-welcome-card">
+    <h2>
+      <i class="fas fa-building"></i>
+      Company Overview
+    </h2>
+    <p>View and manage your company's profile details, including registration information, contact details, and business credentials</p>
+  </div>
+
+  <div class="settings-content">
+    <!-- Left Sidebar -->
+    <div class="settings-nav-card">
+      <div class="company-profile">
+        <i class="fas fa-building"></i>
+        Company Profile
+      </div>
+
+      <div class="company-profile">
+        <div class="profile-image-container">
+          
+            <img id="profileImg" src="/assets/img/noimage.png" alt="Profile Image" class="profile-image">
+            <div class="image-overlay">
+              <button type="button" id="removeImageBtn" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i> Remove
+              </button>
+            </div>
+         
+          <button type="button" id="uploadImageBtn" class="btn btn-outline-primary mt-2">
+            <i class="fas fa-upload"></i> Upload Image
+          </button>
+          <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+        </div>
+
+        <div class="company-name">
+          <h3 class="company-title"></h3>
+        </div>
+
+ 
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="settings-form-section">
+      <div class="content-header">
+        <div class="header-title">
+          <i class="fas fa-building"></i>
+          Company Information
+        </div>
+        <button id="editButton" class="btn btn-primary" onclick="toggleEditMode()">
+          <i class="fas fa-edit"></i> Edit Details
+        </button>
+      </div>
+
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span>For any changes to Registration Details, please contact your system administrator or developer for assistance.</span>
+      </div>
+
+      <!-- View Mode -->
+      <div id="viewMode">
+        <!-- Registration Details -->
+        <div class="section-title">
+          <i class="fas fa-id-card"></i>
+          Registration Details
+        </div>
+
+        <div class="info-section">
+          <div class="info-item">
+            <div class="item-label">Tax Identification Number (TIN) <span class="required">*</span></div>
+            <div class="item-value">
+              <span class="view-mode" data-field="tin"></span>
+              <div class="edit-mode" style="display: none;">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="tin" id="tin" disabled>
+                </div>
+              </div>
+            </div>
+            <div class="item-description">TIN is mandatory for eInvoice submission. Any changes will result in invalid documents.</div>
+          </div>
+
+          <div class="info-item">
+            <div class="item-label">Business Registration Number (BRN) <span class="required">*</span></div>
+            <div class="item-value">
+              <span class="view-mode" data-field="brn"></span>
+              <div class="edit-mode" style="display: none;">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="brn" id="brn" disabled>
+                </div>
+              </div>
+            </div>
+
+            <div class="item-description">Business Registration Number is your official company identifier.</div>
+          </div>
+
+          <div class="info-item">
+            <div class="item-label">LHDN Client ID <span class="required">*</span></div>
+            <div class="item-value">
+              <span class="view-mode">****************</span>
+              <div class="edit-mode" style="display: none;">
+                <div class="input-group">
+                  <input type="password" class="form-control" name="clientId" id="clientId" value="****************" disabled>
+                
+                </div>
+              </div>
+            </div>
+            <div class="item-description">Client ID is your unique authentication identifier for LHDN integration.</div>
+          </div>
+
+          <div class="info-item">
+            <div class="item-label">LHDN Client Secret <span class="required">*</span></div>
+            <div class="item-value">
+              <span class="view-mode">****************</span>
+              <div class="edit-mode" style="display: none;">
+                <div class="input-group">
+                  <input type="password" class="form-control" name="clientSecret" id="clientSecret" value="****************" disabled>
+                 
+                </div>
+              </div>
+            </div>
+            <div class="item-description">Client Secret is your secure authentication key.</div>
+          </div>
+        </div>
+
+        <!-- Basic Details -->
+        <div class="section-title">
+          <i class="fas fa-info-circle"></i>
+          Basic Details
+        </div>
+
+        <div class="info-section">
+          <div class="info-item">
+            <div class="item-label">Company Name</div>
+            <div class="item-value">
+              <span class="view-mode" data-field="companyName"></span>
+              <div class="edit-mode" style="display: none;">
+                <input type="text" class="form-control" name="companyName" id="companyName">
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="item-label">Industry</div>
+            <div class="item-value">
+              <span class="view-mode" data-field="industry"></span>
+              <div class="edit-mode" style="display: none;">
+                <select class="form-control" name="industry" id="industry">
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Agriculture">Agriculture</option>
+                  <option value="Automotive">Automotive</option>
+                  <option value="Banking">Banking</option>
+                  <option value="Construction">Construction</option>
+                  <option value="Education">Education</option>
+                  <option value="Energy">Energy</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Hospitality">Hospitality</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Insurance">Insurance</option>
+                  <option value="Media">Media</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Telecommunications">Telecommunications</option>
+                  <option value="Transportation">Transportation</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="item-label">Country</div>
+            <div class="item-value">
+              <span class="view-mode" data-field="country"></span>
+              <div class="edit-mode" style="display: none;">
+                <select class="form-control" name="country" id="country">
+                  <option value="Malaysia">Malaysia</option>
+                  <option value="Singapore">Singapore</option>
+                  <option value="Thailand">Thailand</option>
+                  <option value="Indonesia">Indonesia</option>
+                  <option value="Vietnam">Vietnam</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="section-title">
+          <i class="fas fa-address-card"></i>
+          Contact Information
+        </div>
+
+        <div class="info-section">
+          <div class="info-item">
+            <div class="item-label">Email</div>
+            <div class="item-value">
+              <span class="view-mode" data-field="email"></span>
+              <div class="edit-mode" style="display: none;">
+                <input type="email" class="form-control" name="email" id="email">
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="item-label">Phone</div>
+            <div class="item-value">
+              <span class="view-mode" data-field="phone"></span>
+              <div class="edit-mode" style="display: none;">
+                <input type="tel" class="form-control" name="phone" id="phone">
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="item-label">Address</div>
+            <div class="item-value">
+              <span class="view-mode" data-field="address"></span>
+              <div class="edit-mode" style="display: none;">
+                <textarea class="form-control" name="address" id="address" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions" style="display: none;">
+          <button type="button" class="btn btn-secondary" onclick="toggleEditMode()">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveChanges()">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/company-settings.js"></script>
+<script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %} 

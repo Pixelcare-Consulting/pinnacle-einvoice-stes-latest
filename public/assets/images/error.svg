@@ -1,0 +1,10 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .error-bg { fill: #f8f9fa; }
+        .primary { fill: #0d6efd; }
+        .secondary { fill: #6c757d; }
+    </style>
+    <rect class="error-bg" x="0" y="0" width="400" height="300" rx="15"/>
+    <circle class="secondary" cx="200" cy="120" r="60" opacity="0.1"/>
+    <path class="primary" d="M200 70v100M200 190v20" stroke-width="12" stroke-linecap="round"/>
+</svg> 

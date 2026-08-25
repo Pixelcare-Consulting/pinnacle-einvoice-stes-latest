@@ -1,0 +1,3538 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+
+<title>Outbound - eInvoice Portal</title>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link href="/assets/css/pages/inbound/card.css" rel="stylesheet">
+<link href="/assets/css/pages/inbound/notice.css" rel="stylesheet">
+
+
+<link href="/assets/css/pages/inbound/validation-modal.css" rel="stylesheet">
+<link href="/assets/css/pages/inbound/inbound-modal.css" rel="stylesheet">
+<!-- Template Main CSS Files -->
+<link href="/assets/css/pages/outbound/outbound-table.css" rel="stylesheet">
+
+<script src="/assets/js/config/validation-translations.js"></script>
+
+<style>
+/* TIN Validation Modal Styles */
+#tinValidationModal .modal-dialog {
+    max-width: 1000px; /* Increased from 900px */
+}
+
+#tinValidationModal .modal-content {
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+}
+
+#tinValidationModal .modal-header {
+    background-color: #0a3d8a;
+    color: white;
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+#tinValidationModal .modal-header .btn-close {
+    color: white;
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+#tinValidationModal .modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+#validationResultSection {
+    min-height: 500px;
+    position: relative;
+    background: #f8f9fa;
+}
+
+#emptyResultState {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+}
+
+.validation-status-badge .badge {
+    width: 80px;
+    height: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeInScale 0.6s ease-out;
+}
+
+.validation-status-badge .badge i {
+    font-size: 2.5rem;
+}
+
+/* Success checkmark animation */
+.success-checkmark {
+    animation: fadeIn 0.8s ease-out 0.3s both;
+}
+
+.checkmark {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawCheck 1.2s ease-out forwards;
+}
+
+@keyframes drawCheck {
+    from {
+        stroke-dashoffset: 100;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#validationResultContent .card {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+    animation: slideUp 0.5s ease-out 0.2s both;
+}
+
+#validationResultContent .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#validationResultContent .card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+#validationResultContent .list-group-item {
+    transition: background-color 0.2s ease;
+    padding: 0.8rem 1.25rem;
+}
+
+#validationResultContent .list-group-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.btn-lhdn {
+    background-color: #0a3d8a;
+    border-color: #0a3d8a;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    font-weight: 500;
+    padding: 0.6rem 1.5rem;
+    border-radius: 0.375rem;
+}
+
+.btn-lhdn:hover {
+    background-color: #0f2952;
+    border-color: #0f2952;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(26, 58, 108, 0.25);
+}
+
+.btn-lhdn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.6s ease;
+}
+
+     /* Tutorial Modal Styles */
+     .tutorial-content {
+        position: relative;
+    }
+    
+    .tutorial-progress {
+        padding: 15px 15px 5px;
+        background-color: #f8f9fa;
+    }
+    
+    .step-indicators {
+        margin-top: 10px;
+    }
+    
+    .step-dot {
+        width: 12px;
+        height: 12px;
+        background-color: #dee2e6;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .step-dot.active {
+        background-color: #0d6efd;
+        transform: scale(1.2);
+    }
+    
+    .tutorial-step {
+        display: none;
+    }
+    
+    .tutorial-step.active {
+        display: block;
+    }
+    
+    .step-content {
+        min-height: 300px;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    
+    .step-image img {
+        max-height: 200px;
+        object-fit: contain;
+        border: 1px solid #dee2e6;
+    }
+    
+    /* Highlight elements during tutorial */
+    .tutorial-highlight {
+        position: relative;
+        z-index: 1060;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.5), 0 0 15px rgba(0, 0, 0, 0.3) !important;
+        border-radius: 4px;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    /* Tutorial tip styles */
+    .tutorial-tip {
+        background-color: #e7f5ff;
+        border-left: 4px solid #0d6efd;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+    }
+    
+    .tutorial-note {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+    }
+    
+    /* Modal header styling */
+    #tutorialModal .modal-header {
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    }
+    
+    /* Progress bar styling */
+    #tutorialModal .progress {
+        height: 8px;
+        border-radius: 4px;
+        background-color: #e9ecef;
+    }
+    
+    #tutorialModal .progress-bar {
+        background: linear-gradient(90deg, #0d6efd, #0a58ca);
+        transition: width 0.5s ease;
+    }
+
+    /* Guided Tour Styles */
+    .guided-tour-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(1px);
+        z-index: 1050;
+        display: none;
+    }
+    
+    /* Prevent scrolling during tutorial */
+    body.tour-active {
+        overflow: hidden !important;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .guided-tour-tooltip {
+        position: fixed;
+        width: min(360px, 90vw);
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        z-index: 1060;
+        display: none;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        --arrow-position: 50%;
+        max-height: min(600px, 90vh);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Header styling */
+    .tooltip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        flex-shrink: 0;
+    }
+    
+    .tooltip-step-indicator {
+        font-size: 14px;
+        font-weight: 600;
+        color: #0d6efd;
+        background-color: rgba(13, 110, 253, 0.1);
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+    
+    .tooltip-close-btn {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        transition: all 0.2s;
+    }
+    
+    .tooltip-close-btn:hover {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #495057;
+    }
+    
+    /* Body styling */
+    .tooltip-body {
+        padding: 20px;
+        overflow-y: auto;
+        flex-grow: 1;
+        min-height: 100px;
+        max-height: calc(90vh - 180px);
+    }
+    
+    .tooltip-title {
+        font-size: clamp(16px, 4vw, 18px);
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 16px;
+    }
+    
+    .tooltip-content {
+        font-size: clamp(13px, 3.5vw, 14px);
+        line-height: 1.6;
+        color: #495057;
+    }
+    
+    .tooltip-content p {
+        margin-bottom: 12px;
+    }
+    
+    .tooltip-content ul, .tooltip-content ol {
+        padding-left: 20px;
+        margin-bottom: 12px;
+    }
+    
+    .tooltip-content li {
+        margin-bottom: 6px;
+    }
+    
+    /* Progress styling */
+    .tooltip-progress {
+        padding: 12px 20px;
+        background: #fff;
+        border-top: 1px solid #eee;
+        position: sticky;
+        bottom: 56px;
+        z-index: 3;
+        flex-shrink: 0;
+    }
+    
+    .tooltip-progress .progress {
+        height: 4px;
+        border-radius: 2px;
+        background-color: #e9ecef;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+    
+    .tooltip-progress .progress-bar {
+        background: linear-gradient(90deg, #0d6efd, #6610f2);
+        transition: width 0.5s ease;
+    }
+    
+    .step-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #dee2e6;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .step-dot.active {
+        background-color: #0d6efd;
+        transform: scale(1.3);
+    }
+    
+    /* Footer styling */
+    .tooltip-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #eee;
+        position: sticky;
+        bottom: 0;
+        z-index: 3;
+        flex-shrink: 0;
+        height: 56px;
+    }
+    
+    .tooltip-btn {
+        border: none;
+        background: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: clamp(12px, 3.5vw, 14px);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+        min-width: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+    
+    .tooltip-btn-prev {
+        color: #6c757d;
+        background-color: #f8f9fa;
+    }
+    
+    .tooltip-btn-prev:hover:not(:disabled) {
+        background-color: #e9ecef;
+    }
+    
+    .tooltip-btn-prev:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .tooltip-btn-skip {
+        color: #dc3545;
+        background-color: #fff;
+        border: 1px solid #dc3545;
+    }
+    
+    .tooltip-btn-skip:hover {
+        background-color: #dc3545;
+        color: #fff;
+    }
+    
+    .tooltip-btn-next {
+        color: #fff;
+        background-color: #0d6efd;
+        border-radius: 8px;
+        padding: 8px 20px;
+        min-width: 80px;
+    }
+    
+    .tooltip-btn-next:hover {
+        background-color: #0b5ed7;
+    }
+    
+    /* Highlight elements during tutorial */
+    .tour-highlight {
+        position: relative !important;
+        z-index: 1055 !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.4),
+                   0 0 15px 5px rgba(13, 110, 253, 0.2) !important;
+        border-radius: 4px !important;
+        animation: glow-highlight 2s infinite !important;
+        isolation: isolate;
+    }
+    
+    /* Row highlighting for table rows */
+    .tour-highlight-row {
+        position: relative !important;
+        z-index: 1054 !important;
+        background-color: rgba(13, 110, 253, 0.04) !important;
+    }
+    
+    /* Special handling for table cells */
+    .outbound-table td.tour-highlight,
+    .outbound-table th.tour-highlight {
+        position: relative !important;
+        z-index: 1056 !important;
+        background-color: rgba(255, 255, 255, 0.98) !important;
+        animation: glow-highlight 2s infinite;
+    }
+    
+    /* Special handling for action buttons */
+    .tour-highlight .outbound-action-btn {
+        position: relative !important;
+        z-index: 1057 !important;
+        animation: glow-highlight 2s infinite;
+    }
+    
+    /* Special handling for checkboxes */
+    .tour-highlight .outbound-checkbox {
+        position: relative !important;
+        z-index: 1057 !important;
+        animation: glow-highlight 2s infinite;
+    }
+    
+/* Enhanced UI Styles */
+.statistics-section .card,
+.quick-actions-section .card,
+.enhanced-filter-section .card,
+.document-preview-section .card {
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.statistics-section .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.quick-actions-section .btn {
+    transition: all 0.2s ease;
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.quick-actions-section .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.enhanced-filter-section .form-floating > .form-control,
+.enhanced-filter-section .form-floating > .form-select {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 1rem 0.75rem;
+}
+
+.enhanced-filter-section .form-floating > label {
+    padding: 1rem 0.75rem;
+}
+
+.document-preview-section .document-info {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.document-preview-section .info-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.document-preview-section .info-item:last-child {
+    border-bottom: none;
+}
+
+.document-preview-frame {
+    min-height: 300px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Animation for refresh icon */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Chart container styles */
+.statistics-section canvas {
+    max-height: 200px;
+}
+
+/* Card title styles */
+.card-title {
+    color: #495057;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick action button styles */
+.quick-actions-section .btn i {
+    font-size: 1rem;
+}
+
+/* Enhanced filter styles */
+.enhanced-filter-section .btn-link {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.enhanced-filter-section .btn-link:hover {
+    color: #495057;
+}
+
+/* Document preview styles */
+.document-preview-section .badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+}
+
+.document-preview-section .fw-medium {
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .statistics-section .card {
+        margin-bottom: 1rem;
+    }
+    
+    .quick-actions-section .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .enhanced-filter-section .form-floating {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Filter Styles */
+.filter-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper .form-control {
+    padding-left: 2.5rem;
+    height: 48px;
+    border-radius: 24px;
+    border: 2px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.search-wrapper .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.15);
+}
+
+
+.quick-filters .btn.active {
+    background-color: #0a3d8a;
+    color: white;
+    box-shadow: 0 2px 4px rgba(13,110,253,0.2);
+}
+
+/* Filter Tags */
+.active-filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.filter-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-size: 0.875rem;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.filter-tag:hover {
+    background-color: #e9ecef;
+}
+
+.filter-tag .close-btn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 0 0 8px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.filter-tag .close-btn:hover {
+    color: #dc3545;
+}
+
+/* Advanced Filters */
+.advanced-filters-content {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.advanced-filters-content .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.advanced-filters-content .form-control,
+.advanced-filters-content .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+}
+
+.advanced-filters-content .input-group-text {
+    border: 2px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+/* Loading State */
+.filter-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+}
+
+.filter-loading.active {
+    display: flex;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .quick-filters {
+        flex-wrap: wrap;
+    }
+    
+    .quick-filters .btn {
+        flex: 1 1 auto;
+        min-width: calc(33.333% - 8px);
+        margin-bottom: 8px;
+    }
+    
+    .quick-filters .ms-auto {
+        width: 100%;
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+[aria-expanded="false"] .toggle-icon {
+    transform: rotate(180deg);
+}
+#consolidationDetails {
+    transition: all 0.3s ease;
+}
+.btn-outline-secondary:hover .toggle-icon {
+    color: #6c757d;
+}
+
+.fs-7 {
+    font-size: 0.875rem;
+}
+.filter-note .card {
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+}
+.filter-note .list-unstyled li {
+    margin-bottom: 0.25rem;
+}
+.filter-note .list-unstyled li:last-child {
+    margin-bottom: 0;
+}
+.filter-note .btn-link {
+    text-decoration: none;
+}
+.filter-note .btn-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+.filter-note .alert-light {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.consolidation-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.info-banner {
+    padding: 0.75rem;
+    background: rgba(13, 110, 253, 0.04);
+    border-radius: 8px;
+}
+
+.content-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.content-card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-content {
+    padding: 1rem;
+}
+
+.detail-item, .format-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    background: #fff;
+}
+
+.detail-item:last-child, .format-item:last-child {
+    margin-bottom: 0;
+}
+
+.detail-item .label {
+    color: #6c757d;
+    min-width: 100px;
+    font-size: 0.875rem;
+}
+
+.detail-item .value {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.875rem;
+}
+
+.format-item {
+    font-size: 0.875rem;
+}
+
+.format-item i {
+    font-size: 1rem;
+}
+
+.badge.rounded-pill {
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-link:hover {
+    opacity: 0.75;
+}
+
+@media (max-width: 768px) {
+    .consolidation-section {
+        padding: 1rem;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .detail-item .label {
+        min-width: auto;
+    }
+}
+
+.middleware-disclaimer {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    /* background: linear-gradient(to right, rgba(13, 110, 253, 0.03), rgba(13, 110, 253, 0.01)); */
+    border-radius: 8px;
+    border: 1px solid rgba(13, 110, 253, 0.1);
+    position: relative;
+}
+
+.disclaimer-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+
+.disclaimer-icon i {
+    font-size: 1.25rem;
+    color: #0d6efd;
+}
+
+.disclaimer-content {
+    flex: 1;
+}
+
+.disclaimer-content h6 {
+    color: #0d6efd;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.disclaimer-content ul {
+    margin-top: 0.25rem;
+}
+
+.disclaimer-content ul li {
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.disclaimer-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 4px;
+    color: #856404;
+    font-size: 0.75rem;
+}
+
+.disclaimer-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 4px;
+    color: #084298;
+    font-size: 0.75rem;
+}
+
+.disclaimer-info i {
+    font-size: 0.875rem;
+}
+
+.disclaimer-note i {
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .middleware-disclaimer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .disclaimer-content ul {
+        text-align: left;
+    }
+
+    .disclaimer-note {
+        text-align: left;
+    }
+}
+
+/* Progress Modal Styles */
+#submissionProgressModal .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+#submissionProgressModal .modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+}
+
+#submissionProgressModal .modal-body {
+    padding: 1.5rem;
+}
+
+#submissionProgress .progress {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #e9ecef;
+    margin-bottom: 1rem;
+}
+
+#submissionProgress .progress-bar {
+    background: linear-gradient(90deg, #0d6efd, #0a58ca);
+    border-radius: 5px;
+}
+
+#submissionProgress .submission-status {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+#submissionProgress .documents-status {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#submissionProgress .doc-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+
+#submissionProgress .doc-status i {
+    font-size: 1rem;
+}
+
+/* Submission Summary Styles */
+.submission-summary {
+    text-align: left;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.submission-summary p {
+    margin-bottom: 0.5rem;
+}
+
+.submission-summary p:last-child {
+    margin-bottom: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Selected Documents List Styles */
+.selected-docs-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.selected-docs-list:empty::after {
+    content: 'No documents selected';
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Validation Button Styles */
+.validate-tin-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.validate-tin-btn:hover {
+    background-color: #dee2e6;
+    border-color: #ced4da;
+}
+
+.validate-tin-btn i {
+    margin-right: 0.25rem;
+}
+
+/* Validation Result Styles */
+.validation-result {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.validation-result.success {
+    background-color: rgba(25, 135, 84, 0.1);
+}
+
+.validation-result.error {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.validation-result i {
+    font-size: 1.5rem;
+}
+
+.validation-result.success i {
+    color: #198754;
+}
+
+.validation-result.error i {
+    color: #dc3545;
+}
+
+.result-details h6 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.result-details p {
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+}
+
+.error-details {
+    color: #dc3545;
+    font-size: 0.875rem;
+}
+
+/* Summary Stats Styles */
+.summary-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+}
+
+.stat-item.success {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.stat-item.error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.validate-tin-btn {
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.validate-tin-btn:hover {
+    background-color: #dee2e6;
+    border-color: #ced4da;
+}
+
+.validate-tin-btn i {
+    font-size: 1rem;
+}
+
+.status-cell .badge {
+    font-size: 0.75rem;
+    padding: 0.25em 0.5em;
+}
+
+/* Validation Section Styles */
+.quick-validation-form {
+    background-color: #f8f9fa;
+}
+
+.quick-validation-form .form-floating > .form-control,
+.quick-validation-form .form-floating > .form-select {
+    height: calc(2.5rem + 2px);
+    line-height: 1.25;
+    padding: 0.5rem 0.75rem;
+}
+
+.quick-validation-form .form-floating > label {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.quick-validation-form .form-control:focus,
+.quick-validation-form .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+}
+
+.history-item {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item .tin-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-item .tin-number {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-item .tin-details {
+    font-size: 0.75rem;
+    color: #6c757d;
+    line-height: 1.2;
+}
+
+.history-item .validation-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.history-item .validation-status.valid {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.history-item .validation-status.invalid {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+#clearHistory {
+    color: #6c757d;
+    transition: color 0.2s;
+}
+
+#clearHistory:hover {
+    color: #dc3545;
+}
+
+.validation-history {
+    background: #fff;
+}
+
+.alert-info {
+    background-color: rgba(13, 110, 253, 0.05);
+    border: none;
+}
+
+.outbound-btn-lhdn:hover {
+  background-color: #0f2952;
+  border-color: #0f2952;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(26, 58, 108, 0.3);
+}
+
+.outbound-btn-lhdn:hover:before {
+  left: 100%;
+}
+
+.outbound-btn-lhdn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(26, 58, 108, 0.2);
+}
+
+.outbound-btn-lhdn i {
+  transition: transform 0.3s ease;
+}
+
+.outbound-btn-lhdn:hover i {
+  transform: translateX(3px);
+}
+
+/* Consolidation Header Styles */
+#consolidationHeader {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+#consolidationHeader:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#consolidationDetails {
+    transition: all 0.3s ease-in-out;
+}
+
+#consolidationDetails.collapse:not(.show) {
+    display: none;
+}
+
+#consolidationDetails.collapsing {
+    height: 0;
+    overflow: hidden;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+#toggleConsolidation[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+}
+
+.requirements-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,.2) transparent;
+}
+
+.requirements-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.requirements-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.requirements-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.2);
+    border-radius: 3px;
+}
+
+.requirements-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,.3);
+}
+
+.bg-light {
+    background-color: rgba(248,249,250,.5) !important;
+}
+
+.table-sm td {
+    padding: 0.25rem;
+}
+
+.additional-details-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,.2) transparent;
+    max-height: 20px; /* Reduced from 300px */
+    overflow-y: auto;
+}
+
+.additional-details-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.additional-details-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.additional-details-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.2);
+    border-radius: 3px;
+}
+
+.additional-details-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,.3);
+}
+
+.section-container {
+    transition: all 0.2s ease;
+    margin-bottom: 0.2rem; /* Reduced from default */
+    padding: 0.75rem !important; /* Reduced padding */
+}
+
+.section-container:last-child {
+    margin-bottom: 0;
+}
+
+.section-container .table-sm td {
+    padding: 0.25rem 0.5rem; /* Reduced padding */
+}
+
+.requirements-section {
+    margin-bottom: 0.5rem; /* Reduced margin */
+}
+
+.requirements-section .bg-white {
+    padding: 0.75rem !important; /* Reduced padding */
+}
+
+.requirements-list.small {
+    margin-bottom: 0; /* Remove bottom margin */
+}
+
+.requirements-list.small .d-flex {
+    margin-bottom: 0.25rem; /* Reduced spacing between items */
+}
+
+.requirements-list.small .d-flex:last-child {
+    margin-bottom: 0;
+}
+
+#flatFileUploadModal .modal-body {
+    padding: 0 !important;
+}
+
+.upload-dropzone {
+    padding: 1rem; /* Reduced padding */
+}
+
+.section-container h6 {
+    font-size: 0.875rem; /* Smaller heading size */
+    margin-bottom: 0.5rem; /* Reduced margin */
+}
+
+.small {
+    font-size: 0.75rem !important; /* Slightly smaller text */
+}
+
+.section-container:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    color: navy;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, .125);
+}
+
+.accordion-button::after {
+    transition: transform 0.3s ease-in-out;
+}
+
+.accordion-button:not(.collapsed)::after {
+    transform: rotate(-180deg);
+}
+
+.accordion-collapse {
+    transition: all 0.3s ease-in-out;
+}
+
+.requirements-list i {
+    transition: transform 0.2s ease;
+}
+
+.requirements-list div:hover i {
+    transform: scale(1.2);
+}
+
+.accordion-item {
+    margin-bottom: 5px;
+    border-radius: 6px !important;
+    overflow: hidden;
+}
+
+.accordion-button {
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.accordion-button:hover {
+    background-color: #f0f0f0;
+}
+
+.accordion-body {
+    padding: 1.5rem;
+}
+
+.requirements-list span {
+    transition: color 0.2s ease;
+}
+
+.requirements-list div:hover span {
+    color: navy;
+}
+
+.drop-zone {
+    min-height: 200px;
+    border: 2px dashed #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.drop-zone.dragover {
+    border-color: #1e88e5;
+    background-color: rgba(30, 136, 229, 0.05);
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.requirements-section .accordion-button {
+    padding: 0.75rem 1rem;
+}
+
+.requirements-section .accordion-button:not(.collapsed) {
+    background-color: rgba(30, 136, 229, 0.05);
+    color: #1e88e5;
+}
+
+.requirements-section .accordion-body {
+    padding: 1rem;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-2 px-md-2 px-lg-2">
+    <!-- Toast container for notifications -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="validationToast" class="toast validation-toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="bi bi-shield-check me-2 text-primary"></i>
+                <strong class="me-auto">TIN Validation</strong>
+                <small>Just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                TIN details reused from history.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Welcome Card - Full width -->
+    <div class="profile-welcome-section mb-4">
+        <!-- Welcome Card content -->
+        <div class="profile-welcome-card">
+            <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <div class="welcome-icon">
+                <i class="bi bi-box-arrow-in-right"></i>
+                </div>
+                <div class="welcome-content">
+                    <h3 class="text-xl font-semibold text-white-800 md:text-2xl tracking-tight">Consolidation</h3>
+                            <p class="mb-0 cursor-pointer" data-bs-placement="bottom" data-bs-html="true" 
+                            title="">
+                    Manage and track your consolidated document submissions, including validation and submission status.
+                </p>
+                <!-- <button id="openTutorialBtn" class="btn btn-sm btn-outline-light mt-2">
+                    <i class="bi bi-question-circle me-1"></i> How to use this page
+                </button> -->
+                </div>
+            </div>
+            <div class="d-flex align-items-start">
+                <!-- Existing datetime section -->
+                <div class="welcome-datetime text-end">
+                <div class="current-time">
+                    <i class="bi bi-clock"></i>
+                    <span id="currentTime">00:00:00 AM</span>
+                </div>
+                <div class="current-date">
+                    <i class="bi bi-calendar3"></i>
+                    <span id="currentDate">Loading...</span>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+  
+        <!-- Content Section - With margins -->
+        <div class="content-section">
+      <!-- Cards Section -->
+      <div class="cards-container">
+        <!-- Invoices Card -->
+        <div class="info-card invoices-card">
+            <div class="card-info">
+                <div class="card-icon position-relative">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <div class="count-info">
+                    <div class="spinner-border text-primary loading-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h6 class="total-invoice-count" style="display: none;">0</h6>
+                    <span class="text-muted">Total</span>
+                </div>
+            </div>
+            <span class="card-title-new">INVOICES</span>
+        </div>
+
+        <!-- Valid Card -->
+        <div class="info-card valid-card">
+            <div class="card-info">
+                <div class="card-icon position-relative">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <div class="count-info">
+                    <div class="spinner-border text-success loading-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h6 class="total-submitted-count" style="display: none;">0</h6>
+                    <span class="text-muted">Total</span>
+                </div>
+            </div>
+            <span class="card-title-new">SUBMITTED</span>
+        </div>
+
+        <!-- Invalid Card -->
+        <div class="info-card invalid-card">
+            <div class="card-info">
+                <div class="card-icon position-relative">
+                    <i class="bi bi-file-earmark-excel-fill"></i>
+                </div>
+                <div class="count-info">
+                    <div class="spinner-border text-danger loading-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h6 class="total-invalid-count" style="display: none;">0</h6>
+                    <span class="text-muted">Total</span>
+                </div>
+            </div>
+            <span class="card-title-new">INVALID</span>
+        </div>
+         
+        <!-- PENDING Card -->
+        <div class="info-card pending-card">
+            <div class="card-info">
+                <div class="card-icon position-relative">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                </div>
+                <div class="count-info">
+                    <div class="spinner-border text-warning loading-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h6 class="total-queue-value" style="display: none;">0</h6>
+                    <span class="text-muted">Total</span>
+                </div>
+            </div>
+            <span class="card-title-new">PENDING</span>
+        </div>
+
+              <!-- Invalid Card -->
+       <div class="info-card cancelled-card">
+        <div class="card-info">
+            <div class="card-icon position-relative">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="count-info">
+                <div class="spinner-border text-warning loading-spinner" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h6 class="total-cancelled-count" style="display: none;">0</h6>
+                <span class="text-muted">Total</span>
+            </div>
+        </div>
+        <span class="card-title-new">CANCELLED</span>
+    </div>
+     
+    </div>
+
+ 
+
+    <!-- Statistics Section -->
+    <div class="statistics-section mb-4">
+      <div class="row">
+        <!-- Document Status Chart -->
+        <div class="col-md-3">
+          <div class="card shadow-sm h-100 ">
+            <div class="card-body">
+              <h6 class="card-title d-flex align-items-center mb-3 ">
+                <i class="bi bi-pie-chart-fill me-2"></i>
+                Document Status Distribution
+              </h6>
+              <div style="height: 200px; position: relative;">
+                <canvas id="documentStatusChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Validate TIN -->
+        <div class="col-md-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-title d-flex align-items-center mb-2">
+                        <i class="bi bi-shield-check me-2"></i>
+                        TIN Validation
+                        <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-html="true" 
+                           title="<div class='p-2'><strong>TIN Validation:</strong><br><small>Validate Tax Identification Numbers (TIN) before adding to invoice</small></div>"></i>
+                    </h6>
+
+                    <!-- Launch TIN Validation Modal Button -->
+                    <div class="text-center mb-3">
+                        <button class="btn btn-lhdn w-75" type="button" data-bs-toggle="modal" data-bs-target="#tinValidationModal">
+                            <i class="bi bi-shield-check me-2"></i>Validate New TIN
+                        </button>
+                        <div class="text-muted mt-2 small">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Validate business partner TINs before adding to invoices
+                        </div>
+                    </div>
+
+                    <!-- Recent Validations Preview Card -->
+                    <div class="validation-history border rounded">
+                        <div class="d-flex align-items-center justify-content-between p-2 border-bottom bg-light">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clock-history me-2"></i>
+                                <small class="fw-medium">Recent Validations</small>
+                                <i class="bi bi-info-circle ms-2 text-primary" style="font-size: 12px; cursor: pointer;" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-html="true" 
+                                   title="<div class='p-2 text-start'>
+                                           <strong>Validation Limits:</strong><br>
+                                           • 30-second cooldown between identical validations<br>
+                                           • Maximum 100 validations per session<br>
+                                           • Click on a validation to reuse its data
+                                         </div>">
+                                </i>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <div class="position-relative">
+                                    <input type="text" class="form-control form-control-sm" id="historySearchInput" placeholder="Search..." style="width: 150px;">
+                                    <i class="bi bi-search position-absolute" style="right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #6c757d;"></i>
+                                </div>
+                                <button class="btn btn-sm btn-link p-0" id="clearHistory">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="history-list" id="validationHistory" style="max-height: 150px; overflow-y: auto;">
+                            <!-- History items will be added here dynamically -->
+                            <div class="text-center text-muted py-2">
+                                <i class="bi bi-shield-check mb-1 d-block" style="font-size: 1.2rem;"></i>
+                                <small>No validation history yet</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LHDN Best Practice Note -->
+                    <div class="alert alert-info py-2 px-3 mt-2 mb-0">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-lightbulb me-2"></i>
+                            <small>
+                                <strong>LHDN Best Practice:</strong> Validate business partner TINs during onboarding.
+                            </small>
+                            <a href="https://www.newpages.net/validate-tax-payer" target="_blank" class="btn btn-link btn-sm ms-auto p-0" data-bs-toggle="tooltip" title="Alternative validation method">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Time Chart -->
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="card-title d-flex align-items-center mb-3">
+                <i class="bi bi-bar-chart-fill me-2"></i>
+                Submission Success Rate
+                <i class="bi bi-info-circle ms-2" data-bs-toggle="tooltip" data-bs-html="true" 
+                   title="<div class='p-2'>
+                           <strong>How Success Rate is Calculated:</strong><br>
+                           <small>Success Rate = (Submitted Documents / Total Documents) × 100<br>
+                           Total Documents = Submitted + Invalid + Pending</small>
+                         </div>"></i>
+              </h6>
+              <div class="validation-rate-container" style="height: 200px; position: relative;">
+                <div class="validation-stats mb-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Overall Success Rate</span>
+                    <span class="fw-bold success-rate" data-bs-toggle="tooltip" data-bs-html="true"
+                          title="<div class='p-2'>
+                                  <strong>Current Success Rate:</strong> 0%<br>
+                                  <small>Based on successfully validated documents out of total submissions</small>
+                                </div>">0%</span>
+                  </div>
+                  <div class="progress" style="height: 25px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" 
+                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+                <div class="validation-breakdown">
+                  <div class="breakdown-item mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="text-muted small">
+                        Submitted
+                        <i class="bi bi-info-circle-fill ms-1" data-bs-toggle="tooltip" data-bs-html="true"
+                           title="<div class='p-2'>
+                                   <strong>Submitted Documents:</strong><br>
+                                   • Successfully validated by LHDN<br>
+                                   • Meets all format requirements<br>
+                                   • Ready for submission
+                                 </div>"></i>
+                      </span>
+                      <span class="text-success small">0%</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" 
+                           aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="breakdown-item mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="text-muted small">
+                        Invalid
+                        <i class="bi bi-info-circle-fill ms-1" data-bs-toggle="tooltip" data-bs-html="true"
+                           title="<div class='p-2'>
+                                   <strong>Invalid Documents:</strong><br>
+                                   • Failed LHDN validation<br>
+                                   • Format or data issues detected<br>
+                                   • Requires correction and resubmission
+                                 </div>"></i>
+                      </span>
+                      <span class="text-danger small">0%</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                      <div class="progress-bar bg-danger" role="progressbar" style="width: 0%;" 
+                           aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="breakdown-item">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <span class="text-muted small">
+                        Pending
+                        <i class="bi bi-info-circle-fill ms-1" data-bs-toggle="tooltip" data-bs-html="true"
+                           title="<div class='p-2'>
+                                   <strong>Pending Documents:</strong><br>
+                                   • Awaiting LHDN validation<br>
+                                   • In processing queue<br>
+                                   • May take up to 24 hours
+                                 </div>"></i>
+                      </span>
+                      <span class="text-warning small">0%</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                      <div class="progress-bar bg-warning" role="progressbar" style="width: 0%;" 
+                           aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="calculation-note mt-3">
+                  <small class="text-muted">
+                    <!-- <i class="bi bi-calculator me-1"></i> -->
+                    <!-- <span class="loading-text-outbound">Loading statistics...</span> -->
+                    <span class="stats-text" style="display: none;">Percentages are calculated based on total document count</span>
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+   
+    </div>
+            <!-- Table Section -->
+            <div class="table-container-wrapper">
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-header-content">
+                            <h2 class="table-title">Consolidated Document List</h2>
+                            <div class="table-actions">
+                                      <button class="btn outbound-action-btn submit" id="openFlatFileModalBtn" data-bs-toggle="modal" data-bs-target="#flatFileUploadModal" title="If you don't have custom integration, you can upload your own flat file">
+                                                        <i class="bi bi-file-earmark-text me-1"></i>Upload File
+                                                    </button>
+                            </div>
+                        </div>              
+                    </div>
+                    <div class="table-controls">
+                        <div class="d-flex align-items-center gap-1">
+                            <div class="modern-length">
+                                <!-- Length control will be inserted by DataTables -->
+                            </div>
+                            <div class="modern-search">
+                                <!-- Search control will be inserted by DataTables -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-body-container">
+                        <div class="responsive-table-container">
+                            <div class="table-section">
+                                <div class="outbound-table-container">
+                                    
+                                    <div>
+                                        <!-- Primary Filters Row -->
+                                        <div class="row g-3 mb-3">
+                                            <!-- Global Search -->
+                                            <div class="col-md-4">
+                                                <div class="search-wrapper position-relative">
+                                                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                                    <input type="text" class="form-control form-control-lg ps-5" id="globalSearch" 
+                                                        placeholder="Search documents...">
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Quick Filters -->
+                                            <div class="col-md-8">
+                                                <div class="quick-filters d-flex gap-2">
+                                                    <!-- <button class="btn outbound-action-btn submit" data-bs-toggle="modal" data-bs-target="#consolidatedSubmitModal">
+                                                        <i class="bi bi-file-earmark-arrow-up me-1"></i>Bulk Submit
+                                                    </button> -->
+                                                    <button class="btn outbound-action-btn submit" data-filter="all">
+                                                        <i class="bi bi-grid-3x3-gap-fill me-1"></i>All
+                                                    </button>
+                                          
+                                                    <button class="btn outbound-action-btn submit active" data-filter="pending">
+                                                        <i class="bi bi-clock-history me-1"></i>Pending
+                                                    </button>
+                                              
+                                                </div>
+                                            </div>
+                                        </div>
+                    
+                                    </div>
+                                    <!-- End of new filter section -->
+                                  
+                    
+                                        <table id="invoiceTable" class="outbound-table-responsive">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                    <input type="checkbox" class="outbound-checkbox" id="selectAll">
+                                                    </th>
+                                                    <th>#</th>
+                                                    <th>INVOICE NO.</th>
+                                                    <th>COMPANY</th>
+                                                    <th>SUPPLIER</th>
+                                                    <th>RECEIVER</th>
+                                                    <th>DATE</th>
+                                                    <th>INV. DATE INFO</th>
+                                                    <th>STATUS</th>
+                                                    <th>SOURCE</th>
+                                                    <th>TOTAL AMOUNT</th>
+                                                    <th class="outbound-action-column">ACTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            
+                                            </tbody>
+                                        </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Loading Overlay -->
+                        <div id="tableLoadingOverlay" class="table-loading-overlay d-none">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Fetching documents...</p>
+                        </div>
+                    </div>
+                    
+                    
+       
+                    <div class="table-footer">
+                        <div class="disclaimer-note mt-2">
+                            <i class="bi bi-exclamation-circle"></i>
+                            <span>For a smooth submission process, verify all required fields are complete and accurate on your ERP System Before Submitting to LHDN. </br>
+                            <span>Pinnacle e-Invoice Portal performs initial validations for Mandatory fields before proceeding to LHDN submission</span>
+                            <a href="/help" class="ms-1 text-decoration-none" target="_blank">
+                                <i class="bi bi-question-circle" data-bs-toggle="tooltip" title="Click for help documentation"></i>
+                            </a>
+                        </div>
+                        <div class="disclaimer-note mt-2" style="background: rgba(220, 53, 69, 0.1); color: #842029;">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span><strong>Important Disclaimer:</strong> <br>
+                            Our platform provides validation services, but the ultimate responsibility for data accuracy lies with the user. 
+                            <br>
+                            We are not liable for any consequences, penalties, or issues arising from submission of incomplete, inaccurate or non-compliant data to LHDN.</span>
+                        </div>
+
+                        <!-- Consolidation Guidelines -->
+                        <div class="mt-3 mb-4">
+                            <div class="middleware-disclaimer mb-3">
+                                <div class="disclaimer-icon">
+                                    <i class="bi bi-info-circle-fill text-primary"></i>
+                                </div>
+                                <div class="disclaimer-content">
+                                    <h6 class="mb-0 text-primary fw-bold">Important Information About Consolidation</h6>
+                                    <p class="mb-2">This section outlines critical requirements for LHDN e-Invoice consolidation. Please review carefully before proceeding.</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between mb-3" 
+                                 id="consolidationHeader">
+                                <div class="d-flex align-items-center">
+                                    <span class="badge rounded-pill bg-primary me-2" style="padding: 8px;" data-bs-toggle="tooltip" title="Consolidation allows grouping multiple invoices into a single submission">
+                                        <i class="bi bi-boxes"></i>
+                                    </span>
+                                    <h6 class="mb-0 text-primary fw-bold">LHDN e-Invoice Consolidation Requirements <i class="bi bi-info-circle-fill ms-1 small" data-bs-toggle="tooltip" data-bs-html="true" 
+                                        title="<div class='p-2'>
+                                            <strong>Before Submitting a Consolidation:</strong><br>
+                                            • Must Group multiple invoices together<br>
+                                            • Must meet LHDN requirements<br>
+                                            • Streamlines submission process</div>">
+                                        </i>
+                                        </h6>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <a href="https://www.hasil.gov.my/media/uwwehxwq/irbm-e-invoice-specific-guideline.pdf" 
+                                       target="_blank" 
+                                       class="btn btn-sm btn-link text-primary p-0 d-flex align-items-center hover-effect"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-html="true"
+                                       title="<div class='p-2'>
+                                               <strong>LHDN Official Guidelines:</strong><br>
+                                               • Review consolidation requirements<br>
+                                               • Ensure compliance with LHDN standards<br>
+                                               • Understand submission protocols
+                                             </div>">
+                                        <i class="bi bi-file-pdf fs-5"></i>
+                                        <span class="ms-1 small">LHDN Guidelines</span>
+                                    </a>
+                                    <button class="btn btn-sm btn-link text-primary p-0 d-flex align-items-center" 
+                                            type="button" 
+                                            id="toggleConsolidation"
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#consolidationDetails" 
+                                            aria-expanded="false" 
+                                            aria-controls="consolidationDetails">
+                                        <i class="bi bi-chevron-down toggle-icon fs-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="collapse" id="consolidationDetails">
+                                <div class="consolidation-content bg-white p-3 border rounded mt-2">
+                                    <div class="row g-3">
+                                        <!-- Buyer's Details -->
+                                        <div class="col-md-6">
+                                            <div class="content-card h-100" style="border: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                                <div class="card-header bg-light">
+                                                    <i class="bi bi-person-badge text-primary"></i>
+                                                    <span class="fw-bold">Buyer's Details</span>
+                                                </div>
+                                                <div class="card-content">
+                                                    <div class="detail-item">
+                                                        <span class="label">Name</span>
+                                                        <span class="value">"General Public"</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <span class="label">TIN</span>
+                                                        <span class="value">"EI00000000010"</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <span class="label">Registration/ID</span>
+                                                        <span class="value">"NA"</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <span class="label">Other Details</span>
+                                                        <span class="value text-muted">Address/Contact/SST: "NA"</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Description Format -->
+                                        <div class="col-md-6">
+                                            <div class="content-card h-100" style="border: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                                <div class="card-header bg-light">
+                                                    <i class="bi bi-list-check text-primary"></i>
+                                                    <span class="fw-bold">Description Format</span>
+                                                </div>
+                                                <div class="card-content">
+                                                    <div class="format-item">
+                                                        <i class="bi bi-check2 text-success"></i>
+                                                        <span>Summary per receipt as line items (Use Classification Code: 004)</span>
+                                                    </div>
+                                                    <div class="format-item">
+                                                        <i class="bi bi-check2 text-success"></i>
+                                                        <span>Continuous receipt number chain</span>
+                                                    </div>
+                                                    <div class="format-item">
+                                                        <i class="bi bi-check2 text-success"></i>
+                                                        <span>Branch consolidated submissions</span>
+                                                    </div>
+                                                    <div class="format-item text-danger">
+                                                        <i class="bi bi-exclamation-circle"></i>
+                                                        <span>Receipt reference numbers required</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Get the consolidation elements
+                                const toggleBtn = document.getElementById('toggleConsolidation');
+                                const consolidationHeader = document.getElementById('consolidationHeader');
+                                const consolidationDetails = document.getElementById('consolidationDetails');
+                                
+                                if (toggleBtn && consolidationDetails) {
+                                    // Initialize collapse
+                                    const bsCollapse = new bootstrap.Collapse(consolidationDetails, {
+                                        toggle: false
+                                    });
+                                    
+                                    // Add hover effects to header
+                                    consolidationHeader.addEventListener('mouseenter', function() {
+                                        this.style.transform = 'translateY(-2px)';
+                                        this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                                        this.style.cursor = 'pointer';
+                                    });
+                                    
+                                    consolidationHeader.addEventListener('mouseleave', function() {
+                                        this.style.transform = 'translateY(0)';
+                                        this.style.boxShadow = 'none';
+                                    });
+
+                                    // Handle header click
+                                    consolidationHeader.addEventListener('click', function(e) {
+                                        // Don't trigger if clicking the PDF link or its children
+                                        if (!e.target.closest('a') && !e.target.closest('button')) {
+                                            bsCollapse.toggle();
+                                        }
+                                    });
+
+                                    // Handle toggle button click
+                                    toggleBtn.addEventListener('click', function(e) {
+                                        e.stopPropagation(); // Prevent event bubbling
+                                        bsCollapse.toggle();
+                                    });
+
+                                    // Handle collapse events
+                                    consolidationDetails.addEventListener('show.bs.collapse', function () {
+                                        const icon = toggleBtn.querySelector('.toggle-icon');
+                                        if (icon) {
+                                            icon.style.transform = 'rotate(180deg)';
+                                        }
+                                    });
+
+                                    consolidationDetails.addEventListener('hide.bs.collapse', function () {
+                                        const icon = toggleBtn.querySelector('.toggle-icon');
+                                        if (icon) {
+                                            icon.style.transform = 'rotate(0deg)';
+                                        }
+                                    });
+
+                                    // Add transition to icon
+                                    const icon = toggleBtn.querySelector('.toggle-icon');
+                                    if (icon) {
+                                        icon.style.transition = 'transform 0.3s ease';
+                                    }
+                                }
+                            });
+                        </script>
+
+         
+                        <!-- Add Flat File Upload Modal -->
+                        <div class="modal fade" id="flatFileUploadModal" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="flatFileUploadModalLabel">
+                                            <i class="bi bi-file-earmark-text me-2"></i>
+                                            Upload Flat File for Consolidation
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body p-0">
+                                        <div class="row g-0">
+                                            <!-- Left Column - Upload Form -->
+                                            <div class="col-md-5 border-end">
+                                                <div class="p-4">
+                                                    <div class="text-center mb-2">
+                                                      <i class="bi bi-file-earmark-text h1 mb-1 d-block opacity-50"></i>
+                                                      <h6 class="mb-1">Consolidated e-Invoice Upload</h6>
+                                                    </div>
+
+                                                    <!-- Download Template Button -->
+                                                    <div class="text-center mb-3">
+                                                        <button class="btn btn-outline-primary btn-sm" id="downloadTemplateBtn">
+                                                            <i class="bi bi-download me-1"></i>
+                                                            Download Template (.xls)
+                                                        </button>
+                                                        <div class="text-muted small mt-1">
+                                                            Use this template for proper formatting
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Custom Download Template Popup -->
+                                                    <div class="position-fixed top-50 start-50 translate-middle bg-white rounded-3 shadow" 
+                                                         id="downloadPopup" 
+                                                         style="width: 380px; z-index: 1060; display: none; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);">
+                                                        <div class="p-3">
+                                                            <!-- Header -->
+                                                             
+                                                            <div class="d-flex align-items-center mb-3">
+                                                                <div class="flex-grow-1">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <i class="bi bi-file-text me-2"></i>
+                                                                        <span>Select e-Invoice Type</span>
+                                                                    </div>
+                                                                </div>
+                                                                <button type="button" class="btn-close" onclick="closeDownloadPopup()"></button>
+                                                            </div>
+
+                                                            <!-- Content -->
+                                                            <div>
+                                                                <select class="form-select mb-2" id="downloadTaxTypeSelect">
+                                                                    <option value="01" selected>01 - Invoice</option>
+                                                                    <option value="02">02 - Credit Note</option>
+                                                                    <option value="03">03 - Debit Note</option>
+                                                                    <option value="04">04 - Refund Note</option>
+                                                                    <option value="11">11 - Self-billed Invoice</option>
+                                                                    <option value="12">12 - Self-billed Credit Note</option>
+                                                                    <option value="13">13 - Self-billed Debit Note</option>
+                                                                    <option value="14">14 - Self-billed Refund Note</option>
+                                                                </select>
+
+                                                                <!-- Info Text -->
+                                                                <div class="d-flex align-items-start rounded p-2 mb-3" 
+                                                                     style="background-color: #E8F0FE;">
+                                                                    <i class="bi bi-info-circle me-2" style="color: #1967D2;"></i>
+                                                                    <span class="small" style="color: #1967D2;" id="downloadTaxTypeInfo">Standard invoice template for regular transactions.</span>
+                                                                </div>
+
+                                                                <!-- File Requirements -->
+                                                                <div class="mb-3">
+                                                                    <div class="mb-2">File Requirements</div>
+                                                                    <div class="d-flex flex-column gap-2">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <i class="bi bi-check2 text-success me-2"></i>
+                                                                            <span class="small text-secondary">File must be CSV/XLS/XLSX with proper delimiters</span>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center">
+                                                                            <i class="bi bi-check2 text-success me-2"></i>
+                                                                            <span class="small text-secondary">Required fields must be present</span>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center">
+                                                                            <i class="bi bi-check2 text-success me-2"></i>
+                                                                            <span class="small text-secondary">UTF-8 encoding required</span>
+                                                                        </div>
+                                                                        <div class="d-flex align-items-center">
+                                                                            <i class="bi bi-check2 text-success me-2"></i>
+                                                                            <span class="small text-secondary">Header row must include standard field names</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Footer -->
+                                                            <div class="d-flex justify-content-end gap-2">
+                                                                <button type="button" class="btn btn-danger btn-sm px-3" onclick="closeDownloadPopup()">Cancel</button>
+                                                                <button type="button" class="btn btn-sm px-3" 
+                                                                    style="background-color: #2B3479; color: white;" 
+                                                                    onmouseover="this.style.backgroundColor='#1e2554'" 
+                                                                    onmouseout="this.style.backgroundColor='#2B3479'"
+                                                                    onclick="downloadTemplate()">
+                                                                    Download Template
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <script>
+                                                        // Tax type descriptions
+                                                        const downloadTaxTypeGuide = {
+                                                            '01': 'Standard invoice template for regular transactions.',
+                                                            '02': 'Use for adjustments that decrease the invoice value.',
+                                                            '03': 'Use for adjustments that increase the invoice value.',
+                                                            '04': 'Specific template for refund transactions.',
+                                                            '11': 'For cases where the buyer generates the invoice on behalf of the seller.',
+                                                            '12': 'Self-billed version of credit note.',
+                                                            '13': 'Self-billed version of debit note.',
+                                                            '14': 'Self-billed version of refund note.'
+                                                        };
+
+                                                        // Show download popup
+                                                        document.getElementById('downloadTemplateBtn')?.addEventListener('click', function(e) {
+                                                            e.preventDefault();
+                                                            document.getElementById('downloadPopup').style.display = 'block';
+                                                        });
+
+                                                        // Close download popup
+                                                        function closeDownloadPopup() {
+                                                            document.getElementById('downloadPopup').style.display = 'none';
+                                                        }
+
+                                                        // Update info text when tax type changes
+                                                        document.getElementById('downloadTaxTypeSelect')?.addEventListener('change', function() {
+                                                            const selectedType = this.value;
+                                                            document.getElementById('downloadTaxTypeInfo').textContent = downloadTaxTypeGuide[selectedType];
+                                                        });
+
+                                                        // Handle template download
+                                                        function downloadTemplate() {
+                                                            const selectedTaxType = document.getElementById('downloadTaxTypeSelect').value;
+                                                            
+                                                            // Generate timestamp
+                                                            const now = new Date();
+                                                            const timestamp = now.getFullYear() +
+                                                                String(now.getMonth() + 1).padStart(2, '0') +
+                                                                String(now.getDate()).padStart(2, '0') +
+                                                                String(now.getHours()).padStart(2, '0') +
+                                                                String(now.getMinutes()).padStart(2, '0') +
+                                                                String(now.getSeconds()).padStart(2, '0');
+
+                                                            // Create filename with selected tax type
+                                                            const filename = `${selectedTaxType}_CONSOFILENAME_eInvoice_${timestamp}.xls`;
+                                                            
+                                                            // Create a temporary link and trigger download
+                                                            const tempLink = document.createElement('a');
+                                                            tempLink.href = '/templates/01_CONSOFILENAME_eInvoice_20250410165153.xls';
+                                                            tempLink.download = filename;
+                                                            document.body.appendChild(tempLink);
+                                                            tempLink.click();
+                                                            document.body.removeChild(tempLink);
+
+                                                            // Close the popup
+                                                            closeDownloadPopup();
+                                                        }
+                                                    </script>
+                                      
+                                                   <!-- Information Alert -->
+                                                   <div class="alert alert-info mb-3 small">
+                                                    <div class="d-flex">
+                                                        <div class="flex-shrink-0">
+                                                            <i class="bi bi-info-circle-fill"></i>
+                                                        </div>
+                                                        <div class="flex-grow-1 ms-2">
+                                                            <p class="mb-0"><strong>LHDN Recommendation:</strong><br> Upload your flat file in proper format for efficient processing.</p>
+                                                            <small>Properly formatted files are processed faster and reduce errors.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                     <!-- Upload Area -->
+                                                     <div class="upload-dropzone border-2 border-dashed rounded-3 text-center py-4 mb-3" id="uploadArea">
+                                                        <div>Drag & Drop your file here</div>
+                                                        <div class="text-muted my-2 small">or</div>
+                                                        <div class="text-center mb-2">
+                                                            <a href="#" class="text-primary fw-bold" id="browseFilesLink">Browse Files</a>
+                                                            <input type="file" id="flatFileUpload" class="d-none" accept=".xlsx,.xls">
+                                                        </div>
+                                                        <div class="text-muted mt-2 small d-flex align-items-center justify-content-center">
+                                                            <i class="bi bi-info-circle me-1"></i>
+                                                            Maximum file size: 5MB
+                                                        </div>
+                                                    </div>
+                                                    <!-- File Details -->
+                                                    <div id="fileDetails" class="d-none mt-3">
+                                                        <div class="selected-file p-2 bg-light rounded">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                                                <div class="flex-grow-1">
+                                                                    <h6 class="mb-0 file-name">filename.csv</h6>
+                                                                    <p class="mb-0 small text-muted file-info">Size: 0 KB</p>
+                                                                </div>
+                                                                <button class="btn btn-link text-danger p-0" id="removeFile">
+                                                                    <i class="bi bi-x-lg"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+          
+                                                  
+
+                                                    <!-- Example File Section
+                                                    <div class="mb-3 mt-2">
+                                                        <h6 class="small text-muted d-flex align-items-center mb-0 fw-normal">
+                                                            Example CSV Format
+                                                            <i class="bi bi-info-circle ms-2" 
+                                                               data-bs-toggle="tooltip" 
+                                                               data-bs-html="true"
+                                                               data-bs-placement="right"
+                                                               title="• Text fields: Use double quotes<br>• Dates: YYYY-MM-DD<br>• Amounts: 2 decimal places<br>• Exchange Rate: 4 decimal places<br>• MSIC: 5-digit code"></i>
+                                                        </h6>
+                                                        <div class="example-content">
+                                                            <div class="text-muted small mb-0 fw-normal">Header Row:</div>
+                                                            <pre class="bg-light border rounded p-2 small mb-0 fw-normal" style="overflow-x: auto;">SupplierName,SupplierTIN,SupplierSSM,SupplierSST,SupplierMSIC,BuyerName,BuyerTIN,BuyerSSM,BuyerSST,InvoiceNo,InvoiceDate,CurrencyCode,ExchangeRate,ItemDescription,Classification,TaxType,TaxRate,TaxAmount,TotalExclTax,TotalInclTax</pre>
+                                                            
+                                                            <div class="text-muted small mt-2 mb-0 fw-normal">Example Data:</div>
+                                                            <pre class="bg-light border rounded p-2 small mb-0 fw-normal" style="overflow-x: auto;">"ABC Company Sdn Bhd","T1234567","SSM123456","SST98765","46421","XYZ Trading","B7654321","BSSM654321","BSST12345","INV-2024-001","2024-03-26","MYR","1.0000","Office Supplies","G4","SST","6","60.00","1000.00","1060.00"</pre>
+                                                        </div>
+                                                    </div>
+                                                     -->
+                                                    <script>
+                                                        // Initialize tooltips
+                                                        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                                                        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                                            return new bootstrap.Tooltip(tooltipTriggerEl);
+                                                        });
+                                                    </script>
+
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Right Column - Requirements & Information -->
+                                            <div class="col-md-7 bg-light">
+                                                <div class="p-3">
+                                                   
+                                                     
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="bi bi-exclamation-triangle text-danger me-2"></i>
+                                                        <h6 class="mb-0">LHDN Submission Requirements<span style="color: red; animation: blinker 1s linear infinite;">*</span></h6>
+                                                    </div>
+
+                                                    
+                                                    <!-- Scrollable Additional Details Container -->
+                                                    <div class="additional-details-container" style="max-height: 380px; overflow-y: auto;">
+                                                    <!-- Fixed PXC Requirements Section -->
+                                                    <div class="requirements-section mb-1">
+                                                        <div class="accordion accordion-flush" id="requirementsAccordion">
+                                                            <!-- File Requirements -->
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header">
+                                                                    <button class="accordion-button mb-0 fw-normal" type="button" data-bs-toggle="collapse" data-bs-target="#fileRequirements" aria-expanded="true" aria-controls="fileRequirements">
+                                                                        <i class="bi bi-file-earmark-text me-2" style="color: navy;"></i>
+                                                                        File Requirements
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="fileRequirements" class="accordion-collapse collapse show focus" data-bs-parent="#requirementsAccordion">
+                                                                    <div class="accordion-body">
+                                                                        <div class="requirements-list small">
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>File must be CSV/XLS/XLSX with proper delimiters</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Required fields must be present</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>UTF-8 encoding required</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Header row must include standard field names</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Supplier Information -->
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header">
+                                                                    <button class="accordion-button collapsed mb-0 fw-normal" type="button" data-bs-toggle="collapse" data-bs-target="#supplierInfo" aria-expanded="false" aria-controls="supplierInfo">
+                                                                        <i class="bi bi-building me-2" style="color: navy;"></i>
+                                                                        Required Supplier Information
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="supplierInfo" class="accordion-collapse collapse" data-bs-parent="#requirementsAccordion">
+                                                                    <div class="accordion-body">
+                                                                        <div class="requirements-list small">
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Supplier's Name and TIN (Tax Identification Number)</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Business Registration Number (SSM)</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>SST Registration Number (if applicable)</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>MSIC Code and Business Activity Description</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Buyer Information -->
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header">
+                                                                    <button class="accordion-button collapsed mb-0 fw-normal" type="button" data-bs-toggle="collapse" data-bs-target="#buyerInfo" aria-expanded="false" aria-controls="buyerInfo">
+                                                                        <i class="bi bi-person me-2" style="color: navy;"></i>
+                                                                        Required Buyer Information
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="buyerInfo" class="accordion-collapse collapse" data-bs-parent="#requirementsAccordion">
+                                                                    <div class="accordion-body">
+                                                                        <div class="requirements-list small">
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Buyer's Name and TIN</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Business Registration Number</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>SST Registration Number (if applicable)</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Invoice Details -->
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header">
+                                                                    <button class="accordion-button collapsed mb-0 fw-normal" type="button" data-bs-toggle="collapse" data-bs-target="#invoiceDetails" aria-expanded="false" aria-controls="invoiceDetails">
+                                                                        <i class="bi bi-receipt me-2" style="color: navy;" ></i>
+                                                                        Required Invoice Details
+                                                                    </button>
+                                                                </h2>
+                                                                <div id="invoiceDetails" class="accordion-collapse collapse" data-bs-parent="#requirementsAccordion">
+                                                                    <div class="accordion-body">
+                                                                        <div class="requirements-list small">
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Invoice Number and Date</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Currency Code and Exchange Rate (if not MYR)</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Product/Service Classification and Description</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center mb-2">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Tax Details (Type, Rate, Amount)</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center">
+                                                                                <i class="bi bi-check-circle text-success me-2" style="color: navy;"></i>
+                                                                                <span>Total Amount (Including and Excluding Tax)</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                                                                            <!-- Section Container Template (DRY) -->
+                                                        <!-- Use this template to create consistent section containers -->
+
+                                                        <!-- Buyer Details Section -->
+                                                        <div class="section-container bg-white p-3 rounded border mb-3">
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <i class="bi bi-person-badge text-primary me-2"></i>
+                                                                <h6 class="mb-0 fw-bold">Standard Buyer Details</h6>
+                                                            </div>
+                                                            <div class="small">
+                                                                <div class="row">
+                                                                    <div class="col-6 mb-2">
+                                                                        <span class="text-muted d-block">Name:</span>
+                                                                        <span>General Public</span>
+                                                                    </div>
+                                                                    <div class="col-6 mb-2">
+                                                                        <span class="text-muted d-block">TIN:</span>
+                                                                        <span>EI00000000010</span>
+                                                                    </div>
+                                                                    <div class="col-6 mb-2">
+                                                                        <span class="text-muted d-block">ID/Passport:</span>
+                                                                        <span>NA</span>
+                                                                    </div>
+                                                                    <div class="col-6 mb-2">
+                                                                        <span class="text-muted d-block">Other:</span>
+                                                                        <span>NA (Address/Contact/SST)</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Consolidation Methods -->
+                                                        <div class="section-container bg-white p-3 rounded border mb-3">
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <i class="bi bi-diagram-3 text-primary me-2"></i>
+                                                                <h6 class="mb-0 fw-bold">Consolidation Methods</h6>
+                                                            </div>
+                                                            <ul class="small list-unstyled">
+                                                                <li class="mb-2 d-flex align-items-center">
+                                                                    <i class="bi bi-1-circle-fill text-primary me-2"></i>
+                                                                    <span>List each receipt as separate line items</span>
+                                                                </li>
+                                                                <li class="mb-2 d-flex align-items-center">
+                                                                    <i class="bi bi-2-circle-fill text-primary me-2"></i>
+                                                                    <span>Group continuous receipt numbers together</span>
+                                                                </li>
+                                                                <li class="d-flex align-items-center">
+                                                                    <i class="bi bi-3-circle-fill text-primary me-2"></i>
+                                                                    <span>Branch-specific consolidated submissions</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+
+                                                        <!-- System Limitations -->
+                                                        <div class="section-container bg-white p-3 rounded border">
+                                                            <div class="d-flex align-items-center mb-2">
+                                                                <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                                                                <h6 class="mb-0 fw-bold">System Limitations</h6>
+                                                            </div>
+                                                            <ul class="small list-unstyled">
+                                                                <li class="mb-2 d-flex align-items-center">
+                                                                    <i class="bi bi-dot me-2"></i>
+                                                                    <span>Maximum file size: 5MB</span>
+                                                                </li>
+                                                                <li class="mb-2 d-flex align-items-center">
+                                                                    <i class="bi bi-dot me-2"></i>
+                                                                    <span>Maximum 100 e-invoices per submission</span>
+                                                                </li>
+                                                                <li class="d-flex align-items-center">
+                                                                    <i class="bi bi-dot me-2"></i>
+                                                                    <span>Individual e-invoice size limit: 300KB</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Fixed Bottom Section -->
+                                                    <div class="mt-3 pt-3 border-top">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-lightbulb text-primary me-2"></i>
+                                                            <small class="text-muted">
+                                                                <strong>LHDN Best Practice:</strong> Validate all TINs before uploading
+                                                            </small>
+                                                            <a href="https://www.cleartax.com/my/en/consolidated-einvoicing-malaysia" 
+                                                               class="btn btn-link btn-sm ms-auto p-0" 
+                                                               target="_blank"
+                                                               data-bs-toggle="tooltip" 
+                                                               title="Learn more about Malaysia's e-Invoice consolidation requirements">
+                                                                <i class="bi bi-box-arrow-up-right"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Additional Guide -->
+                                                    <div class="mt-2">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-info-circle text-info me-2"></i>
+                                                            <small class="text-muted">
+                                                                <strong>Best Practice:</strong> Ensure your file size is under 5MB for optimal processing speed
+                                                            </small>
+                                                            <button type="button" 
+                                                                    class="btn btn-link btn-sm ms-auto p-0"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Large files may take longer to process">
+                                                                <i class="bi bi-question-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top-0">
+                                        <button type="button" class="btn outbound-action-btn cancel" id="cancelUploadBtn" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn outbound-action-btn submit" id="processFileBtn" disabled>
+                                            <i class="bi bi-arrow-right-circle me-2"></i>
+                                            Process File
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <style>
+                            .upload-dropzone {
+                                border: 2px dashed #dee2e6;
+                                transition: all 0.3s ease;
+                                background-color: #f8f9fa;
+                            }
+
+                            .upload-dropzone:hover {
+                                border-color: #0d6efd;
+                                background-color: rgba(13, 110, 253, 0.05);
+                                cursor: pointer;
+                            }
+
+                            .upload-dropzone.border-primary {
+                                border-color: #0d6efd;
+                                background-color: rgba(13, 110, 253, 0.05);
+                            }
+
+                            .selected-file {
+                                transition: all 0.3s ease;
+                                background-color: #f8f9fa !important;
+                                border: 1px solid #e9ecef;
+                            }
+
+                            .selected-file:hover {
+                                background-color: #e9ecef !important;
+                            }
+
+                            #flatFileUploadModal .modal-content {
+                                border-radius: 10px;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                                border: none;
+                            }
+
+                            #flatFileUploadModal .modal-header {
+                                padding: 1rem 1.5rem;
+                            }
+
+                            #flatFileUploadModal .modal-body {
+                                padding: 1.5rem;
+                            }
+
+                            #flatFileUploadModal .modal-footer {
+                                padding: 1rem 1.5rem;
+                            }
+
+                            .requirement-item .check-icon {
+                                width: 24px;
+                                text-align: center;
+                            }
+
+                            #removeFile {
+                                opacity: 0.7;
+                                transition: all 0.2s ease;
+                            }
+
+                            #removeFile:hover {
+                                opacity: 1;
+                            }
+                            
+                            #processFileBtn {
+                                padding-left: 1.5rem;
+                                padding-right: 1.5rem;
+                            }
+                            
+                            #processFileBtn:hover:not(:disabled) {
+                                box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+                            }
+                            
+                            #processFileBtn:disabled {
+                                opacity: 0.65;
+                            }
+                            
+                            #browseFilesLink {
+                                text-decoration: none;
+                                color: #0d6efd;
+                                font-weight: 500;
+                            }
+                            
+                            #browseFilesLink:hover {
+                                text-decoration: underline;
+                            }
+                        </style>
+
+                        
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Get the file input and browse files link elements
+                                const fileInput = document.getElementById('flatFileUpload');
+                                const browseLink = document.getElementById('browseFilesLink');
+                                const fileDetails = document.getElementById('fileDetails');
+                                const fileName = fileDetails?.querySelector('.file-name');
+                                const fileInfo = fileDetails?.querySelector('.file-info');
+                                const uploadArea = document.getElementById('uploadArea');
+                                const processFileBtn = document.getElementById('processFileBtn');
+                                const removeFileBtn = document.getElementById('removeFile');
+                                
+                                // Function to format file size
+                                function formatFileSize(bytes) {
+                                    if (bytes === 0) return '0 Bytes';
+                                    const k = 1024;
+                                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                                }
+                                
+                                // Function to show file details
+                                function showFileDetails(file) {
+                                    if (fileDetails && fileName && fileInfo) {
+                                        // Update file details
+                                        fileName.textContent = file.name;
+                                        fileInfo.textContent = 'Size: ' + formatFileSize(file.size);
+                                        
+                                        // Show file details container
+                                        fileDetails.classList.remove('d-none');
+                                        
+                                        // Hide upload area
+                                        if (uploadArea) {
+                                            uploadArea.style.display = 'none';
+                                        }
+                                        
+                                        // Enable process button
+                                        if (processFileBtn) {
+                                            processFileBtn.disabled = false;
+                                        }
+                                        
+                                        console.log('File details displayed for:', file.name);
+                                    }
+                                }
+                                
+                                // Function to reset UI
+                                function resetUI() {
+                                    // Clear file input
+                                    if (fileInput) {
+                                        fileInput.value = '';
+                                    }
+                                    
+                                    // Hide file details
+                                    if (fileDetails) {
+                                        fileDetails.classList.add('d-none');
+                                    }
+                                    
+                                    // Show upload area
+                                    if (uploadArea) {
+                                        uploadArea.style.display = 'block';
+                                    }
+                                    
+                                    // Disable process button
+                                    if (processFileBtn) {
+                                        processFileBtn.disabled = true;
+                                    }
+                                }
+                                
+                                // Make sure to add click handler for browse files link
+                                if (browseLink && fileInput) {
+                                    browseLink.addEventListener('click', function(e) {
+                                        e.preventDefault();
+                                        fileInput.click();
+                                        console.log('Browse files link clicked, triggering file input');
+                                    });
+                                    console.log('Browse files link handler initialized');
+                                }
+                                
+                                // Add file input change handler to display file details
+                                if (fileInput) {
+                                    fileInput.addEventListener('change', function(e) {
+                                        const files = e.target.files;
+                                        if (files.length) {
+                                            showFileDetails(files[0]);
+                                        }
+                                        console.log('File input change detected', files.length ? files[0].name : 'no files');
+                                    });
+                                    console.log('File input change handler initialized');
+                                }
+                                
+                                // Add remove file button handler
+                                if (removeFileBtn) {
+                                    removeFileBtn.addEventListener('click', function() {
+                                        resetUI();
+                                        console.log('Remove file button clicked, UI reset');
+                                    });
+                                    console.log('Remove file button handler initialized');
+                                }
+                            });
+                        </script>
+
+                        <div class="pagination-container">
+                        <!-- Pagination will be inserted by DataTables -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        
+    </div>
+    </div>
+</div>
+
+<!-- Modal for Validation Results -->
+<div class="modal fade" id="validationResultsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="float-end">
+                    <a href="https://www.newpages.net/validate-tax-payer" 
+                       target="_blank" 
+                       class="btn btn-outline-secondary btn-sm" 
+                       data-bs-toggle="tooltip" 
+                       title="Alternative TIN validation via NewPages">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>
+                        Alternative Validator
+                    </a>
+                </div>
+                <h5 class="modal-title">
+                    <i class="bi bi-shield-check"></i>
+                    TIN Validation Results
+                </h5>
+                <button type="button" class="btn-lhdn d-flex align-items-center justify-content-center" data-bs-dismiss="modal"></button>
+               
+            </div>
+            <div class="modal-body">
+                <div id="validationResults">
+                    <!-- Validation results will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Validation Error Modal -->
+<div class="modal fade" id="validationErrorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Validation Error
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="validationErrorList">
+                    <!-- Error details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Alert Template -->
+<template id="alertTemplate">
+    <div class="custom-alert">
+        <i class="alert-icon"></i>
+        <div class="alert-content">
+            <div class="alert-title"></div>
+            <div class="alert-message"></div>
+        </div>
+        <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+    </div>
+</template>
+
+<!-- Add Consolidated Submit Modal -->
+<div class="modal fade" id="consolidatedSubmitModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-file-earmark-arrow-up"></i>
+                    Submit Bulk Documents
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- User Guidance Section -->
+                <div class="user-guidance mb-4">
+                    <div class="guidance-header">
+                        <i class="bi bi-info-circle"></i>
+                        <h6>How to Submit Multiple Documents</h6>
+                    </div>
+                    <div class="guidance-steps">
+                        <div class="guidance-step">
+                            <span class="step-number">1</span>
+                            <span class="step-text">Select documents from the table (ensure all documents comply with LHDN format)</span>
+                        </div>
+                        <div class="guidance-step">
+                            <span class="step-number">2</span>
+                            <span class="step-text">Verify selected documents have valid TIN numbers and company details</span>
+                        </div>
+                        <div class="guidance-step">
+                            <span class="step-number">3</span>
+                            <span class="step-text">Choose LHDN version (v1.0 for standard submission)</span>
+                        </div>
+                        <div class="guidance-step">
+                            <span class="step-number">4</span>
+                            <span class="step-text">Review and submit documents for batch processing</span>
+                        </div>
+                    </div>
+                    <div class="guidance-requirements mt-3">
+                        <h6 class="requirements-title">
+                            <i class="bi bi-shield-check"></i>
+                            LHDN Compliance Requirements
+                        </h6>
+                        <ul class="requirements-list">
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                All documents must have valid Tax Identification Numbers (TIN)
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                Company details must match LHDN registered information
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                Documents must be in the correct format (JSON/XML)
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                Each document must pass LHDN schema validation
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="guidance-note">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Important: Documents will be processed individually. All documents must meet LHDN requirements for successful submission.</span>
+                    </div>
+                </div>
+
+                <div class="selected-docs-container">
+                    <h6>Selected Documents</h6>
+                    <div id="selectedDocsList" class="selected-docs-list">
+                        <!-- Selected documents will be listed here -->
+                    </div>
+                </div>
+                <div class="submission-options">
+                    <div class="mb-0">
+                        <label class="form-label">LHDN Version</label>
+                        <select class="form-select" id="lhdnVersion">
+                            <option value="1.0">Version 1.0</option>
+                            <option value="1.1" disabled>Version 1.1 (with Digital Signature) COMING SOON</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn outbound-action-btn cancel" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn outbound-action-btn submit" id="submitConsolidatedBtn">
+                    Submit Documents
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Modal -->
+<div class="modal fade" id="submissionProgressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Submission Progress</h5>
+            </div>
+            <div class="modal-body">
+                <div id="submissionProgress">
+                    <!-- Progress will be shown here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tutorial Modal -->
+<div class="guided-tour-overlay" id="guidedTourOverlay"></div>
+<div class="guided-tour-tooltip" id="guidedTourTooltip">
+    <div class="tooltip-header">
+        <div class="tooltip-step-indicator">
+            <span id="currentStepIndicator">1</span>/<span id="totalStepsIndicator">6</span>
+        </div>
+        <button type="button" class="tooltip-close-btn" id="closeTourBtn">
+            <i class="bi bi-x"></i>
+        </button>
+    </div>
+    <div class="tooltip-body">
+        <h4 class="tooltip-title" id="tooltipTitle">Welcome to Outbound</h4>
+        <div class="tooltip-content" id="tooltipContent">
+            <!-- Content will be dynamically inserted -->
+        </div>
+    </div>
+    <div class="tooltip-progress">
+        <div class="progress">
+            <div class="progress-bar" id="tourProgressBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="step-indicators d-flex justify-content-between px-3 mt-2" id="stepIndicators">
+            <!-- Step indicators will be dynamically inserted -->
+        </div>
+    </div>
+    <div class="tooltip-footer">
+        <button type="button" class="tooltip-btn tooltip-btn-prev" id="prevStepBtn" disabled>
+            <i class="bi bi-arrow-left"></i>
+        </button>
+        <button type="button" class="tooltip-btn tooltip-btn-skip" id="skipTourBtn">
+            Skip
+        </button>
+        <button type="button" class="tooltip-btn tooltip-btn-next" id="nextStepBtn">
+            Next <i class="bi bi-arrow-right"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the advanced filters button and collapse element
+    const advancedFiltersBtn = document.querySelector('[data-bs-toggle="collapse"][data-bs-target="#advancedFilters"]');
+    const advancedFiltersCollapse = document.getElementById('advancedFilters');
+
+    if (advancedFiltersBtn && advancedFiltersCollapse) {
+        // Initialize the collapse manually
+        const bsCollapse = new bootstrap.Collapse(advancedFiltersCollapse, {
+            toggle: false
+        });
+
+        // Add click event listener to the button
+        advancedFiltersBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            bsCollapse.toggle();
+        });
+
+        // Update button icon on collapse events
+        advancedFiltersCollapse.addEventListener('show.bs.collapse', function () {
+            const icon = advancedFiltersBtn.querySelector('i.bi');
+            if (icon) {
+                icon.classList.remove('bi-sliders');
+                icon.classList.add('bi-x-lg');
+            }
+        });
+
+        advancedFiltersCollapse.addEventListener('hide.bs.collapse', function () {
+            const icon = advancedFiltersBtn.querySelector('i.bi');
+            if (icon) {
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-sliders');
+            }
+        });
+    }
+});
+</script>
+
+{% endblock %} 
+{% block scripts %}
+<script src="/assets/js/modules/excel/outbound-consolidate.js"></script>
+<script src="/assets/js/modules/tutorial/guided-tour.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+<!-- TIN Validation Modal -->
+<div class="modal fade" id="tinValidationModal" tabindex="-1" aria-labelledby="tinValidationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tinValidationModalLabel">
+                    <i class="bi bi-shield-check me-2"></i>
+                    Validate Tax Identification Number (TIN)
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Left Column - Input Form -->
+                    <div class="col-md-5 border-end">
+                        <div class="p-4">
+                            <!-- Information Alert -->
+                            <div class="alert alert-info mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="bi bi-info-circle-fill"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <p class="mb-0"><strong>LHDN Recommendation:</strong> Validate all TINs before using them in invoices.</p>
+                                        <small>Validated TINs are cached to reduce API calls and improve performance.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- TIN Validation Form -->
+                            <form id="tinValidationForm" class="needs-validation" novalidate>
+                                <div class="mb-1">
+                                    <label for="tinNumber" class="form-label fw-medium">TIN Number <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="tinNumber" placeholder="Enter Tax Identification Number" required>
+                                    <div class="invalid-feedback">Please enter a valid TIN number.</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="idType" class="form-label fw-medium">ID Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="idType" required>
+                                        <option value="" selected disabled>Select ID Type</option>
+                                        <option value="NRIC">NRIC (National Registration Identity Card)</option>
+                                        <option value="PASSPORT">Passport</option>
+                                        <option value="BRN">Business Registration Number</option>
+                                        <option value="ARMY">Army Number</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select an ID type.</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="idValue" class="form-label fw-medium">ID Value <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="idValue" placeholder="Enter ID value" required>
+                                    <div class="invalid-feedback">Please enter the ID value.</div>
+                                    <small class="text-muted mt-1">
+                                        <i class="bi bi-info-circle-fill me-1"></i>
+                                        For BRN, use your 12-digit business registration number
+                                    </small>
+                                </div>
+                                
+
+                                <div class="d-grid mt-4">
+                                    <button type="button" class="btn btn-lhdn" id="validateSingleTin">
+                                        <i class="bi bi-shield-check me-1"></i>
+                                        Validate TIN
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column - Validation Results -->
+                    <div class="col-md-7 bg-light" id="validationResultSection">
+                        <div class="p-4">
+                            <div class="d-flex align-items-center justify-content-center h-100">
+                                <div class="text-center text-muted" id="emptyResultState">
+                                    <i class="bi bi-shield-check display-1 mb-3 d-block opacity-50"></i>
+                                    <h5>Validation Results</h5>
+                                    <p class="mb-0">Enter TIN details and click "Validate TIN" to see validation results here.</p>
+                                </div>
+                                <div id="validationResultContent" class="w-100 d-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
+
+<!-- Custom Invoice History Modal -->
+<div class="modal fade" id="invoiceHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-clock-history me-2"></i>
+                    Invoice History Timeline
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Left Column - Timeline -->
+                    <div class="col-md-7 border-end">
+                        <div class="p-4">
+                            <div class="alert alert-info mb-4 small">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="bi bi-info-circle-fill"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <p class="mb-0"><strong>Timeline View:</strong><br> Track the complete lifecycle of your invoice from creation to submission.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Timeline Component -->
+                            <div class="invoice-timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-point bg-success">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Invoice Created</h6>
+                                        <p class="mb-0 small text-muted" id="timelineCreatedDate">June 15, 2024 - 09:45 AM</p>
+                                        <p class="mb-0 small">Initial invoice generated in the system</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-point bg-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Invoice Modified</h6>
+                                        <p class="mb-0 small text-muted" id="timelineModifiedDate">June 16, 2024 - 10:30 AM</p>
+                                        <p class="mb-0 small">Invoice details updated</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-point bg-warning">
+                                        <i class="bi bi-check2-circle"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Validation Complete</h6>
+                                        <p class="mb-0 small text-muted" id="timelineValidatedDate">June 17, 2024 - 11:15 AM</p>
+                                        <p class="mb-0 small">Invoice validated against LHDN requirements</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-point bg-info">
+                                        <i class="bi bi-arrow-up-circle"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Submitted to LHDN</h6>
+                                        <p class="mb-0 small text-muted" id="timelineSubmittedDate">June 18, 2024 - 02:30 PM</p>
+                                        <p class="mb-0 small">Invoice successfully submitted to tax authority</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-point bg-success">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Acknowledged by LHDN</h6>
+                                        <p class="mb-0 small text-muted" id="timelineAcknowledgedDate">June 19, 2024 - 10:45 AM</p>
+                                        <p class="mb-0 small">Receipt confirmation received from tax authority</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column - Details & Actions -->
+                    <div class="col-md-5 bg-light">
+                        <div class="p-4">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-file-earmark-text h1 mb-2 d-block text-primary opacity-75"></i>
+                                <h6 class="mb-1">Invoice Details</h6>
+                                <p class="mb-0 small text-muted" id="invoiceNumberDisplay">INV-2024-0123</p>
+                            </div>
+                            
+                            <!-- Invoice Summary -->
+                            <div class="invoice-summary mb-4">
+                                <div class="summary-item d-flex justify-content-between border-bottom py-2">
+                                    <span class="text-muted">Status:</span>
+                                    <span class="badge bg-success" id="invoiceStatusBadge">Completed</span>
+                                </div>
+                                <div class="summary-item d-flex justify-content-between border-bottom py-2">
+                                    <span class="text-muted">Submission ID:</span>
+                                    <span id="submissionIdDisplay">LHDN-98765432</span>
+                                </div>
+                                <div class="summary-item d-flex justify-content-between border-bottom py-2">
+                                    <span class="text-muted">Buyer:</span>
+                                    <span id="buyerNameDisplay">ABC Company</span>
+                                </div>
+                                <div class="summary-item d-flex justify-content-between border-bottom py-2">
+                                    <span class="text-muted">Amount:</span>
+                                    <span id="invoiceAmountDisplay">RM 1,234.56</span>
+                                </div>
+                                <div class="summary-item d-flex justify-content-between border-bottom py-2">
+                                    <span class="text-muted">Tax Amount:</span>
+                                    <span id="taxAmountDisplay">RM 74.07</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2 mb-4">
+                                <button class="btn btn-outline-primary btn-sm" id="viewInvoicePdfBtn">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                                    View PDF
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" id="downloadInvoiceBtn">
+                                    <i class="bi bi-download me-2"></i>
+                                    Download
+                                </button>
+                            </div>
+                            
+                            <!-- History Notes -->
+                            <div class="history-notes">
+                                <h6 class="mb-2 small fw-bold">Notes & Comments</h6>
+                                <div class="notes-container bg-white p-3 rounded border small" style="max-height: 120px; overflow-y: auto;">
+                                    <div class="note-item mb-2">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-bold">System</span>
+                                            <span class="text-muted">Jun 19, 2024</span>
+                                        </div>
+                                        <p class="mb-0">Invoice successfully processed by LHDN.</p>
+                                    </div>
+                                    <div class="note-item">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-bold">John Doe</span>
+                                            <span class="text-muted">Jun 16, 2024</span>
+                                        </div>
+                                        <p class="mb-0">Updated buyer information as requested.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="printTimelineBtn">
+                    <i class="bi bi-printer me-2"></i>
+                    Print Timeline
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .invoice-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .invoice-timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 11px;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 25px;
+    }
+    
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .timeline-point {
+        position: absolute;
+        left: -30px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        z-index: 1;
+    }
+    
+    .timeline-point i {
+        font-size: 0.8rem;
+    }
+    
+    .timeline-content {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    #invoiceHistoryModal .modal-content {
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .summary-item {
+        font-size: 0.9rem;
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.35em 0.65em;
+    }
+</style>
+
+
+
+</body>
+</html>

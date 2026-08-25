@@ -1,0 +1,201 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<title>Audit Trail - eInvoice Portal</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="/assets/css/components/outbound-invoice-modal.css" rel="stylesheet">
+<link href="/assets/css/pages/outbound/card.css" rel="stylesheet">
+<link href="/assets/css/pages/outbound/outbound-table.css" rel="stylesheet">
+<link href="/assets/css/pages/profile.css" rel="stylesheet">
+
+<!-- Scripts with correct order -->
+<script src="/assets/js/shared/utils.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4 px-lg-5">
+    <!-- Welcome Card - Full width -->
+    <div class="profile-welcome-section">
+        <div class="profile-welcome-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <div class="welcome-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="welcome-content">
+                        <h3 class="text-xl font-semibold text-white-800 md:text-2xl tracking-tight">Audit Trail</h3>
+                        <p class="mb-0 cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" 
+                        title="<div class='tooltip-content'>
+                                    <div class='tooltip-row'>
+                                    <i class='bi bi-info-circle'></i>
+                                    <span><b>Audit Trail Overview:</b></span>
+                                    </div>
+                                    <div class='tooltip-row'>
+                                    <i class='bi bi-1-circle'></i>
+                                    <span>Track all system activities</span>
+                                    </div>
+                                    <div class='tooltip-row'>
+                                    <i class='bi bi-2-circle'></i>
+                                    <span>Monitor user actions</span>
+                                    </div>
+                                    <div class='tooltip-row'> 
+                                    <i class='bi bi-3-circle'></i>
+                                    <span>Review security events</span>
+                                    </div>
+                                </div>">
+                            Monitor and track system activities and user actions.
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start">
+                    <div class="welcome-datetime text-end">
+                        <div class="current-time">
+                            <i class="bi bi-clock"></i>
+                            <span id="currentTime">00:00:00 AM</span>
+                        </div>
+                        <div class="current-date">
+                            <i class="bi bi-calendar3"></i>
+                            <span id="currentDate">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+        <!-- Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" id="startDate" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" id="endDate" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="actionType" class="form-label">Action Type</label>
+                        <select id="actionType" class="form-select">
+                            <option value="">All Actions</option>
+                            <option value="LOGIN">Login</option>
+                            <option value="LOGOUT">Logout</option>
+                            <option value="CREATE">Create</option>
+                            <option value="UPDATE">Update</option>
+                            <option value="DELETE">Delete</option>
+                            <option value="VIEW">View</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="moduleType" class="form-label">Module</label>
+                        <select id="moduleType" class="form-select">
+                            <option value="">All Modules</option>
+                            <option value="AUTH">Authentication</option>
+                            <option value="USER">User Management</option>
+                            <option value="INVOICE">Invoice</option>
+                            <option value="SETTINGS">Settings</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="userFilter" class="form-label">User</label>
+                        <input type="text" id="userFilter" class="form-control" placeholder="Filter by user">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="cards-container mb-4">
+            <div class="info-card">
+                <div class="card-info">
+                    <div class="card-icon">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <div class="count-info">
+                        <h6 id="totalActivities">0</h6>
+                        <span class="text-muted">Total</span>
+                    </div>
+                </div>
+                <span class="card-title-new">TOTAL ACTIVITIES</span>
+            </div>
+
+            <div class="info-card">
+                <div class="card-info">
+                    <div class="card-icon">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <div class="count-info">
+                        <h6 id="todayActivities">0</h6>
+                        <span class="text-muted">Today</span>
+                    </div>
+                </div>
+                <span class="card-title-new">TODAY'S ACTIVITIES</span>
+            </div>
+
+            <div class="info-card">
+                <div class="card-info">
+                    <div class="card-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="count-info">
+                        <h6 id="activeUsers">0</h6>
+                        <span class="text-muted">Active</span>
+                    </div>
+                </div>
+                <span class="card-title-new">ACTIVE USERS</span>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section">
+            <div class="outbound-table-container">
+                <table id="logTable" class="outbound-table">
+                    <thead>
+                        <tr>
+                            <th>TIMESTAMP</th>
+                            <th>USER</th>
+                            <th>MODULE</th>
+                            <th>ACTION</th>
+                            <th>DESCRIPTION</th>
+                            <th>STATUS</th>
+                            <th>IP ADDRESS</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Template -->
+<template id="alertTemplate">
+    <div class="custom-alert">
+        <i class="alert-icon"></i>
+        <div class="alert-content">
+            <div class="alert-title"></div>
+            <div class="alert-message"></div>
+        </div>
+        <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+    </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script src="/assets/js/audit-trail.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Initialize LogTableManager
+    const logManager = LogTableManager.getInstance();
+});
+</script>
+{% endblock %}

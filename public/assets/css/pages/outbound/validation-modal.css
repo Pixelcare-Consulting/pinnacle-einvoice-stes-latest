@@ -1,0 +1,293 @@
+/* Validation Error Modal Styles */
+.excel-validation {
+    --excel-validation-primary: #47556c;
+    --excel-validation-error: #dc3545;
+    --excel-validation-border: #e9ecef;
+    --excel-validation-bg: #fff;
+    --excel-validation-text: #333;
+    --excel-validation-shadow: rgba(0, 0, 0, 0.1);
+}
+
+.excel-validation__modal {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--excel-validation-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--excel-validation-shadow);
+}
+
+.excel-validation__header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--excel-validation-border);
+    text-align: center;
+}
+
+.excel-validation__title {
+    color: var(--excel-validation-error);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.excel-validation__title i {
+    font-size: 1.75rem;
+}
+
+.excel-validation__content {
+    padding: 1.5rem;
+}
+
+.excel-validation__message {
+    color: var(--excel-validation-text);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.excel-validation__list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1px solid var(--excel-validation-border);
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+
+.excel-validation__item {
+    background: var(--excel-validation-bg);
+    border: 1px solid var(--excel-validation-border);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.excel-validation__item:last-child {
+    margin-bottom: 0;
+}
+
+.excel-validation__row {
+    font-weight: 600;
+    color: var(--excel-validation-primary);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--excel-validation-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.excel-validation__row i {
+    color: var(--excel-validation-error);
+}
+
+.excel-validation__details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.excel-validation__error {
+    color: var(--excel-validation-error);
+    font-size: 0.9rem;
+    padding: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.excel-validation__error i {
+    font-size: 0.8rem;
+}
+
+.excel-validation__help {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--excel-validation-border);
+    text-align: center;
+    color: var(--excel-validation-text);
+}
+
+.excel-validation__button {
+    background: var(--excel-validation-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 1rem;
+}
+
+.excel-validation__button:hover {
+    background: #3a4757;
+}
+
+/* Custom scrollbar for the list */
+.excel-validation__list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.excel-validation__list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.excel-validation__list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.excel-validation__list::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* SweetAlert2 Custom Styles for Validation Modal */
+.swal2-popup.excel-validation__modal {
+    padding: 1.5rem;
+    width: 28em;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.swal2-popup.excel-validation__modal .swal2-icon {
+    border: none;
+    margin: 0 auto 1.5rem;
+}
+
+.swal2-popup.excel-validation__modal .swal2-icon.swal2-error {
+    border: none;
+}
+
+.swal2-popup.excel-validation__modal .swal2-icon.swal2-error .swal2-x-mark {
+    display: none;
+}
+
+.swal2-popup.excel-validation__modal .swal2-title {
+    color: #47556c;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    padding: 0;
+    text-align: center;
+}
+
+.swal2-popup.excel-validation__modal .swal2-html-container {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.validation-error-content {
+    text-align: left;
+}
+
+.validation-error-message {
+    color: #47556c;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.validation-error-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.validation-error-item {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.validation-error-item:last-child {
+    margin-bottom: 0;
+}
+
+.error-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #dc3545;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-row i {
+    font-size: 0.9rem;
+}
+
+.error-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.error-details li {
+    color: #6c757d;
+    font-size: 0.85rem;
+    padding: 0.2rem 0;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.error-details li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #dc3545;
+}
+
+.excel-validation__icon {
+    margin: 0 auto 1rem !important;
+}
+
+.excel-validation__title {
+    font-size: 1.25rem !important;
+    margin: 0 0 0.75rem !important;
+}
+
+.excel-validation__actions {
+    margin-top: 1.25rem !important;
+}
+
+.excel-validation__confirm {
+    min-width: 100px !important;
+    padding: 0.5rem 1.5rem !important;
+}
+
+/* Update icon colors for different states */
+.swal2-icon.swal2-info {
+    border-color: #47556c !important;
+    color: #47556c !important;
+}
+
+.swal2-icon.swal2-info .swal2-icon-content {
+    color: #47556c !important;
+}
+
+/* Adjust actions spacing */
+.excel-validation__actions {
+    gap: 1rem !important;
+    padding: 0 1rem !important;
+}
+
+/* Make the modal slightly larger for confirmation */
+.swal2-popup.excel-validation__modal.confirmation {
+    width: 36em !important;
+}
+
+/* Style the icon container */
+.excel-validation__icon i {
+    color: #47556c !important;
+    font-size: 3rem !important;
+} 

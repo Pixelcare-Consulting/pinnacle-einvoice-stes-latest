@@ -1,0 +1,510 @@
+/* Invoice Preview Modal Enhancements
+ * Fixes for JSON preview scrolling and footer button visibility
+ * Author: Augment Agent
+ * Version: 1.0
+ */
+
+/* Enhanced Modal Structure for Invoice Preview */
+.swal2-popup.large-modal {
+    max-width: 1200px !important;
+    width: 95vw !important;
+    max-height: 90vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.swal2-popup.large-modal .swal2-html-container {
+    overflow-y: auto !important;
+    flex: 1 !important;
+    max-height: calc(90vh - 180px) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    /* Ensure scrollbar is positioned correctly */
+    padding-right: 8px !important;
+}
+
+/* Summary Details Positioning - Above Scrollable Area */
+.modal-content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+.summary-details-section {
+    order: 1 !important; /* Position at top */
+    flex-shrink: 0 !important;
+    margin-bottom: 1.5rem !important;
+    padding: 0 1rem !important;
+}
+
+.json-preview-section {
+    order: 2 !important; /* Position below summary */
+    flex: 1 !important;
+    overflow: hidden !important;
+    padding: 0 1rem !important;
+}
+
+/* JSON Preview Section Enhancements - Fixed Design */
+.json-preview-section .modal-card {
+    display: flex !important;
+    flex-direction: column !important;
+    max-height: 400px !important; /* Reduced height to accommodate summary above */
+    overflow: hidden !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    border-radius: 16px !important;
+}
+
+.json-preview-section .modal-card-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 25 !important;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+    flex-shrink: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    padding: 1.5rem !important;
+}
+
+.json-preview-section .modal-card-content {
+    flex: 1 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* JSON Content Container - Unified Design */
+#jsonContentContainer {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.json-content-wrapper {
+    flex: 1 !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+/* Hide the entire JSON preview section by default */
+.json-preview-section .modal-card {
+    display: none !important;
+}
+
+/* Show the JSON preview section when any content is active */
+.json-preview-section.json-active .modal-card {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Ensure JSON content is hidden by default */
+#invoiceJsonPreviewContent {
+    display: none !important;
+}
+
+/* Show JSON content when explicitly made visible */
+#invoiceJsonPreviewContent[style*="display: block"] {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Ensure loading animation is hidden by default */
+#invoiceJsonLoadingAnimation {
+    display: none !important;
+}
+
+/* Show loading animation when explicitly made visible */
+#invoiceJsonLoadingAnimation[style*="display: block"] {
+    display: block !important;
+}
+
+/* Initial message styling - outside the card */
+#invoiceJsonInitialMessage {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 120px !important;
+    background: #f8fafc !important;
+    border: 2px dashed #cbd5e1 !important;
+    border-radius: 8px !important;
+    margin: 1rem 0 !important;
+}
+
+/* Hide initial message when explicitly hidden */
+#invoiceJsonInitialMessage[style*="display: none"] {
+    display: none !important;
+}
+
+.json-viewer {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    flex: 1 !important;
+}
+
+.json-toolbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    background: #f1f5f9 !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6) !important;
+    flex-shrink: 0 !important;
+    padding: 1rem 1.5rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.json-code-container {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    max-height: 320px !important;
+    background: #ffffff !important;
+    border-radius: 0 !important;
+}
+
+/* Ensure JSON content doesn't interfere with scrolling */
+.json-code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+    font-size: 0.75rem !important;
+    line-height: 1.6 !important;
+    color: #374151 !important;
+    margin: 0 !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    text-align: left !important;
+    padding: 1.5rem !important;
+}
+
+/* Modal Footer Enhancements */
+.swal2-popup.large-modal .swal2-actions {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 30 !important;
+    background: #f8fafc !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.6) !important;
+    border-radius: 0 0 16px 16px !important;
+    padding: 1.5rem 2rem !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Confirmation Modal Enhancements */
+.swal2-popup.semi-minimal-popup {
+    max-width: 600px !important;
+    width: 90vw !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.swal2-popup.semi-minimal-popup .swal2-html-container {
+    overflow-y: auto !important;
+    flex: 1 !important;
+    max-height: calc(90vh - 160px) !important;
+}
+
+.swal2-popup.semi-minimal-popup .swal2-actions {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 30 !important;
+    background: #f8fafc !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.6) !important;
+    border-radius: 0 0 16px 16px !important;
+    padding: 1.25rem 1.5rem !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+/* Header Consistency for Confirmation Modal */
+.semi-minimal-dialog .modal-header-section {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    color: white !important;
+    border-radius: 16px 16px 0 0 !important;
+    margin: -2rem -2rem 2rem -2rem !important;
+    position: sticky !important;
+    z-index: 25 !important;
+}
+
+/* Content Scrolling Improvements */
+.modern-modal-content {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    padding: 2rem !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    flex: 1 !important;
+}
+
+/* Prevent content from being hidden behind sticky elements */
+.modal-content-grid {
+    padding-bottom: 1rem !important;
+}
+
+/* Modal Footer Enhancements - Fixed Position */
+.swal2-actions {
+    position: sticky !important;
+    bottom: 0 !important;
+    background: white !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.8) !important;
+    padding: 1.5rem 2rem !important;
+    margin: 0 -2rem -2rem -2rem !important;
+    z-index: 30 !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: center !important;
+}
+
+/* Larger Button Styling for Better UX */
+.swal2-confirm,
+.swal2-cancel {
+    min-width: 140px !important;
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.swal2-confirm {
+    background: #198754 !important;
+    border: 1px solid #198754 !important;
+}
+
+.swal2-confirm:hover {
+    background: #157347 !important;
+    border-color: #157347 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3) !important;
+}
+
+.swal2-cancel {
+    background: #6c757d !important;
+    border: 1px solid #6c757d !important;
+}
+
+.swal2-cancel:hover {
+    background: #5c636a !important;
+    border-color: #5c636a !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3) !important;
+}
+
+/* JSON Preview Button - Keep Original Size */
+#toggleJsonBtn {
+    min-width: auto !important;
+    padding: 8px 16px !important;
+    font-size: 0.875rem !important;
+}
+
+.json-preview-section {
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Enhanced Button Styling */
+.swal2-confirm.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 2rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: white !important;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25) !important;
+    transition: all 0.2s ease !important;
+    min-width: 140px !important;
+}
+
+.swal2-confirm.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .swal2-popup.large-modal {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        margin: 1rem auto !important;
+        max-height: 95vh !important;
+    }
+
+    .swal2-popup.large-modal .swal2-html-container {
+        max-height: calc(95vh - 160px) !important;
+    }
+
+    .json-code-container {
+        max-height: 200px !important;
+    }
+
+    .swal2-actions {
+        padding: 1rem !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    .swal2-confirm,
+    .swal2-cancel {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+}
+
+/* Scrollbar Styling */
+.json-code-container::-webkit-scrollbar,
+.swal2-html-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.json-code-container::-webkit-scrollbar-track,
+.swal2-html-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.json-code-container::-webkit-scrollbar-thumb,
+.swal2-html-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.json-code-container::-webkit-scrollbar-thumb:hover,
+.swal2-html-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Loading Animation Improvements */
+.json-loading-animation {
+    padding: 2rem !important;
+    background: #ffffff !important;
+    border-radius: 8px !important;
+    border: 1px solid #e5e7eb !important;
+    margin: 1rem 0 !important;
+}
+
+/* Auto-close notification positioning */
+.auto-close-notification {
+    position: sticky !important;
+    bottom: 1rem !important;
+    z-index: 15 !important;
+    margin: 1rem 0 0 0 !important;
+}
+
+/* Loading Steps for Submission Progress Modal */
+.loading-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.loading-step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.step-indicator {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.step-indicator::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.step-indicator.processing::before {
+    background: #3b82f6;
+}
+
+.step-indicator.completed::before {
+    background: #10b981;
+}
+
+.step-indicator.error::before {
+    background: #ef4444;
+}
+
+.step-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.step-title {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.step-message {
+    font-size: 0.8125rem;
+    color: #6b7280;
+}
+
+/* Loading animation */
+.loading-spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top-color: #3b82f6;
+    border-right-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Status-specific styles for loading steps */
+.loading-step.processing {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.loading-step.completed {
+    border-color: #10b981;
+    background: #ecfdf5;
+}
+
+.loading-step.error {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.loading-step.processing .step-message {
+    color: #3b82f6;
+}
+
+.loading-step.completed .step-message {
+    color: #10b981;
+}
+
+.loading-step.error .step-message {
+    color: #ef4444;
+}

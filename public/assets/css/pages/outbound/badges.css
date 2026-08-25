@@ -1,0 +1,130 @@
+/* Cancellation period badges */
+.badge-cancellation {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35em 0.65em;
+    font-size: 0.85em;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    gap: 0.35em;
+}
+
+.badge-cancellation.success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border: 1px solid #badbcc;
+}
+
+.badge-cancellation.urgent {
+    color: #842029;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    animation: pulse 1.5s infinite;
+}
+
+.badge-cancellation.expired {
+    color: #41464b;
+    background-color: #e2e3e5;
+    border: 1px solid #d3d6d8;
+}
+
+.badge-cancellation.not-applicable {
+    color: #41464b;
+    background-color: #e2e3e5;
+    border: 1px solid #d3d6d8;
+    opacity: 0.75;
+}
+
+.badge-cancellation i {
+    font-size: 0.9em;
+}
+
+/* Pulse animation for urgent badges */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Remaining time text styles */
+.badge-cancellation.urgent .remaining-time {
+    font-weight: 600;
+}
+
+.badge-cancellation.success .remaining-time {
+    color: #0a3622;
+}
+
+/* Badge styles for cancellation time status */
+.badge-cancellation {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.35em 0.65em;
+    font-size: 0.85em;
+    font-weight: 500;
+    border-radius: 0.25rem;
+}
+
+.badge-cancellation.success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border: 1px solid #badbcc;
+}
+
+.badge-cancellation.urgent {
+    color: #842029;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    animation: pulse 1.5s infinite;
+}
+
+.badge-cancellation.expired {
+    color: #41464b;
+    background-color: #e2e3e5;
+    border: 1px solid #d3d6d8;
+}
+
+.badge-cancellation.not-applicable {
+    color: #41464b;
+    background-color: #e2e3e5;
+    border: 1px solid #d3d6d8;
+    opacity: 0.75;
+}
+
+.badge-cancellation i {
+    font-size: 0.9em;
+}
+
+/* Pulse animation for urgent badges */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Remaining time text styles */
+.badge-cancellation.urgent .remaining-time {
+    font-weight: 600;
+}
+
+.badge-cancellation.success .remaining-time {
+    color: #0a3622;
+}
+

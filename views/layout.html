@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Pinnacle e-Invoice Portal - Middleware Invoicing System for LHDN Malaysia">
+    <meta name="keywords" content="einvoice, electronic invoice, tax invoice, LHDN, Malaysia, GST, SST">
+    <meta name="author" content="Pinnacle Pixelcare Consulting Sdn Bhd">
+    
+    <title>{{ title }} - eInvoice Portal</title>
+    {% include "partials/head.html" %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/chat-assistant.css">
+    {% block head %}
+    {% endblock %}
+</head>
+<body class="bg-background">
+    {% include "partials/header.html" %}
+    <main id="main" class="mainLayout md:p-8 lg:p-12">
+        <div class="mx-auto w-full max-w-screen-2xl">
+            <div class="flex flex-col space-y-4">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+
+    {% include "partials/footer.html" %}
+    <script src="/assets/js/chat-assistant.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
