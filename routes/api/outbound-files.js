@@ -688,8 +688,7 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
         const inboundStatuses = await prisma.wP_INBOUND_STATUS.findMany({
             select: {
                 internalId: true,
-                status: true,
-                updated_at: true
+                status: true
             },
             where: {
                 status: {
