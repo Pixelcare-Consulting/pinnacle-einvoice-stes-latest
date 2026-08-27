@@ -1,6 +1,6 @@
 {
   "name": "pxceinvoiceportal",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
@@ -19,7 +19,7 @@
     "clean": "rimraf dist/ build/",
     "prebuild": "pnpm run clean",
     "postbuild": "pnpm run security:check",
-    "db:generate": "npx prisma generate",
+    "db:generate": "prisma generate",
     "db:pull": "npx prisma db pull",
     "db:push": "npx prisma db push",
     "db:migrate": "npx prisma migrate deploy",
@@ -54,7 +54,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@google/generative-ai": "^0.23.0",
     "@neondatabase/serverless": "^1.0.0",
-    "@prisma/client": "^6.7.0",
+    "@prisma/client": "6.8.2",
     "axios": "^1.7.9",
     "axios-retry": "^4.5.0",
     "bcryptjs": "^2.4.3",
