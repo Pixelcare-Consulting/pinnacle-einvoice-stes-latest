@@ -247,9 +247,15 @@
       <h3>Version History</h3>
       <ul class="version-list">
         <li>
-          <a href="#v1.2.0" class="active">
-            Version 1.2.0
+          <a href="#v1.2.3" class="active">
+            Version 1.2.3
             <span class="version-badge">Latest</span>
+          </a>
+        </li>
+        <li>
+          <a href="#v1.2.0">
+            Version 1.2.0
+            <span class="version-badge">Aug 25</span>
           </a>
         </li>
         <li>
@@ -291,6 +297,42 @@
       </ul>
     </aside>
     <div class="changelog-container">
+      <div class="changelog-version" id="v1.2.3">
+        <div class="version-header">
+          <h2>Version 1.2.3</h2>
+          <p class="changelog-date">
+            <i class="bi bi-calendar3"></i>
+            August 28, 2026
+          </p>
+        </div>
+
+        <div class="mt-4 space-y-4">
+          <div>
+            <span class="changelog-type type-improvement">
+              <i class="bi bi-arrow-up-circle-fill"></i>
+              Improvement
+            </span>
+            <div class="changelog-list">
+              <ul>
+                <li>Extra charges now send the invoice number as the shipment reference, as LHDN requires</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <span class="changelog-type type-fix">
+              <i class="bi bi-bug-fill"></i>
+              Bug Fix
+            </span>
+            <div class="changelog-list">
+              <ul>
+                <li>Stopped LHDN rejections when a shipping recipient is present but there are no extra charges</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="changelog-version" id="v1.2.0">
         <div class="version-header">
           <h2>Version 1.2.0</h2>

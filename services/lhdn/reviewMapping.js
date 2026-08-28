@@ -484,6 +484,14 @@ const fullSampleChecks = (payload, sample) => {
     billingAdr === 'E12345678912'
   ));
 
+  const shipmentId = invoice.Delivery?.[0]?.Shipment?.[0]?.ID?.[0]?._;
+  checks.push(check(
+    'Invoice.Delivery.Shipment.ID',
+    '1234',
+    shipmentId,
+    shipmentId === '1234'
+  ));
+
   if (sampleInvoice) {
     checks.push(check(
       'sampleOracle.loaded',
@@ -570,6 +578,25 @@ const optionalOmittedChecks = (payload) => {
   ));
 };
 
+const deliveryWithoutShipmentChecks = (payload) => {
+  const invoice = invoiceOf(payload);
+  const delivery = invoice.Delivery?.[0];
+  return [
+    check(
+      'Invoice.Delivery',
+      'present',
+      delivery ? 'present' : 'omitted',
+      Boolean(delivery)
+    ),
+    check(
+      'Invoice.Delivery.Shipment',
+      'omitted',
+      delivery?.Shipment ?? 'omitted',
+      delivery?.Shipment === undefined
+    )
+  ];
+};
+
 const CASES = [
   {
     id: 'full-sample-shape',
@@ -643,6 +670,22 @@ const CASES = [
       };
     }),
     checks: (payload) => optionalOmittedChecks(payload)
+  },
+  {
+    id: 'delivery-without-shipment',
+    expectError: false,
+    input: withDoc((doc) => {
+      doc.header.invoiceNo = 'DELIVERY-NO-SHIPMENT';
+      doc.delivery.shipment = {
+        id: '',
+        freightAllowanceCharge: {
+          indicator: false,
+          reason: '',
+          amount: ''
+        }
+      };
+    }),
+    checks: (payload) => deliveryWithoutShipmentChecks(payload)
   }
 ];
 

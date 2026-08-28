@@ -15,7 +15,10 @@ const {
   SDK_FIELD_LIMITS,
   toIsoDate,
   toPlainAmount,
-  truncate
+  truncate,
+  hasShipmentFreightCharge,
+  resolveDeliveryShipmentId,
+  shouldEmitDeliveryShipment
 } = require('./sdkFieldLimits');
 
 /**
@@ -668,8 +671,8 @@ const mapBuyerParty = (buyer = {}) => ([{
   }]
 }]);
 
-const mapDelivery = (delivery, documentCurrencyCode) => {
-  if (!delivery?.name || delivery.name === 'NA') {
+const mapDelivery = (delivery, documentCurrencyCode, invoiceNo) => {
+  if (!hasMeaningfulValue(delivery?.name)) {
     return undefined;
   }
 
@@ -679,18 +682,33 @@ const mapDelivery = (delivery, documentCurrencyCode) => {
     "PartyIdentification": mapPartyIdentifications(delivery.identifications)
   };
 
+  const freight = delivery.shipment?.freightAllowanceCharge;
+  let freightAllowanceCharge;
+  if (hasShipmentFreightCharge(delivery)) {
+    const reason = hasMeaningfulValue(freight?.reason)
+      ? wrapValue(freight.reason)
+      : undefined;
+    freightAllowanceCharge = [{
+      "ChargeIndicator": wrapBoolean(true),
+      ...(reason ? { "AllowanceChargeReason": reason } : {}),
+      "Amount": wrapValue(freight.amount, documentCurrencyCode)
+    }];
+  }
+
+  let shipment;
+  if (shouldEmitDeliveryShipment(delivery)) {
+    const shipmentId = resolveDeliveryShipmentId(delivery, invoiceNo);
+    if (hasMeaningfulValue(shipmentId)) {
+      shipment = [{
+        "ID": wrapValue(shipmentId),
+        ...(freightAllowanceCharge ? { "FreightAllowanceCharge": freightAllowanceCharge } : {})
+      }];
+    }
+  }
+
   return [{
     "DeliveryParty": [deliveryParty],
-    ...(delivery.shipment ? {
-      "Shipment": [{
-        "ID": wrapValue(delivery.shipment.id),
-        "FreightAllowanceCharge": [{
-          "ChargeIndicator": wrapBoolean(delivery.shipment.freightAllowanceCharge.indicator),
-          "AllowanceChargeReason": wrapValue(delivery.shipment.freightAllowanceCharge.reason),
-          "Amount": wrapValue(delivery.shipment.freightAllowanceCharge.amount, documentCurrencyCode)
-        }]
-      }]
-    } : {})
+    ...(shipment ? { "Shipment": shipment } : {})
   }];
 };
 
@@ -733,7 +751,7 @@ const mapToLHDNFormat = (excelData, version) => {
     const paymentTerms = mapPaymentTerms(doc.payment);
     const prepaidPayment = mapPrepaidPayment(doc.payment, doc.header.documentCurrencyCode);
     const taxExchangeRate = mapTaxExchangeRate(doc.header);
-    const delivery = mapDelivery(doc.delivery, doc.header.documentCurrencyCode);
+    const delivery = mapDelivery(doc.delivery, doc.header.documentCurrencyCode, doc.header.invoiceNo);
     const supplierParty = mapSupplierParty(doc.supplier);
     const buyerParty = mapBuyerParty(doc.buyer);
     const taxTotal = mapTaxTotal(doc.summary?.taxTotal, doc.header.documentCurrencyCode, doc.header.taxCurrencyCode);

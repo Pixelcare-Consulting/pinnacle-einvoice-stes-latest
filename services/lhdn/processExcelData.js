@@ -413,13 +413,13 @@ const processExcelData = (rawData, options = {}) => {
               countryListAgencyID: String(getField(headerRow, '46') || DEFAULT_VALUES.COUNTRY_SCHEME.agencyId)
             },
             shipment: {
-              id: getField(headerRow, '48') || DEFAULT_VALUES.NOT_APPLICABLE,
+              id: getField(headerRow, '48') || '',
               freightAllowanceCharge: {
                 indicator: getField(headerRow, '49') === true ||
                           getField(headerRow, '49') === 'true' ||
                           getField(headerRow, '49') === 1,
-                reason: getField(headerRow, '50') || DEFAULT_VALUES.NOT_APPLICABLE,
-                amount: getField(headerRow, '51') || DEFAULT_VALUES.ZERO
+                reason: getField(headerRow, '50') || '',
+                amount: getField(headerRow, '51')
               }
             }
           },

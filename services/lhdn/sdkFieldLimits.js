@@ -218,6 +218,37 @@ const toPlainAmount = (value) => {
   return numeric;
 };
 
+const isTrueChargeIndicator = (value) => (
+  value === true || value === 'true' || value === 1 || value === '1'
+);
+
+const isMeaningfulNonZeroAmount = (value) => {
+  const amount = toPlainAmount(value);
+  return amount !== undefined && amount !== 0;
+};
+
+const hasShipmentFreightCharge = (delivery) => {
+  const freight = delivery?.shipment?.freightAllowanceCharge;
+  if (!freight) {
+    return false;
+  }
+  return isTrueChargeIndicator(freight.indicator) && isMeaningfulNonZeroAmount(freight.amount);
+};
+
+const shouldEmitDeliveryShipment = (delivery) => (
+  hasShipmentFreightCharge(delivery) || hasMeaningfulValue(delivery?.shipment?.id)
+);
+
+const resolveDeliveryShipmentId = (delivery, invoiceNo) => {
+  if (hasMeaningfulValue(delivery?.shipment?.id)) {
+    return String(delivery.shipment.id).trim();
+  }
+  if (hasMeaningfulValue(invoiceNo)) {
+    return String(invoiceNo).trim();
+  }
+  return '';
+};
+
 const exceedsAmountDigits = (value) => {
   if (value === null || value === undefined || value === '') {
     return false;
@@ -318,6 +349,18 @@ const collectSdkValidationErrors = (doc) => {
       target: 'ID',
       propertyPath: 'Invoice.ID'
     });
+  }
+
+  if (shouldEmitDeliveryShipment(doc.delivery)) {
+    const shipmentId = resolveDeliveryShipmentId(doc.delivery, invoiceNo);
+    if (!shipmentId) {
+      errors.push({
+        code: 'CF421',
+        message: 'Shipment ID is required when extra charges are included',
+        target: 'Shipment',
+        propertyPath: 'Invoice.Delivery.Shipment.ID'
+      });
+    }
   }
 
   const industryName = doc.supplier?.industryName;
@@ -494,5 +537,8 @@ module.exports = {
   clipIdByScheme,
   isValidIncoterms,
   classifyAdditionalDocumentReference,
-  collectSdkValidationErrors
+  collectSdkValidationErrors,
+  hasShipmentFreightCharge,
+  shouldEmitDeliveryShipment,
+  resolveDeliveryShipmentId
 };
