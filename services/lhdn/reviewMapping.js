@@ -597,12 +597,99 @@ const deliveryWithoutShipmentChecks = (payload) => {
   ];
 };
 
+const foreignMsicChecks = (payload) => {
+  const industry = partyOf(payload, 'AccountingSupplierParty').IndustryClassificationCode?.[0];
+  return [
+    check(
+      'Invoice.AccountingSupplierParty.Party.IndustryClassificationCode._',
+      '00000',
+      industry?._,
+      industry?._ === '00000'
+    ),
+    check(
+      'Invoice.AccountingSupplierParty.Party.IndustryClassificationCode.name',
+      'NOT APPLICABLE',
+      industry?.name,
+      industry?.name === 'NOT APPLICABLE'
+    )
+  ];
+};
+
+const foreignAddressChecks = (payload) => {
+  const address = partyOf(payload, 'AccountingSupplierParty').PostalAddress?.[0] || {};
+  const keys = Object.keys(address);
+  return [
+    check(
+      'Invoice.AccountingSupplierParty.Party.PostalAddress#keyOrder',
+      'CityName, PostalZone, CountrySubentityCode, AddressLine, Country',
+      keys.join(', '),
+      keys.join('|') === 'CityName|PostalZone|CountrySubentityCode|AddressLine|Country'
+    ),
+    check(
+      'Invoice.AccountingSupplierParty.Party.PostalAddress.CityName',
+      'NA',
+      address.CityName?.[0]?._,
+      address.CityName?.[0]?._ === 'NA'
+    ),
+    check(
+      'Invoice.AccountingSupplierParty.Party.PostalAddress.PostalZone',
+      'NA',
+      address.PostalZone?.[0]?._,
+      address.PostalZone?.[0]?._ === 'NA'
+    ),
+    check(
+      'Invoice.AccountingSupplierParty.Party.PostalAddress.CountrySubentityCode',
+      '17',
+      address.CountrySubentityCode?.[0]?._,
+      address.CountrySubentityCode?.[0]?._ === '17'
+    ),
+    check(
+      'Invoice.AccountingSupplierParty.Party.PostalAddress.Country',
+      'SGP',
+      address.Country?.[0]?.IdentificationCode?.[0]?._,
+      address.Country?.[0]?.IdentificationCode?.[0]?._ === 'SGP'
+    )
+  ];
+};
+
+const usdOmitZeroAllowanceChecks = (payload) => {
+  const invoice = invoiceOf(payload);
+  const keys = Object.keys(invoice);
+  const taxCurrencyIdx = keys.indexOf('TaxCurrencyCode');
+  const taxExIdx = keys.indexOf('TaxExchangeRate');
+  return [
+    check(
+      'Invoice.AllowanceCharge',
+      'omitted when amount is 0',
+      invoice.AllowanceCharge ?? 'omitted',
+      invoice.AllowanceCharge === undefined
+    ),
+    check(
+      'Invoice.TaxExchangeRate#position',
+      'immediately after TaxCurrencyCode',
+      `TaxCurrencyCode@${taxCurrencyIdx}, TaxExchangeRate@${taxExIdx}`,
+      taxCurrencyIdx >= 0 && taxExIdx === taxCurrencyIdx + 1
+    )
+  ];
+};
+
 const CASES = [
   {
     id: 'full-sample-shape',
     expectError: false,
     input: baseProcessedDoc(),
     checks: (payload, sample) => fullSampleChecks(payload, sample)
+  },
+  {
+    id: 'foreign-msic-00000',
+    expectError: false,
+    input: withDoc((doc) => {
+      doc.header.invoiceNo = 'FOREIGN-MSIC-00000';
+      doc.supplier.industryClassificationCode = '00000';
+      doc.supplier.industryName = 'NOT APPLICABLE';
+      doc.supplier.companyIndustry = 'Wholesale of computer hardware, software and peripherals';
+    }),
+    checks: (payload) => foreignMsicChecks(payload)
   },
   {
     id: 'cf701-missing-activity',
@@ -613,6 +700,40 @@ const CASES = [
       doc.supplier.industryClassificationCode = '';
       doc.supplier.companyIndustry = '';
     })
+  },
+  {
+    id: 'foreign-address-sgp',
+    expectError: false,
+    input: withDoc((doc) => {
+      doc.header.invoiceNo = 'FOREIGN-ADDRESS-SGP';
+      doc.supplier.industryClassificationCode = '00000';
+      doc.supplier.industryName = 'NOT APPLICABLE';
+      doc.supplier.address = {
+        line: '123 Tech Park',
+        city: 'NA',
+        postcode: 'NA',
+        state: '',
+        country: 'SGP'
+      };
+    }),
+    checks: (payload) => foreignAddressChecks(payload)
+  },
+  {
+    id: 'usd-omit-zero-allowance',
+    expectError: false,
+    input: withDoc((doc) => {
+      doc.header.invoiceNo = 'USD-OMIT-ZERO-ALLOWANCE';
+      doc.header.documentCurrencyCode = 'USD';
+      doc.header.currency = 'USD';
+      doc.header.taxCurrencyCode = 'MYR';
+      doc.header.exchangeRate = 4.72;
+      doc.allowanceCharge = {
+        indicator: false,
+        reason: 'NA',
+        amount: 0
+      };
+    }),
+    checks: (payload) => usdOmitZeroAllowanceChecks(payload)
   },
   {
     id: 'cf417-long-incoterms',

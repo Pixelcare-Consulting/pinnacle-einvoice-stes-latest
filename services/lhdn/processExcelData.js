@@ -362,6 +362,7 @@ const processExcelData = (rawData, options = {}) => {
             schemeAgencyName: truncate(getField(headerRow, '13') || 'CertEx', SDK_FIELD_LIMITS.certExAuthNumber),
             industryClassificationCode,
             industryName,
+            companyIndustry: options.companyIndustry || '',
             identifications: getIdentifications(partyIdentifications.supplier),
             name: getField(headerRow, '25'),
             address: {

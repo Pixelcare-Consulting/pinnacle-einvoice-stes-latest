@@ -3,10 +3,13 @@ const path = require('path');
 const { getCertificatesHashedParams } = require('./lhdnService');
 const {
   clipIdByScheme,
+  FOREIGN_MSIC_CODE,
   hasMeaningfulValue,
+  hasValidSupplierIndustry,
   INVOICE_ADR_TYPES,
   isEmptyOptional,
-  isMeaningfulIndustry,
+  isForeignMsicCode,
+  isMeaningfulNonZeroAmount,
   isValidIncoterms,
   LhdnMappingError,
   PARTY_ID_SCHEMES,
@@ -117,6 +120,34 @@ const wrapValue = (value, currencyID = null) => {
   }];
 };
 
+const wrapRequiredText = (value, fallback = 'NA') => {
+  const text = String(value ?? '').trim();
+  return [{
+    "_": text || fallback
+  }];
+};
+
+const isMalaysianCountry = (country) => {
+  const normalized = String(country || '').trim().toUpperCase();
+  return normalized === 'MYS' || normalized === 'MY' || normalized === 'MALAYSIA';
+};
+
+const resolveCountrySubentityCode = (address = {}) => {
+  if (hasMeaningfulValue(address.state)) {
+    return String(address.state).trim();
+  }
+  if (!isMalaysianCountry(address.country)) {
+    return '17';
+  }
+  return '';
+};
+
+const DEFAULT_UNIT_CODE = 'C62';
+
+const resolveLineUnitCode = (unitCode) => (
+  hasMeaningfulValue(unitCode) ? String(unitCode).trim() : DEFAULT_UNIT_CODE
+);
+
 const wrapDate = (value) => {
   const isoDate = toIsoDate(value);
   if (!isoDate) {
@@ -212,19 +243,29 @@ const mapAddressLines = (line) => {
   }));
 };
 
-const mapAllowanceCharges = (charges) => {
-  if (!charges || !Array.isArray(charges)) {
-    charges = [charges];
-  }
+const mapAllowanceCharges = (charges, documentCurrencyCode) => {
+  const list = Array.isArray(charges) ? charges : (charges ? [charges] : []);
+  const currency = hasMeaningfulValue(documentCurrencyCode)
+    ? String(documentCurrencyCode).trim()
+    : 'MYR';
 
-  return charges.map(charge => ({
-    "ChargeIndicator": wrapBoolean(charge.indicator),
-    "AllowanceChargeReason": wrapValue(charge.reason || 'NA'),
-    "MultiplierFactorNumeric": charge.multiplierFactorNumeric ? [{
-      "_": charge.multiplierFactorNumeric
-    }] : undefined,
-    "Amount": wrapValue(charge.amount || 0, 'MYR')
-  })).filter(c => c);
+  const mapped = list.map((charge) => {
+    if (!charge || !isMeaningfulNonZeroAmount(charge.amount)) {
+      return null;
+    }
+
+    const reasonText = String(charge.reason ?? '').trim();
+    return {
+      "ChargeIndicator": wrapBoolean(charge.indicator),
+      ...(reasonText ? { "AllowanceChargeReason": wrapRequiredText(reasonText) } : {}),
+      "MultiplierFactorNumeric": charge.multiplierFactorNumeric ? [{
+        "_": charge.multiplierFactorNumeric
+      }] : undefined,
+      "Amount": wrapValue(charge.amount, currency)
+    };
+  }).filter(Boolean);
+
+  return mapped.length ? mapped : undefined;
 };
 
 const mapCommodityClassifications = (item) => {
@@ -306,13 +347,14 @@ const mapPartyIdentifications = (identifications = []) => {
 };
 
 const resolveSupplierIndustry = (supplier = {}) => {
+  const msicCode = supplier.industryClassificationCode;
   const industryName = resolveIndustryName({
     excelName: supplier.industryName,
-    msicCode: supplier.industryClassificationCode,
+    msicCode,
     companyIndustry: supplier.companyIndustry
   });
 
-  if (!isMeaningfulIndustry(industryName)) {
+  if (!hasValidSupplierIndustry(industryName, msicCode)) {
     throw new LhdnMappingError(
       'CF701',
       'Business activity description is required',
@@ -324,20 +366,24 @@ const resolveSupplierIndustry = (supplier = {}) => {
   }
 
   return {
-    "_": String(supplier.industryClassificationCode || ''),
+    "_": isForeignMsicCode(msicCode) ? FOREIGN_MSIC_CODE : String(msicCode || ''),
     "name": truncate(industryName, SDK_FIELD_LIMITS.industryName)
   };
 };
 
-const mapPartyAddress = (address) => {
+const mapPartyAddress = (address = {}) => {
+  const countrySubentityCode = resolveCountrySubentityCode(address);
   return {
-    "CityName": wrapValue(address.city),
-    "PostalZone": wrapValue(address.postcode),
-    "CountrySubentityCode": wrapValue(address.state),
+    "CityName": wrapRequiredText(address.city),
+    "PostalZone": wrapRequiredText(address.postcode),
+    "CountrySubentityCode": wrapRequiredText(
+      countrySubentityCode,
+      isMalaysianCountry(address.country) ? '' : '17'
+    ),
     "AddressLine": mapAddressLines(address.line || ""),
     "Country": [{
       "IdentificationCode": [{
-        "_": address.country || "MYS",
+        "_": String(address.country || 'MYS').trim() || 'MYS',
         "listID": "ISO3166-1",
         "listAgencyID": "6"
       }]
@@ -421,7 +467,7 @@ const mapLineItem = (item, documentCurrencyCode, taxCurrencyCode, exchangeRate) 
     "ID": wrapValue(String(item.lineId)),
     "InvoicedQuantity": [{
       "_": Number(item.quantity),
-      "unitCode": item.unitCode || ""
+      "unitCode": resolveLineUnitCode(item.unitCode)
     }],
     "LineExtensionAmount": wrapValue(item.lineExtensionAmount, documentCurrencyCode),
     "AllowanceCharge": item.allowanceCharges.map(charge => ({
@@ -755,6 +801,10 @@ const mapToLHDNFormat = (excelData, version) => {
     const supplierParty = mapSupplierParty(doc.supplier);
     const buyerParty = mapBuyerParty(doc.buyer);
     const taxTotal = mapTaxTotal(doc.summary?.taxTotal, doc.header.documentCurrencyCode, doc.header.taxCurrencyCode);
+    const invoiceAllowanceCharges = mapAllowanceCharges(
+      doc.allowanceCharge,
+      doc.header.documentCurrencyCode
+    );
     const legalMonetaryTotal = [{
       "LineExtensionAmount": wrapValue(doc.summary.amounts.lineExtensionAmount, doc.header.documentCurrencyCode),
       "TaxExclusiveAmount": wrapValue(doc.summary.amounts.taxExclusiveAmount, doc.header.documentCurrencyCode),
@@ -791,7 +841,7 @@ const mapToLHDNFormat = (excelData, version) => {
         ...(paymentMeans ? { "PaymentMeans": paymentMeans } : {}),
         ...(paymentTerms ? { "PaymentTerms": paymentTerms } : {}),
         ...(prepaidPayment ? { "PrepaidPayment": prepaidPayment } : {}),
-        "AllowanceCharge": mapAllowanceCharges(doc.allowanceCharge),
+        ...(invoiceAllowanceCharges ? { "AllowanceCharge": invoiceAllowanceCharges } : {}),
         "TaxTotal": taxTotal,
         "LegalMonetaryTotal": legalMonetaryTotal,
         "InvoiceLine": mapInvoiceLines(doc.items, doc.header.documentCurrencyCode, doc.header.taxCurrencyCode, doc.header.exchangeRate)

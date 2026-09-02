@@ -5,8 +5,8 @@ const VersionControl = require(path.join(__dirname, '..', './utils', 'versionCon
 // Create the app version
 const appVersion = new VersionControl({
   major: '1',
-  minor: '2',
-  patch: '3',
+  minor: '3',
+  patch: '1',
   build: '001'
 });
 

@@ -81,7 +81,6 @@ class InvoiceTableManager {
         this.selectedRows = new Set();
 
         // Request management properties
-        this.currentRequest = null;
         this.requestQueue = [];
         this.isRequestInProgress = false;
         this.requestTimeout = 60000; // 60 seconds timeout
@@ -90,6 +89,9 @@ class InvoiceTableManager {
         this.lastRequestTime = 0;
         this.requestDebounceDelay = 200; // 200ms debounce
         this.isDataSourceSwitching = false; // Flag to track data source switching
+        this.listAllRequest = null;
+        this._hydrateInFlight = false;
+        this._hydrateQueued = false;
 
         // Reset DataTables request flags to ensure they're in a clean state
         window._dataTablesRequestInProgress = false;
@@ -102,40 +104,43 @@ class InvoiceTableManager {
                 options.timeout = this.requestTimeout;
             }
 
-            // Add abort controller for better request management
-            if (options.url && options.url.includes('/api/outbound-files/')) {
-                // Cancel any existing request for the same endpoint
-                if (this.currentRequest && this.currentRequest.readyState !== 4) {
-                    console.log('Aborting previous request to prevent conflicts');
-                    this.currentRequest.abort();
+            const requestUrl = options.url || '';
+            const isListAll = requestUrl.includes('/api/outbound-files/list-all');
+            const skipLoading = originalOptions.skipOutboundLoading === true
+                || requestUrl.includes('/api/outbound-files/hydrate-list');
+
+            if (isListAll) {
+                if (this.listAllRequest && this.listAllRequest.readyState !== 4) {
+                    console.log('Aborting previous list-all request to prevent conflicts');
+                    this.listAllRequest.abort();
                 }
-                this.currentRequest = jqXHR;
+                this.listAllRequest = jqXHR;
             }
 
-            if (!options.beforeSend) {
+            if (!skipLoading && !options.beforeSend) {
                 options.beforeSend = () => {
                     this.showLoadingBackdrop();
                 };
             }
 
             let oldComplete = options.complete;
-            options.complete = (jqXHR, textStatus) => {
-                this.hideLoadingBackdrop();
-
-                // Clear current request reference
-                if (this.currentRequest === jqXHR) {
-                    this.currentRequest = null;
+            options.complete = (jqXHRComplete, textStatus) => {
+                if (!skipLoading) {
+                    this.hideLoadingBackdrop();
                 }
 
-                // Ensure DataTables request flags are cleared
-                if (options.url && options.url.includes('/api/outbound-files/')) {
+                if (this.listAllRequest === jqXHRComplete) {
+                    this.listAllRequest = null;
+                }
+
+                if (isListAll) {
                     window._dataTablesRequestInProgress = false;
                     window._dataTablesRequestStartTime = null;
                     this.isRequestInProgress = false;
                 }
 
                 if (oldComplete) {
-                    oldComplete(jqXHR, textStatus);
+                    oldComplete(jqXHRComplete, textStatus);
                 }
             };
         });
@@ -391,6 +396,115 @@ class InvoiceTableManager {
         });
     }
 
+    rowNeedsHydrate(row) {
+        if (!row || row.fromStaging || row.dataSource === 'WP_OUTBOUND_STATUS') {
+            return false;
+        }
+        const supplier = row.supplierInfo?.registrationName || row.supplierName || row.supplier;
+        const buyer = row.buyerInfo?.registrationName || row.buyerName || row.receiver;
+        const amount = row.totalAmount;
+        return !supplier || !buyer || !amount;
+    }
+
+    hydrateVisibleRows() {
+        if (this._skipHydrateDraw || this.currentDataSource !== 'list-all' || !this.table) {
+            return;
+        }
+
+        if (this._hydrateInFlight) {
+            this._hydrateQueued = true;
+            return;
+        }
+
+        const visibleRows = this.table.rows({ page: 'current' }).data().toArray();
+        const files = visibleRows
+            .filter((row) => row && row.fileName && this.rowNeedsHydrate(row))
+            .map((row) => ({
+                fileName: row.fileName,
+                type: row.type || row.source,
+                company: row.company,
+                date: row.date
+            }))
+            .filter((file) => file.type && file.company && file.date)
+            .slice(0, 25);
+
+        if (files.length === 0) {
+            return;
+        }
+
+        this._hydrateInFlight = true;
+        this._hydrateQueued = false;
+
+        $.ajax({
+            url: '/api/outbound-files/hydrate-list',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ files }),
+            skipOutboundLoading: true,
+            timeout: this.requestTimeout,
+            xhrFields: {
+                withCredentials: true
+            }
+        }).done((json) => {
+            if (!json || !json.success || !Array.isArray(json.files) || !this.table) {
+                return;
+            }
+
+            const hydratedByName = new Map(
+                json.files.filter((item) => item && item.success && item.fileName).map((item) => [item.fileName, item])
+            );
+
+            if (hydratedByName.size === 0) {
+                return;
+            }
+
+            let didUpdate = false;
+            this._skipHydrateDraw = true;
+            this.table.rows({ page: 'current' }).every(function () {
+                const current = this.data();
+                const hydrated = current ? hydratedByName.get(current.fileName) : null;
+                if (!hydrated) {
+                    return;
+                }
+
+                const supplierName = hydrated.supplierInfo?.registrationName || current.supplier;
+                const buyerName = hydrated.buyerInfo?.registrationName || current.receiver;
+                this.data({
+                    ...current,
+                    supplierInfo: hydrated.supplierInfo || current.supplierInfo,
+                    buyerInfo: hydrated.buyerInfo || current.buyerInfo,
+                    supplier: supplierName,
+                    receiver: buyerName,
+                    supplierName,
+                    buyerName,
+                    totalAmount: hydrated.totalAmount || current.totalAmount,
+                    issueDate: hydrated.issueDate || current.issueDate,
+                    issueTime: hydrated.issueTime || current.issueTime,
+                    currency: hydrated.currency || current.currency,
+                    needsHydrate: false
+                });
+                didUpdate = true;
+            });
+
+            if (didUpdate) {
+                this.table.columns.adjust();
+                setTimeout(() => this.updateCardTotals(), 0);
+            }
+        }).fail((xhr, error) => {
+            if (error === 'abort') {
+                return;
+            }
+            console.error('Failed to hydrate visible outbound rows:', error);
+        }).always(() => {
+            this._skipHydrateDraw = false;
+            this._hydrateInFlight = false;
+            if (this._hydrateQueued) {
+                this._hydrateQueued = false;
+                this.hydrateVisibleRows();
+            }
+        });
+    }
+
     // Handle timeout errors with retry logic
     handleTimeoutError() {
         console.log('Request timed out, implementing retry logic');
@@ -473,8 +587,8 @@ class InvoiceTableManager {
             console.log('Page unloading, cleaning up requests...');
 
             // Cancel any ongoing requests
-            if (this.currentRequest && this.currentRequest.readyState !== 4) {
-                this.currentRequest.abort();
+            if (this.listAllRequest && this.listAllRequest.readyState !== 4) {
+                this.listAllRequest.abort();
             }
 
             // Clear flags
@@ -725,36 +839,43 @@ class InvoiceTableManager {
                         }
 
                         // Process the files data - handle both live and staging data
-                        const processedData = filesData.map(file => ({
-                            ...file,
-                            DT_RowId: file.fileName,
-                            invoiceNumber: file.invoiceNumber || file.invoice_number || file.fileName.replace(/\.xml$/i, ''),
-                            fileName: file.fileName,
-                            documentType: file.documentType || file.document_type || 'Invoice',
-                            company: file.company,
-                            // Handle staging data supplier/buyer info
-                            buyerInfo: file.buyerInfo || { registrationName: file.buyerName || file.receiver || 'N/A' },
-                            supplierInfo: file.supplierInfo || { registrationName: file.supplierName || file.supplier || 'N/A' },
-                            // Keep original staging field names for the render functions
-                            supplierName: file.supplierName || file.supplier,
-                            buyerName: file.buyerName || file.receiver,
-                            supplier: file.supplier,
-                            receiver: file.receiver,
-                            uploadedDate: file.uploadedDate ? new Date(file.uploadedDate).toISOString() : new Date().toISOString(),
-                            issueDate: file.issueDate,
-                            issueTime: file.issueTime,
-                            date_submitted: file.submissionDate ? new Date(file.submissionDate).toISOString() : file.date_submitted,
-                            date_cancelled: file.date_cancelled ? new Date(file.date_cancelled).toISOString() : null,
-                            cancelled_by: file.cancelled_by || null,
-                            cancel_reason: file.cancel_reason || file.cancellation_reason || null,
-                            status: file.status || 'Pending',
-                            source: file.source,
-                            uuid: file.uuid || file.UUID || null,
-                            totalAmount: file.totalAmount || file.amount || null,
-                            // Staging metadata
-                            fromStaging: file.fromStaging || false,
-                            dataSource: file.dataSource || null
-                        }));
+                        const processedData = filesData.map(file => {
+                            const supplierName = file.supplierName || file.supplier || file.supplierInfo?.registrationName || null;
+                            const buyerName = file.buyerName || file.receiver || file.buyerInfo?.registrationName || null;
+                            const isLiveList = self.currentDataSource === 'list-all' && !file.fromStaging;
+                            return {
+                                ...file,
+                                DT_RowId: file.fileName,
+                                invoiceNumber: file.invoiceNumber || file.invoice_number || file.fileName.replace(/\.xml$/i, ''),
+                                fileName: file.fileName,
+                                documentType: file.documentType || file.document_type || 'Invoice',
+                                company: file.company,
+                                buyerInfo: file.buyerInfo || { registrationName: buyerName },
+                                supplierInfo: file.supplierInfo || { registrationName: supplierName },
+                                supplierName,
+                                buyerName,
+                                supplier: file.supplier || supplierName,
+                                receiver: file.receiver || buyerName,
+                                uploadedDate: file.uploadedDate ? new Date(file.uploadedDate).toISOString() : new Date().toISOString(),
+                                issueDate: file.issueDate,
+                                issueTime: file.issueTime,
+                                date_submitted: file.submissionDate ? new Date(file.submissionDate).toISOString() : file.date_submitted,
+                                date_cancelled: file.date_cancelled ? new Date(file.date_cancelled).toISOString() : null,
+                                cancelled_by: file.cancelled_by || null,
+                                cancel_reason: file.cancel_reason || file.cancellation_reason || null,
+                                status: file.status || 'Pending',
+                                source: file.source,
+                                uuid: file.uuid || file.UUID || null,
+                                totalAmount: file.totalAmount || file.amount || null,
+                                fromStaging: file.fromStaging || false,
+                                dataSource: file.dataSource || null,
+                                needsHydrate: isLiveList ? (file.needsHydrate === true || self.rowNeedsHydrate({
+                                    supplierInfo: file.supplierInfo || { registrationName: supplierName },
+                                    buyerInfo: file.buyerInfo || { registrationName: buyerName },
+                                    totalAmount: file.totalAmount || file.amount || null
+                                })) : false
+                            };
+                        });
 
                         console.log('Current Processed Data: ', processedData);
 
@@ -856,7 +977,7 @@ class InvoiceTableManager {
                         }
 
                         // Handle timeout errors
-                        if (error === 'timeout' || xhr.status === 0) {
+                        if (error === 'timeout') {
                             self.handleTimeoutError();
                             return;
                         }
@@ -920,6 +1041,7 @@ class InvoiceTableManager {
                         const pageInfo = settings._iDisplayStart;
                         $(this).find('.row-index').text(pageInfo + index + 1);
                     });
+                    self.hydrateVisibleRows();
                 },
                 createdRow: (row, data, dataIndex) => {
                     // Add a class to the row based on status
@@ -1129,7 +1251,7 @@ class InvoiceTableManager {
 
     
   renderTotalAmount(data, type, row) {
-    if (!data) return '<span class="text-muted">N/A</span>';
+    if (!data) return '<span class="text-muted">—</span>';
 
     // Debug: Log what data we're receiving from the backend
     // console.log('🔍 renderTotalAmount received data:', data, 'for file:', row.fileName);
@@ -1302,11 +1424,10 @@ class InvoiceTableManager {
 
 
     renderSupplierInfo(data) {
-
-        if (!data) {
-            return '<span class="text-muted">Company Name</span>';
+        const supplierName = data?.name || data?.registrationName || data?.supplierName || data?.supplier?.name || data?.supplier?.registrationName;
+        if (!supplierName) {
+            return '<span class="text-muted">—</span>';
         }
-        const supplierName = data.name || data.registrationName || data.supplierName || data.supplier?.name || data.supplier?.registrationName || 'N/A';
         return `
             <div class="cell-group">
                 <div class="cell-main ">
@@ -1321,10 +1442,10 @@ class InvoiceTableManager {
     }
 
     renderBuyerInfo(data) {
-        if (!data) {
-            return '<span class="text-muted">Company Name</span>';
+        const buyerName = data?.name || data?.registrationName || data?.buyerName || data?.buyer?.name || data?.buyer?.registrationName;
+        if (!buyerName) {
+            return '<span class="text-muted">—</span>';
         }
-        const buyerName = data.name || data.registrationName || data.buyerName || data.buyer?.name || data.buyer?.registrationName || 'N/A';
         return `
             <div class="cell-group">
                 <div class="cell-main ">
@@ -1821,9 +1942,9 @@ class InvoiceTableManager {
             }, 10000);
 
             // Cancel any existing request before switching
-            if (this.currentRequest && this.currentRequest.readyState !== 4) {
-                console.log('Cancelling existing request before switching to staging');
-                this.currentRequest.abort();
+            if (this.listAllRequest && this.listAllRequest.readyState !== 4) {
+                console.log('Cancelling existing list-all request before switching to staging');
+                this.listAllRequest.abort();
             }
 
             this.currentDataSource = 'staging';
@@ -1941,9 +2062,9 @@ class InvoiceTableManager {
             }, 10000);
 
             // Cancel any existing request before switching
-            if (this.currentRequest && this.currentRequest.readyState !== 4) {
-                console.log('Cancelling existing request before switching data source');
-                this.currentRequest.abort();
+            if (this.listAllRequest && this.listAllRequest.readyState !== 4) {
+                console.log('Cancelling existing list-all request before switching data source');
+                this.listAllRequest.abort();
             }
 
             this.currentDataSource = 'live';
@@ -3931,7 +4052,9 @@ async function validateExcelFile(fileName, type, company, date) {
             if (!supplier.name) supplierErrors.push('Missing supplier name');
             if (!buyer.name) buyerErrors.push('Missing buyer name');
             const industryName = String(supplier.industryName || '').trim();
-            if (!industryName || ['NA', 'N/A', 'NOT APPLICABLE'].includes(industryName.toUpperCase())) {
+            const msicCode = String(supplier.industryClassificationCode || '').trim();
+            const isForeignMsic = msicCode === '00000';
+            if (!isForeignMsic && (!industryName || ['NA', 'N/A', 'NOT APPLICABLE'].includes(industryName.toUpperCase()))) {
                 supplierErrors.push({
                     code: 'CF701',
                     message: 'Business activity description is required',

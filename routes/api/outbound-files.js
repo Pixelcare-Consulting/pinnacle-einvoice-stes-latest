@@ -25,6 +25,71 @@ const { auth } = require('../../middleware/index-prisma');
 const os = require('os');
 
 const CACHE_KEY_PREFIX = 'outbound_files';
+const excelDisplayCache = new NodeCache({ stdTTL: 3600, maxKeys: 5000 });
+const HYDRATE_LIST_BATCH_CAP = 25;
+
+const DOC_TYPE_LABELS = {
+    '01': 'Invoice',
+    '02': 'Credit Note',
+    '03': 'Debit Note',
+    '04': 'Refund Note',
+    '11': 'Self-billed Invoice',
+    '12': 'Self-billed Credit Note',
+    '13': 'Self-billed Debit Note',
+    '14': 'Self-billed Refund Note'
+};
+
+function excelDisplayCacheKey(filePath, mtimeMs) {
+    return `${filePath}|${mtimeMs}`;
+}
+
+function toPublicProcessLog(processLog) {
+    return {
+        summary: processLog?.summary || { total: 0, valid: 0, invalid: 0, errors: 0 }
+    };
+}
+
+function hasDisplayValue(value) {
+    if (value === null || value === undefined) {
+        return false;
+    }
+    if (typeof value === 'string' && value.trim() === '') {
+        return false;
+    }
+    return true;
+}
+
+function needsExcelHydrate(fields) {
+    return !hasDisplayValue(fields?.supplierInfo?.registrationName)
+        || !hasDisplayValue(fields?.buyerInfo?.registrationName)
+        || !hasDisplayValue(fields?.totalAmount);
+}
+
+async function readExcelDisplayFields(filePath) {
+    const excelData = await readExcelWithLogging(filePath);
+    const buyerInfo = extractBuyerInfo(excelData.dataWithHeaders);
+    const supplierInfo = extractSupplierInfo(excelData.dataWithHeaders);
+    const dates = extractDates(excelData.dataAsObjects);
+    const currencyInfo = extractCurrencyInfo(excelData.dataWithHeaders);
+    const totalAmount = extractTotalAmount(excelData.dataWithHeaders);
+
+    return {
+        buyerInfo,
+        supplierInfo,
+        issueDate: dates.issueDate,
+        issueTime: dates.issueTime,
+        totalAmount,
+        currency: currencyInfo
+    };
+}
+
+function getCachedExcelDisplayFields(filePath, mtimeMs) {
+    return excelDisplayCache.get(excelDisplayCacheKey(filePath, mtimeMs)) || null;
+}
+
+function setCachedExcelDisplayFields(filePath, mtimeMs, fields) {
+    excelDisplayCache.set(excelDisplayCacheKey(filePath, mtimeMs), fields);
+}
 
 /**
  * Poll LHDN for submission status updates
@@ -262,7 +327,7 @@ async function getUpdatedStatuses(since) {
             SELECT
                 id, UUID, submissionUid, fileName, invoice_number,
                 status, date_submitted, date_cancelled, cancellation_reason,
-                cancelled_by, updated_at
+                cancelled_by, updated_at, supplier, receiver, amount
             FROM WP_OUTBOUND_STATUS
             WHERE updated_at > ${formattedDate}
             ORDER BY updated_at DESC
@@ -586,6 +651,13 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                             const status = statusMap.get(file.fileName) || statusMap.get(file.invoiceNumber);
                             if (status) {
                                 // Update this file with new status
+                                const supplierInfo = status.supplier
+                                    ? { registrationName: status.supplier }
+                                    : file.supplierInfo;
+                                const buyerInfo = status.receiver
+                                    ? { registrationName: status.receiver }
+                                    : file.buyerInfo;
+                                const totalAmount = status.amount || file.totalAmount;
                                 return {
                                     ...file,
                                     status: status.status || file.status,
@@ -595,7 +667,13 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                                     cancellation_reason: status.cancellation_reason || file.cancellation_reason,
                                     cancelled_by: status.cancelled_by || file.cancelled_by,
                                     uuid: status.UUID || file.uuid,
-                                    submissionUid: status.submissionUid || file.submissionUid
+                                    submissionUid: status.submissionUid || file.submissionUid,
+                                    supplier: status.supplier || file.supplier,
+                                    receiver: status.receiver || file.receiver,
+                                    supplierInfo,
+                                    buyerInfo,
+                                    totalAmount,
+                                    needsHydrate: needsExcelHydrate({ supplierInfo, buyerInfo, totalAmount })
                                 };
                             }
                             return file;
@@ -615,7 +693,7 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                         return res.json({
                             success: true,
                             files: updatedFiles,
-                            processLog: cachedData.processLog,
+                            processLog: toPublicProcessLog(cachedData.processLog),
                             fromCache: true,
                             incrementalUpdate: true,
                             updatedCount: updatedStatuses.length,
@@ -641,7 +719,7 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                     return res.json({
                         success: true,
                         files: cachedData.files,
-                        processLog: cachedData.processLog,
+                        processLog: toPublicProcessLog(cachedData.processLog),
                         fromCache: true,
                         cachedAt: cachedData.timestamp,
                         lastStatusUpdate: cachedData.lastStatusUpdate,
@@ -683,81 +761,6 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                 throw new Error('Invalid SAP configuration format');
             }
         }
-        // Get inbound statuses for comparison
-        ////console.log('Fetching inbound statuses');
-        const inboundStatuses = await prisma.wP_INBOUND_STATUS.findMany({
-            select: {
-                internalId: true,
-                status: true
-            },
-            where: {
-                status: {
-                    startsWith: 'Invalid'
-                }
-            }
-        });
-
-        // Create a map of inbound statuses for quick lookup
-        const inboundStatusMap = new Map();
-        inboundStatuses.forEach(status => {
-            if (status.internalId) {
-                inboundStatusMap.set(status.internalId, status);
-            }
-        });
-
-        // Fetch outbound statuses that might need updates
-        ////console.log('Fetching outbound statuses');
-        let outboundStatusesToUpdate = [];
-        if (inboundStatusMap.size > 0) {
-            outboundStatusesToUpdate = await prisma.wP_OUTBOUND_STATUS.findMany({
-                where: {
-                    status: {
-                        notIn: ['Cancelled', 'Failed', 'Invalid', 'Rejected']
-                    }
-                }
-            });
-        }
-
-        // Process status updates in batches
-        if (outboundStatusesToUpdate.length > 0) {
-            ////console.log('Processing status updates');
-            const batchSize = 100;
-            const updatePromises = [];
-
-            for (let i = 0; i < outboundStatusesToUpdate.length; i += batchSize) {
-                const batch = outboundStatusesToUpdate.slice(i, i + batchSize);
-                const batchPromises = [];
-
-                for (const outbound of batch) {
-                    if (outbound.invoice_number && inboundStatusMap.has(outbound.invoice_number)) {
-                        const inbound = inboundStatusMap.get(outbound.invoice_number);
-                        if (inbound.status.startsWith('Invalid')) {
-                            batchPromises.push(
-                                prisma.wP_OUTBOUND_STATUS.update({
-                                    where: {
-                                        id: outbound.id
-                                    },
-                                    data: {
-                                        status: inbound.status,
-                                        updated_at: new Date()
-                                    }
-                                })
-                            );
-                        }
-                    }
-                }
-
-                if (batchPromises.length > 0) {
-                    updatePromises.push(Promise.all(batchPromises));
-                }
-            }
-
-            if (updatePromises.length > 0) {
-                await Promise.all(updatePromises);
-                ////console.log('Updated outbound statuses');
-            }
-        }
-
         // Get existing submission statuses
         ////console.log('Fetching submission statuses');
         const submissionStatuses = await prisma.wP_OUTBOUND_STATUS.findMany({
@@ -773,7 +776,10 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                 date_cancelled: true,
                 cancellation_reason: true,
                 cancelled_by: true,
-                updated_at: true
+                updated_at: true,
+                supplier: true,
+                receiver: true,
+                amount: true
             },
             orderBy: {
                 updated_at: 'desc'
@@ -793,7 +799,10 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                 CancelledReason: status.cancellation_reason,
                 CancelledBy: status.cancelled_by,
                 FileName: status.fileName,
-                DocNum: status.invoice_number
+                DocNum: status.invoice_number,
+                Supplier: status.supplier,
+                Receiver: status.receiver,
+                Amount: status.amount
             };
 
             if (status.fileName) statusMap.set(status.fileName, statusObj);
@@ -842,7 +851,8 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
                 cancellation_reason: status?.CancelledReason || null,
                 cancelled_by: status?.CancelledBy || null,
                 uuid: status?.UUID || null,
-                submissionUid: status?.SubmissionUID || null
+                submissionUid: status?.SubmissionUID || null,
+                needsHydrate: needsExcelHydrate(file)
             };
         });
 
@@ -851,9 +861,10 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
 
         // Update cache
         ////console.log('Updating cache');
+        const publicProcessLog = toPublicProcessLog(processLog);
         const cacheData = {
             files: mergedFiles,
-            processLog,
+            processLog: publicProcessLog,
             timestamp: new Date().toISOString(),
             lastStatusUpdate: latestStatusUpdate?.updated_at,
             networkPath: settings.networkPath
@@ -870,7 +881,7 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
         res.json({
             success: true,
             files: mergedFiles,
-            processLog,
+            processLog: publicProcessLog,
             fromCache: false,
             realTime: realTime
         });
@@ -889,8 +900,90 @@ router.get('/list-all', auth.isApiAuthenticated, async (req, res) => {
         res.status(500).json({
             success: false,
             error: error.message,
-            processLog,
+            processLog: toPublicProcessLog(processLog),
             stack: error.stack // Include stack trace for debugging
+        });
+    }
+});
+
+
+/**
+ * Fill Supplier / Receiver / Amount / issue date for a visible page of live files.
+ * Parses only the requested workbooks (capped) and caches results by path + mtime.
+ */
+router.post('/hydrate-list', auth.isApiAuthenticated, async (req, res) => {
+    try {
+        const requestedFiles = Array.isArray(req.body?.files) ? req.body.files : [];
+        const files = requestedFiles.slice(0, HYDRATE_LIST_BATCH_CAP);
+
+        if (files.length === 0) {
+            return res.json({ success: true, files: [] });
+        }
+
+        const config = await getActiveSAPConfig();
+        if (!config.success) {
+            throw new Error(config.error || 'Failed to get SAP configuration');
+        }
+
+        const hydrated = await Promise.all(files.map(async (file) => {
+            const fileName = file.fileName;
+            const type = file.type;
+            const company = file.company;
+            const date = file.date;
+
+            if (!fileName || !type || !company || !date) {
+                return {
+                    fileName: fileName || null,
+                    success: false,
+                    error: 'fileName, type, company, and date are required'
+                };
+            }
+
+            const formattedDate = moment(date).format('YYYY-MM-DD');
+            const filePath = path.join(config.networkPath, type, company, formattedDate, fileName);
+
+            try {
+                await fsPromises.access(filePath);
+                const stats = await fsPromises.stat(filePath);
+                const mtimeMs = stats.mtimeMs || new Date(stats.mtime).getTime();
+
+                let displayFields = getCachedExcelDisplayFields(filePath, mtimeMs);
+                if (!displayFields) {
+                    displayFields = await readExcelDisplayFields(filePath);
+                    setCachedExcelDisplayFields(filePath, mtimeMs, displayFields);
+                }
+
+                return {
+                    fileName,
+                    type,
+                    company,
+                    date: formattedDate,
+                    success: true,
+                    ...displayFields,
+                    needsHydrate: false
+                };
+            } catch (fileError) {
+                console.error(`Error hydrating file ${fileName}:`, fileError);
+                return {
+                    fileName,
+                    type,
+                    company,
+                    date: formattedDate,
+                    success: false,
+                    error: fileError.message
+                };
+            }
+        }));
+
+        res.json({
+            success: true,
+            files: hydrated
+        });
+    } catch (error) {
+        console.error('Error in hydrate-list:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
     }
 });
@@ -2324,38 +2417,20 @@ async function processFile(file, dateDir, date, company, type, files, processLog
 
         const filePath = path.join(dateDir, file);
         const stats = await fsPromises.stat(filePath);
+        const mtimeMs = stats.mtimeMs || new Date(stats.mtime).getTime();
 
-        // Extract document type and invoice number from file name
         const baseName = path.parse(file).name;
         const [docType, invoiceNumber] = baseName.split('_');
 
-        // Map document types to their descriptions
-        const docTypes = {
-            '01': 'Invoice',
-            '02': 'Credit Note',
-            '03': 'Debit Note',
-            '04': 'Refund Note',
-            '11': 'Self-billed Invoice',
-            '12': 'Self-billed Credit Note',
-            '13': 'Self-billed Debit Note',
-            '14': 'Self-billed Refund Note'
-        };
-
         const submissionStatus = statusMap.get(file) || (invoiceNumber ? statusMap.get(invoiceNumber) : null);
+        const cachedDisplay = getCachedExcelDisplayFields(filePath, mtimeMs);
 
-        const excelData = await readExcelWithLogging(filePath);
-        const buyerInfo = extractBuyerInfo(excelData.dataWithHeaders);
-        const supplierInfo = extractSupplierInfo(excelData.dataWithHeaders);
-        const dates = extractDates(excelData.dataAsObjects);
-        const currencyInfo = extractCurrencyInfo(excelData.dataWithHeaders);
-        const totalAmount = extractTotalAmount(excelData.dataWithHeaders);
-
-        ////console.log('Current Dates:', dates);
-        const issueDate = dates.issueDate;
-        const issueTime = dates.issueTime;
-
-        ////console.log('Issue Date:', issueDate);
-        // //console.log('Issue Time:', issueTime);
+        const supplierName = submissionStatus?.Supplier || cachedDisplay?.supplierInfo?.registrationName || null;
+        const receiverName = submissionStatus?.Receiver || cachedDisplay?.buyerInfo?.registrationName || null;
+        const totalAmount = submissionStatus?.Amount || cachedDisplay?.totalAmount || null;
+        const supplierInfo = supplierName ? { registrationName: supplierName } : (cachedDisplay?.supplierInfo || { registrationName: null });
+        const buyerInfo = receiverName ? { registrationName: receiverName } : (cachedDisplay?.buyerInfo || { registrationName: null });
+        const currencyInfo = cachedDisplay?.currency || null;
 
         files.push({
             type,
@@ -2366,26 +2441,26 @@ async function processFile(file, dateDir, date, company, type, files, processLog
             size: stats.size,
             modifiedTime: stats.mtime,
             uploadedDate: stats.birthtime || stats.mtime,
-            issueDate: issueDate,
-            issueTime: issueTime,
+            issueDate: cachedDisplay?.issueDate || null,
+            issueTime: cachedDisplay?.issueTime || null,
             submissionDate: submissionStatus?.DateTimeSent || null,
             lastUpdated: submissionStatus?.DateTimeUpdated || null,
             status: submissionStatus?.SubmissionStatus || 'Pending',
             uuid: submissionStatus?.UUID,
             buyerInfo,
             supplierInfo,
-            totalAmount: totalAmount,
+            supplier: supplierName,
+            receiver: receiverName,
+            totalAmount,
             invoiceNumber,
-            documentType: docTypes[docType] || 'Unknown',
+            documentType: DOC_TYPE_LABELS[docType] || 'Unknown',
             documentTypeCode: docType,
             source: type,
-
-            // Enhanced currency information
             currency: currencyInfo,
             documentCurrency: currencyInfo,
             currencyCode: currencyInfo,
             documentCurrencyCode: currencyInfo,
-
+            needsHydrate: needsExcelHydrate({ supplierInfo, buyerInfo, totalAmount })
         });
 
         processLog.summary.valid++;

@@ -25,6 +25,8 @@ const DATE_ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
 const INCOTERMS_RE = /^[A-Za-z]{1,3}$/;
 const INCOTERMS_HEURISTIC_RE = /^[A-Za-z]{3}$/;
 const EMPTY_TOKENS = new Set(['', 'NA', 'N/A', 'N.A.', 'NOT APPLICABLE', 'NONE', 'NULL', 'UNDEFINED']);
+const FOREIGN_MSIC_CODE = '00000';
+const FOREIGN_INDUSTRY_NAME = 'NOT APPLICABLE';
 
 const INVOICE_ADR_TYPES = {
   CUSTOMS: 'CustomsImportForm',
@@ -108,15 +110,24 @@ const getMsicDescription = (code) => {
   return description;
 };
 
+const isForeignMsicCode = (code) => String(code ?? '').trim() === FOREIGN_MSIC_CODE;
+
 const isMeaningfulIndustry = (value) => {
   if (isEmptyOptional(value)) {
     return false;
   }
   const normalized = normalizeToken(value);
-  return normalized !== '00000';
+  return normalized !== FOREIGN_MSIC_CODE;
 };
 
+const hasValidSupplierIndustry = (industryName, msicCode) => (
+  isForeignMsicCode(msicCode) || isMeaningfulIndustry(industryName)
+);
+
 const resolveIndustryName = ({ excelName, msicCode, companyIndustry } = {}) => {
+  if (isForeignMsicCode(msicCode)) {
+    return FOREIGN_INDUSTRY_NAME;
+  }
   if (isMeaningfulIndustry(excelName)) {
     return truncate(String(excelName).trim(), SDK_FIELD_LIMITS.industryName);
   }
@@ -363,8 +374,13 @@ const collectSdkValidationErrors = (doc) => {
     }
   }
 
-  const industryName = doc.supplier?.industryName;
-  if (!isMeaningfulIndustry(industryName)) {
+  const msicCode = doc.supplier?.industryClassificationCode;
+  const industryName = resolveIndustryName({
+    excelName: doc.supplier?.industryName,
+    msicCode,
+    companyIndustry: doc.supplier?.companyIndustry
+  });
+  if (!hasValidSupplierIndustry(industryName, msicCode)) {
     errors.push({
       code: 'CF701',
       message: 'Business activity description is required',
@@ -528,7 +544,12 @@ module.exports = {
   hasMeaningfulValue,
   truncate,
   getMsicDescription,
+  FOREIGN_MSIC_CODE,
+  FOREIGN_INDUSTRY_NAME,
+  isForeignMsicCode,
   isMeaningfulIndustry,
+  isMeaningfulNonZeroAmount,
+  hasValidSupplierIndustry,
   resolveIndustryName,
   isValidIsoDate,
   toIsoDate,
