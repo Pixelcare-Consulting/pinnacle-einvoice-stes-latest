@@ -254,10 +254,11 @@ const mapAllowanceCharges = (charges, documentCurrencyCode) => {
       return null;
     }
 
+    const indicator = charge.indicator ?? charge.chargeIndicator;
     const reasonText = String(charge.reason ?? '').trim();
     return {
-      "ChargeIndicator": wrapBoolean(charge.indicator),
-      ...(reasonText ? { "AllowanceChargeReason": wrapRequiredText(reasonText) } : {}),
+      "ChargeIndicator": wrapBoolean(indicator),
+      "AllowanceChargeReason": wrapRequiredText(reasonText),
       "MultiplierFactorNumeric": charge.multiplierFactorNumeric ? [{
         "_": charge.multiplierFactorNumeric
       }] : undefined,
@@ -310,22 +311,31 @@ const partyIdentification = (value, schemeId) => ({
 });
 
 const mapPartyIdentifications = (identifications = []) => {
-  const idMap = identifications.reduce((acc, id) => {
-    if (id && id.schemeId && hasMeaningfulValue(id.id)) {
-      const schemeId = String(id.schemeId).toUpperCase();
-      acc[schemeId] = clipIdByScheme(id.id, schemeId);
+  const idMap = {};
+  const providedSchemes = new Set();
+
+  identifications.forEach((id) => {
+    if (!id || !id.schemeId) {
+      return;
     }
-    return acc;
-  }, {});
+    const schemeId = String(id.schemeId).toUpperCase();
+    providedSchemes.add(schemeId);
+    if (hasMeaningfulValue(id.id)) {
+      idMap[schemeId] = clipIdByScheme(id.id, schemeId);
+    }
+  });
 
   const result = [
     partyIdentification(hasMeaningfulValue(idMap.TIN) ? idMap.TIN : 'NA', 'TIN')
   ];
 
-  const primaryScheme = PRIMARY_ID_SCHEMES.find((schemeId) => hasMeaningfulValue(idMap[schemeId]));
-  if (primaryScheme) {
-    result.push(partyIdentification(idMap[primaryScheme], primaryScheme));
-  }
+  const primaryScheme = PRIMARY_ID_SCHEMES.find((schemeId) => hasMeaningfulValue(idMap[schemeId]))
+    || PRIMARY_ID_SCHEMES.find((schemeId) => providedSchemes.has(schemeId))
+    || 'BRN';
+  result.push(partyIdentification(
+    hasMeaningfulValue(idMap[primaryScheme]) ? idMap[primaryScheme] : 'NA',
+    primaryScheme
+  ));
 
   ['SST', 'TTX'].forEach((schemeId) => {
     result.push(partyIdentification(
@@ -463,6 +473,8 @@ const mapLineItem = (item, documentCurrencyCode, taxCurrencyCode, exchangeRate) 
     `Receipt ${item.item.description}` :
     item.item.description;
 
+  const lineAllowanceCharges = mapAllowanceCharges(item.allowanceCharges, documentCurrencyCode);
+
   return {
     "ID": wrapValue(String(item.lineId)),
     "InvoicedQuantity": [{
@@ -470,12 +482,7 @@ const mapLineItem = (item, documentCurrencyCode, taxCurrencyCode, exchangeRate) 
       "unitCode": resolveLineUnitCode(item.unitCode)
     }],
     "LineExtensionAmount": wrapValue(item.lineExtensionAmount, documentCurrencyCode),
-    "AllowanceCharge": item.allowanceCharges.map(charge => ({
-      "ChargeIndicator": wrapBoolean(charge.chargeIndicator),
-      "AllowanceChargeReason": wrapValue(charge.reason || 'NA'),
-      "MultiplierFactorNumeric": charge.multiplierFactorNumeric ? wrapNumericValue(charge.multiplierFactorNumeric) : undefined,
-      "Amount": wrapValue(charge.amount, documentCurrencyCode || 0, documentCurrencyCode)
-    })),
+    ...(lineAllowanceCharges ? { "AllowanceCharge": lineAllowanceCharges } : {}),
     "TaxTotal": mapTaxTotal(item.taxTotal, documentCurrencyCode, taxCurrencyCode, { includePercent: true }),
     "Item": [{
       "CommodityClassification": mapCommodityClassifications(item.item),
@@ -598,8 +605,12 @@ const mapBillingReference = (doc) => {
 const mapInvoicePeriod = (period = {}) => {
   const startDate = wrapDate(period.startDate);
   const endDate = wrapDate(period.endDate);
-  const description = hasMeaningfulValue(period.description)
-    ? wrapValue(truncate(period.description, SDK_FIELD_LIMITS.billingFrequency))
+  const hasDates = Boolean(startDate || endDate);
+  const descriptionSource = hasMeaningfulValue(period.description)
+    ? period.description
+    : (hasDates ? 'Monthly' : '');
+  const description = hasMeaningfulValue(descriptionSource)
+    ? wrapValue(truncate(descriptionSource, SDK_FIELD_LIMITS.billingFrequency))
     : undefined;
 
   if (!startDate && !endDate && !description) {

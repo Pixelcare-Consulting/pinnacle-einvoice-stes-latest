@@ -741,6 +741,34 @@ const usdOmitZeroAllowanceChecks = (payload) => {
   ];
 };
 
+const lineZeroPeriodBuyerBrnChecks = (payload) => {
+  const invoice = invoiceOf(payload);
+  const period = invoice.InvoicePeriod?.[0] || {};
+  const buyer = partyOf(payload, 'AccountingCustomerParty');
+  return [
+    check(
+      'Invoice.InvoiceLine[0].AllowanceCharge',
+      'omitted when amount is 0',
+      invoice.InvoiceLine?.[0]?.AllowanceCharge ?? 'omitted',
+      invoice.InvoiceLine?.[0]?.AllowanceCharge === undefined
+    ),
+    check(
+      'Invoice.InvoicePeriod.Description',
+      'Monthly',
+      period.Description?.[0]?._,
+      Boolean(period.StartDate)
+        && Boolean(period.EndDate)
+        && period.Description?.[0]?._ === 'Monthly'
+    ),
+    check(
+      'Invoice.AccountingCustomerParty.Party.PartyIdentification[BRN]',
+      'NA',
+      schemeValue(buyer, 'BRN'),
+      schemeValue(buyer, 'BRN') === 'NA'
+    )
+  ];
+};
+
 const CASES = [
   {
     id: 'full-sample-shape',
@@ -802,6 +830,31 @@ const CASES = [
       };
     }),
     checks: (payload) => usdOmitZeroAllowanceChecks(payload)
+  },
+  {
+    id: 'line-zero-period-buyer-brn',
+    expectError: false,
+    input: withDoc((doc) => {
+      doc.header.invoiceNo = 'LINE-ZERO-PERIOD-BRN';
+      doc.header.invoicePeriod = {
+        startDate: '2026-09-01',
+        endDate: '2026-09-30',
+        description: ''
+      };
+      doc.buyer.identifications = identifications({
+        tin: 'EI00000000020',
+        brn: 'NA',
+        sst: 'NA',
+        ttx: 'NA'
+      });
+      doc.items[0].allowanceCharges = [{
+        chargeIndicator: false,
+        reason: 'NA',
+        multiplierFactorNumeric: 0,
+        amount: 0
+      }];
+    }),
+    checks: (payload) => lineZeroPeriodBuyerBrnChecks(payload)
   },
   {
     id: 'cf417-long-incoterms',
