@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const XLSX = require('xlsx');
 const { processExcelData } = require('./processExcelData');
-const { collectSdkValidationErrors } = require('./sdkFieldLimits');
+const { collectSdkValidationErrors, hasMeaningfulValue } = require('./sdkFieldLimits');
 const prisma = require('../../src/lib/prisma');
 
 class ValidationError extends Error {
@@ -155,7 +155,7 @@ async function validateExcelFile(fileName, type, company, date, networkPath) {
                 item.unitPrice > 0 &&
                 item.item?.classification?.code &&
                 item.item?.classification?.type &&
-                item.item?.description
+                hasMeaningfulValue(item.item?.description)
             );
 
             if (validItems.length === 0) {

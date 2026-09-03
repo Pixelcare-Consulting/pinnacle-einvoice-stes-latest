@@ -5785,17 +5785,44 @@ async function showJsonPreview(fileName, type, company, date, version) {
                 }
             });
         } else {
-            // Standard error modal for other errors
-            await Swal.fire({
+            const previewHasCf385 = (error.code === 'CF385' || error.errorCode === 'CF385')
+                || (typeof errorMessage === 'string' && errorMessage.includes('CF385'))
+                || (Array.isArray(error.details) && error.details.some((detail) => {
+                    if (typeof detail === 'string') {
+                        return detail.includes('CF385');
+                    }
+                    if (detail && typeof detail === 'object') {
+                        return detail.code === 'CF385' || detail.errorCode === 'CF385';
+                    }
+                    return false;
+                }));
+
+            const cf385HowToFixHtml = `
+                <div class="error-information text-start mt-3">
+                    <h6><i class="fas fa-info-circle"></i> How to Fix</h6>
+                    <p>Enter the real product or service name on each line in Excel (column 86). Values like NA are not accepted.</p>
+                    <p>LHDN source: Description of Product or Service is mandatory ([1-1]), example “Laptop Peripherals”.</p>
+                    <p><a href="https://sdk.myinvois.hasil.gov.my/documents/invoice-v1-0/" target="_blank" rel="noopener noreferrer">Invoice v1.0 – field list</a></p>
+                </div>
+            `;
+
+            const previewModalOptions = {
                 icon: 'error',
                 title: 'Preview Generation Failed',
-                text: errorMessage,
                 confirmButtonText: 'OK',
                 customClass: {
                     confirmButton: 'outbound-action-btn submit',
                     popup: 'semi-minimal-popup'
                 }
-            });
+            };
+
+            if (previewHasCf385) {
+                previewModalOptions.html = `<div class="text-start"><p>${errorMessage}</p>${cf385HowToFixHtml}</div>`;
+            } else {
+                previewModalOptions.text = errorMessage;
+            }
+
+            await Swal.fire(previewModalOptions);
         }
 
         return false;
@@ -7607,6 +7634,24 @@ async function showLHDNErrorModal(error) {
         // Fallback to modern error display if helper fails
         const errorCode = formattedError.code || 'VALIDATIONERROR';
         const errorMessage = formattedError.message || 'Invalid document data provided.';
+        const fallbackHasCf385 = errorCode === 'CF385'
+            || (Array.isArray(formattedError.details) && formattedError.details.some((detail) => {
+                if (typeof detail === 'string') {
+                    return detail.includes('CF385');
+                }
+                if (detail && typeof detail === 'object') {
+                    return detail.code === 'CF385' || detail.errorCode === 'CF385';
+                }
+                return false;
+            }));
+        const cf385HowToFixHtml = fallbackHasCf385 ? `
+                    <div class="error-information">
+                        <h6><i class="fas fa-info-circle"></i> How to Fix</h6>
+                        <p>Enter the real product or service name on each line in Excel (column 86). Values like NA are not accepted.</p>
+                        <p>LHDN source: Description of Product or Service is mandatory ([1-1]), example “Laptop Peripherals”.</p>
+                        <p><a href="https://sdk.myinvois.hasil.gov.my/documents/invoice-v1-0/" target="_blank" rel="noopener noreferrer">Invoice v1.0 – field list</a></p>
+                    </div>
+        ` : '';
 
         // Create error details list
         let errorDetailsHtml = '';
@@ -7720,6 +7765,8 @@ async function showLHDNErrorModal(error) {
                         <h6><i class="fas fa-lightbulb"></i> Suggestion</h6>
                         <p>Please check the document and try again</p>
                     </div>
+
+                    ${cf385HowToFixHtml}
                 </div>
             </div>
         `;

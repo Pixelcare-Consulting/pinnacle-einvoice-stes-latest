@@ -469,9 +469,21 @@ const mapLineItem = (item, documentCurrencyCode, taxCurrencyCode, exchangeRate) 
 
   // Special handling for consolidated receipts
   const isConsolidatedReceipt = item.item?.classification?.code === '004';
-  const description = isConsolidatedReceipt ?
-    `Receipt ${item.item.description}` :
-    item.item.description;
+  const rawDescription = item.item?.description;
+  if (!hasMeaningfulValue(rawDescription)) {
+    throw new LhdnMappingError(
+      'CF385',
+      'Description of product or service is required',
+      {
+        target: 'Description',
+        propertyPath: 'Invoice.InvoiceLine.Item.Description'
+      }
+    );
+  }
+
+  const description = isConsolidatedReceipt
+    ? `Receipt ${String(rawDescription).trim()}`
+    : String(rawDescription).trim();
 
   const lineAllowanceCharges = mapAllowanceCharges(item.allowanceCharges, documentCurrencyCode);
 
@@ -486,7 +498,7 @@ const mapLineItem = (item, documentCurrencyCode, taxCurrencyCode, exchangeRate) 
     "TaxTotal": mapTaxTotal(item.taxTotal, documentCurrencyCode, taxCurrencyCode, { includePercent: true }),
     "Item": [{
       "CommodityClassification": mapCommodityClassifications(item.item),
-      "Description": wrapValue(description),
+      "Description": wrapValue(truncate(description, SDK_FIELD_LIMITS.itemDescription)),
       "OriginCountry": [{
         "IdentificationCode": [{
           "_": item.item.originCountry || "MYS"
