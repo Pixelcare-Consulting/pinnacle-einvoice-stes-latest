@@ -28,6 +28,7 @@ const { mapToLHDNFormat, LhdnMappingError } = require('./lhdnMapper');
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
 const OUT_DIR = path.join(PROJECT_ROOT, 'logs', 'lhdn-review');
 const SAMPLE_URL = 'https://sdk.myinvois.hasil.gov.my/files/sdksamples/1.0-Invoice-Sample.json';
+const FOREIGN_SAMPLE_URL = 'https://sdk.myinvois.hasil.gov.my/files/sdksamples/1.0-Invoice-ForeignCurrency-Sample.json';
 const SAMPLE_CANDIDATES = [
   path.join(PROJECT_ROOT, 'uploads', '1.0-Invoice-Sample-0.json'),
   path.join(
@@ -37,6 +38,17 @@ const SAMPLE_CANDIDATES = [
     'c-PXC-GILBERT-1-Development-4-Malaysia-e-Invoice-TEK-Auto-pinnalce-einvoice',
     'uploads',
     '1.0-Invoice-Sample-0.json'
+  )
+];
+const FOREIGN_SAMPLE_CANDIDATES = [
+  path.join(PROJECT_ROOT, 'uploads', '1.0-Invoice-ForeignCurrency-Sample.json'),
+  path.join(
+    process.env.USERPROFILE || '',
+    '.cursor',
+    'projects',
+    'c-PXC-GILBERT-1-Development-4-Malaysia-e-Invoice-TEK-Auto-pinnalce-einvoice',
+    'uploads',
+    '1.0-Invoice-ForeignCurrency-Sample.json'
   )
 ];
 
@@ -83,14 +95,20 @@ const fetchHttpsJson = (url) => new Promise((resolve, reject) => {
   }).on('error', reject);
 });
 
-const loadOfficialSample = async () => {
-  for (const candidate of SAMPLE_CANDIDATES) {
+const loadOfficialJson = async (url, candidates = []) => {
+  for (const candidate of candidates) {
     if (candidate && fs.existsSync(candidate)) {
       return parseJsonLoose(fs.readFileSync(candidate, 'utf8'));
     }
   }
-  return fetchHttpsJson(SAMPLE_URL);
+  return fetchHttpsJson(url);
 };
+
+const loadOfficialSample = () => loadOfficialJson(SAMPLE_URL, SAMPLE_CANDIDATES);
+
+const loadOfficialForeignSample = () => (
+  loadOfficialJson(FOREIGN_SAMPLE_URL, FOREIGN_SAMPLE_CANDIDATES)
+);
 
 const identifications = ({ tin, brn, sst, ttx }) => {
   const ids = [
@@ -538,18 +556,44 @@ const billRefChecks = (payload) => {
   ];
 };
 
-const foreignCurrencyChecks = (payload) => {
+const currencyOf = (amount) => amount?.[0]?.currencyID;
+
+const foreignCurrencyChecks = (payload, _invoiceSample, foreignSample) => {
   const invoice = invoiceOf(payload);
   const keys = Object.keys(invoice);
-  const taxCurrencyIdx = keys.indexOf('TaxCurrencyCode');
   const taxExIdx = keys.indexOf('TaxExchangeRate');
+  const taxTotalIdx = keys.indexOf('TaxTotal');
   const rate = invoice.TaxExchangeRate?.[0] || {};
+  const headerTax = invoice.TaxTotal?.[0] || {};
+  const headerSubtotal = headerTax.TaxSubtotal?.[0] || {};
+  const lineTax = invoice.InvoiceLine?.[0]?.TaxTotal?.[0] || {};
+  const lineSubtotal = lineTax.TaxSubtotal?.[0] || {};
+  const sampleInvoice = invoiceOf(foreignSample);
+  const sampleKeys = Object.keys(sampleInvoice);
   return [
     check(
+      'sampleOracle.foreignCurrency.loaded',
+      'Invoice v1.0 foreign-currency sample present',
+      Boolean(sampleInvoice.ID),
+      Boolean(sampleInvoice.ID)
+    ),
+    check(
+      'sampleOracle.TaxExchangeRate#position',
+      'immediately before TaxTotal',
+      `TaxExchangeRate@${sampleKeys.indexOf('TaxExchangeRate')}, TaxTotal@${sampleKeys.indexOf('TaxTotal')}`,
+      sampleKeys.indexOf('TaxExchangeRate') === sampleKeys.indexOf('TaxTotal') - 1
+    ),
+    check(
       'Invoice.TaxExchangeRate#position',
-      'immediately after TaxCurrencyCode',
-      `TaxCurrencyCode@${taxCurrencyIdx}, TaxExchangeRate@${taxExIdx}`,
-      taxCurrencyIdx >= 0 && taxExIdx === taxCurrencyIdx + 1
+      'immediately before TaxTotal',
+      `TaxExchangeRate@${taxExIdx}, TaxTotal@${taxTotalIdx}`,
+      taxExIdx === taxTotalIdx - 1
+    ),
+    check(
+      'Invoice.TaxCurrencyCode',
+      'MYR',
+      invoice.TaxCurrencyCode?.[0]?._,
+      invoice.TaxCurrencyCode?.[0]?._ === 'MYR'
     ),
     check(
       'Invoice.TaxExchangeRate.SourceCurrencyCode',
@@ -562,6 +606,30 @@ const foreignCurrencyChecks = (payload) => {
       'MYR',
       rate.TargetCurrencyCode?.[0]?._,
       rate.TargetCurrencyCode?.[0]?._ === 'MYR'
+    ),
+    check(
+      'Invoice.TaxTotal.TaxAmount.currencyID',
+      'MYR',
+      currencyOf(headerTax.TaxAmount),
+      currencyOf(headerTax.TaxAmount) === 'MYR'
+    ),
+    check(
+      'Invoice.TaxTotal.TaxSubtotal.TaxableAmount.currencyID',
+      'USD',
+      currencyOf(headerSubtotal.TaxableAmount),
+      currencyOf(headerSubtotal.TaxableAmount) === 'USD'
+    ),
+    check(
+      'Invoice.InvoiceLine[0].TaxTotal.TaxAmount.currencyID',
+      'MYR',
+      currencyOf(lineTax.TaxAmount),
+      currencyOf(lineTax.TaxAmount) === 'MYR'
+    ),
+    check(
+      'Invoice.InvoiceLine[0].TaxTotal.TaxSubtotal.TaxableAmount.currencyID',
+      'USD',
+      currencyOf(lineSubtotal.TaxableAmount),
+      currencyOf(lineSubtotal.TaxableAmount) === 'USD'
     )
   ];
 };
@@ -655,8 +723,8 @@ const foreignAddressChecks = (payload) => {
 const usdOmitZeroAllowanceChecks = (payload) => {
   const invoice = invoiceOf(payload);
   const keys = Object.keys(invoice);
-  const taxCurrencyIdx = keys.indexOf('TaxCurrencyCode');
   const taxExIdx = keys.indexOf('TaxExchangeRate');
+  const taxTotalIdx = keys.indexOf('TaxTotal');
   return [
     check(
       'Invoice.AllowanceCharge',
@@ -666,9 +734,9 @@ const usdOmitZeroAllowanceChecks = (payload) => {
     ),
     check(
       'Invoice.TaxExchangeRate#position',
-      'immediately after TaxCurrencyCode',
-      `TaxCurrencyCode@${taxCurrencyIdx}, TaxExchangeRate@${taxExIdx}`,
-      taxCurrencyIdx >= 0 && taxExIdx === taxCurrencyIdx + 1
+      'immediately before TaxTotal',
+      `TaxExchangeRate@${taxExIdx}, TaxTotal@${taxTotalIdx}`,
+      taxExIdx === taxTotalIdx - 1
     )
   ];
 };
@@ -765,10 +833,12 @@ const CASES = [
       doc.header.invoiceNo = 'FOREIGN-CURRENCY-USD';
       doc.header.documentCurrencyCode = 'USD';
       doc.header.currency = 'USD';
-      doc.header.taxCurrencyCode = 'MYR';
+      doc.header.taxCurrencyCode = 'USD';
       doc.header.exchangeRate = 4.72;
     }),
-    checks: (payload) => foreignCurrencyChecks(payload)
+    checks: (payload, sample, foreignSample) => (
+      foreignCurrencyChecks(payload, sample, foreignSample)
+    )
   },
   {
     id: 'optional-omitted',
@@ -787,7 +857,7 @@ const CASES = [
         paymentMeansCode: '',
         payeeFinancialAccount: '',
         paymentTerms: '',
-        prepaidPayment: { id: '', amount: 0, date: null, time: null }
+        prepaidPayment: { id: '', amount: 0, date: '2026-09-02', time: '20:08:21Z' }
       };
     }),
     checks: (payload) => optionalOmittedChecks(payload)
@@ -823,7 +893,7 @@ const serializeError = (error) => ({
   propertyPath: error?.propertyPath || null
 });
 
-const runCase = (testCase, sample) => {
+const runCase = (testCase, sample, foreignSample) => {
   const caseDir = path.join(OUT_DIR, testCase.id);
   writeJson(path.join(caseDir, 'input.json'), [testCase.input]);
 
@@ -847,7 +917,7 @@ const runCase = (testCase, sample) => {
       ...errorChecks(mappingError, testCase.expectError || 'none')
     ];
   } else {
-    checks = testCase.checks(payload, sample);
+    checks = testCase.checks(payload, sample, foreignSample);
   }
 
   if (mappingError) {
@@ -881,7 +951,7 @@ const toMd = (results) => {
   const lines = [
     '# LHDN mapping review',
     '',
-    `Shape oracle: [Invoice v1.0 sample](${SAMPLE_URL}).`,
+    `Shape oracle: [Invoice v1.0 sample](${SAMPLE_URL}); [foreign currency](${FOREIGN_SAMPLE_URL}).`,
     '',
     `**${passed} passed**, **${failed} failed** across ${results.length} cases.`,
     '',
@@ -916,11 +986,15 @@ const toMd = (results) => {
 
 const main = async () => {
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  const sample = await loadOfficialSample();
-  const results = CASES.map((testCase) => runCase(testCase, sample));
+  const [sample, foreignSample] = await Promise.all([
+    loadOfficialSample(),
+    loadOfficialForeignSample()
+  ]);
+  const results = CASES.map((testCase) => runCase(testCase, sample, foreignSample));
   const summary = {
     generatedAt: new Date().toISOString(),
     sampleUrl: SAMPLE_URL,
+    foreignSampleUrl: FOREIGN_SAMPLE_URL,
     passed: results.filter((item) => item.pass).length,
     failed: results.filter((item) => !item.pass).length,
     cases: results

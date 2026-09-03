@@ -650,7 +650,7 @@ const mapPrepaidPayment = (payment = {}, documentCurrencyCode) => {
   const date = wrapDate(prepaid.date);
   const time = hasMeaningfulValue(prepaid.time) ? wrapValue(prepaid.time) : undefined;
 
-  if (!id && !hasAmount && !date && !time) {
+  if (!id && !hasAmount) {
     return undefined;
   }
 
@@ -660,6 +660,14 @@ const mapPrepaidPayment = (payment = {}, documentCurrencyCode) => {
     ...(date ? { "PaidDate": date } : {}),
     ...(time ? { "PaidTime": time } : {})
   }];
+};
+
+const resolveTaxCurrencyCode = (header = {}) => {
+  const documentCurrency = String(header.documentCurrencyCode || '').trim().toUpperCase();
+  if (documentCurrency && documentCurrency !== 'MYR') {
+    return 'MYR';
+  }
+  return header.taxCurrencyCode || header.documentCurrencyCode;
 };
 
 const mapTaxExchangeRate = (header = {}) => {
@@ -795,24 +803,26 @@ const mapToLHDNFormat = (excelData, version) => {
     const additionalDocumentReferences = mapInvoiceAdditionalDocumentReferences(doc);
     const paymentMeans = mapPaymentMeans(doc.payment);
     const paymentTerms = mapPaymentTerms(doc.payment);
-    const prepaidPayment = mapPrepaidPayment(doc.payment, doc.header.documentCurrencyCode);
+    const documentCurrencyCode = doc.header.documentCurrencyCode;
+    const taxCurrencyCode = resolveTaxCurrencyCode(doc.header);
+    const prepaidPayment = mapPrepaidPayment(doc.payment, documentCurrencyCode);
     const taxExchangeRate = mapTaxExchangeRate(doc.header);
-    const delivery = mapDelivery(doc.delivery, doc.header.documentCurrencyCode, doc.header.invoiceNo);
+    const delivery = mapDelivery(doc.delivery, documentCurrencyCode, doc.header.invoiceNo);
     const supplierParty = mapSupplierParty(doc.supplier);
     const buyerParty = mapBuyerParty(doc.buyer);
-    const taxTotal = mapTaxTotal(doc.summary?.taxTotal, doc.header.documentCurrencyCode, doc.header.taxCurrencyCode);
+    const taxTotal = mapTaxTotal(doc.summary?.taxTotal, documentCurrencyCode, taxCurrencyCode);
     const invoiceAllowanceCharges = mapAllowanceCharges(
       doc.allowanceCharge,
-      doc.header.documentCurrencyCode
+      documentCurrencyCode
     );
     const legalMonetaryTotal = [{
-      "LineExtensionAmount": wrapValue(doc.summary.amounts.lineExtensionAmount, doc.header.documentCurrencyCode),
-      "TaxExclusiveAmount": wrapValue(doc.summary.amounts.taxExclusiveAmount, doc.header.documentCurrencyCode),
-      "TaxInclusiveAmount": wrapValue(doc.summary.amounts.taxInclusiveAmount, doc.header.documentCurrencyCode),
-      "AllowanceTotalAmount": wrapValue(doc.summary.amounts.allowanceTotalAmount, doc.header.documentCurrencyCode),
-      "ChargeTotalAmount": wrapValue(doc.summary.amounts.chargeTotalAmount, doc.header.documentCurrencyCode),
-      "PayableRoundingAmount": wrapValue(doc.summary.amounts.payableRoundingAmount, doc.header.documentCurrencyCode),
-      "PayableAmount": wrapValue(doc.summary.amounts.payableAmount, doc.header.documentCurrencyCode)
+      "LineExtensionAmount": wrapValue(doc.summary.amounts.lineExtensionAmount, documentCurrencyCode),
+      "TaxExclusiveAmount": wrapValue(doc.summary.amounts.taxExclusiveAmount, documentCurrencyCode),
+      "TaxInclusiveAmount": wrapValue(doc.summary.amounts.taxInclusiveAmount, documentCurrencyCode),
+      "AllowanceTotalAmount": wrapValue(doc.summary.amounts.allowanceTotalAmount, documentCurrencyCode),
+      "ChargeTotalAmount": wrapValue(doc.summary.amounts.chargeTotalAmount, documentCurrencyCode),
+      "PayableRoundingAmount": wrapValue(doc.summary.amounts.payableRoundingAmount, documentCurrencyCode),
+      "PayableAmount": wrapValue(doc.summary.amounts.payableAmount, documentCurrencyCode)
     }];
 
     const lhdnFormat = {
@@ -827,9 +837,8 @@ const mapToLHDNFormat = (excelData, version) => {
           "_": doc.header.invoiceType,
           "listVersionID": version
         }],
-        "DocumentCurrencyCode": wrapValue(doc.header.documentCurrencyCode),
-        "TaxCurrencyCode": wrapValue(doc.header.taxCurrencyCode),
-        ...(taxExchangeRate ? { "TaxExchangeRate": taxExchangeRate } : {}),
+        "DocumentCurrencyCode": wrapValue(documentCurrencyCode),
+        "TaxCurrencyCode": wrapValue(taxCurrencyCode),
         ...(invoicePeriod ? { "InvoicePeriod": invoicePeriod } : {}),
         ...(billingReference ? { "BillingReference": billingReference } : {}),
         ...(additionalDocumentReferences ? {
@@ -842,9 +851,10 @@ const mapToLHDNFormat = (excelData, version) => {
         ...(paymentTerms ? { "PaymentTerms": paymentTerms } : {}),
         ...(prepaidPayment ? { "PrepaidPayment": prepaidPayment } : {}),
         ...(invoiceAllowanceCharges ? { "AllowanceCharge": invoiceAllowanceCharges } : {}),
+        ...(taxExchangeRate ? { "TaxExchangeRate": taxExchangeRate } : {}),
         "TaxTotal": taxTotal,
         "LegalMonetaryTotal": legalMonetaryTotal,
-        "InvoiceLine": mapInvoiceLines(doc.items, doc.header.documentCurrencyCode, doc.header.taxCurrencyCode, doc.header.exchangeRate)
+        "InvoiceLine": mapInvoiceLines(doc.items, documentCurrencyCode, taxCurrencyCode, doc.header.exchangeRate)
       }]
     };
 

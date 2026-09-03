@@ -6,7 +6,7 @@ const VersionControl = require(path.join(__dirname, '..', './utils', 'versionCon
 const appVersion = new VersionControl({
   major: '1',
   minor: '3',
-  patch: '1',
+  patch: '2',
   build: '001'
 });
 
