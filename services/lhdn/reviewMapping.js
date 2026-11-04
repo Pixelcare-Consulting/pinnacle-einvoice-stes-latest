@@ -533,6 +533,50 @@ const errorChecks = (error, expectedCode) => ([
   )
 ]);
 
+const originalDocumentReference = (payload) => {
+  const invoice = invoiceOf(payload);
+  return (invoice.BillingReference || [])
+    .find((entry) => entry.InvoiceDocumentReference)
+    ?.InvoiceDocumentReference?.[0] || null;
+};
+
+const originalReferenceChecks = (payload, expectedId, expectedUuid) => {
+  const reference = originalDocumentReference(payload) || {};
+  return [
+    check(
+      'Invoice.BillingReference.InvoiceDocumentReference.ID',
+      expectedId,
+      reference.ID?.[0]?._,
+      reference.ID?.[0]?._ === expectedId
+    ),
+    check(
+      'Invoice.BillingReference.InvoiceDocumentReference.UUID',
+      expectedUuid,
+      reference.UUID?.[0]?._,
+      reference.UUID?.[0]?._ === expectedUuid
+    )
+  ];
+};
+
+const noOriginalReferenceChecks = (payload) => {
+  const reference = originalDocumentReference(payload);
+  return [
+    check(
+      'Invoice.BillingReference.InvoiceDocumentReference',
+      'omitted',
+      reference ? 'present' : 'omitted',
+      !reference
+    )
+  ];
+};
+
+const withOriginalReference = (invoiceType, invoiceNo, originalId, originalUuid) => withDoc((doc) => {
+  doc.header.invoiceNo = invoiceNo;
+  doc.header.invoiceType = invoiceType;
+  doc.header.InvoiceDocumentReference_ID = originalId;
+  doc.header.invoiceDocumentReference = originalUuid;
+});
+
 const billRefChecks = (payload) => {
   const invoice = invoiceOf(payload);
   const billingIds = (invoice.BillingReference || [])
@@ -930,6 +974,87 @@ const CASES = [
       };
     }),
     checks: (payload) => deliveryWithoutShipmentChecks(payload)
+  },
+  {
+    id: 'ref-02-long-uuid',
+    expectError: false,
+    input: withOriginalReference(
+      '02',
+      'CN-LONG-UUID',
+      'INV-2024-0001',
+      '8F3C2A1B9E0D4C7A6B5E4D3C2B1A0987'
+    ),
+    checks: (payload) => originalReferenceChecks(
+      payload,
+      'INV-2024-0001',
+      '8F3C2A1B9E0D4C7A6B5E4D3C2B1A0987'
+    )
+  },
+  {
+    id: 'ref-02-na-uuid',
+    expectError: false,
+    input: withOriginalReference('02', 'CN-NA-UUID', 'INV-OLD-0001', 'NA'),
+    checks: (payload) => originalReferenceChecks(payload, 'INV-OLD-0001', 'NA')
+  },
+  {
+    id: 'ref-03-na-uuid',
+    expectError: false,
+    input: withOriginalReference('03', 'DN-NA-UUID', 'INV-OLD-0002', 'NA'),
+    checks: (payload) => originalReferenceChecks(payload, 'INV-OLD-0002', 'NA')
+  },
+  {
+    id: 'ref-04-na-uuid',
+    expectError: false,
+    input: withOriginalReference('04', 'RN-NA-UUID', 'INV-OLD-0003', 'NA'),
+    checks: (payload) => originalReferenceChecks(payload, 'INV-OLD-0003', 'NA')
+  },
+  {
+    id: 'ref-12-na-uuid',
+    expectError: false,
+    input: withOriginalReference('12', 'SCN-NA-UUID', 'SINV-OLD-0001', 'NA'),
+    checks: (payload) => originalReferenceChecks(payload, 'SINV-OLD-0001', 'NA')
+  },
+  {
+    id: 'ref-13-na-uuid',
+    expectError: false,
+    input: withOriginalReference('13', 'SDN-NA-UUID', 'SINV-OLD-0002', 'NA'),
+    checks: (payload) => originalReferenceChecks(payload, 'SINV-OLD-0002', 'NA')
+  },
+  {
+    id: 'ref-14-na-uuid',
+    expectError: false,
+    input: withOriginalReference('14', 'SRN-NA-UUID', 'SINV-OLD-0003', 'NA'),
+    checks: (payload) => originalReferenceChecks(payload, 'SINV-OLD-0003', 'NA')
+  },
+  {
+    id: 'ref-02-blank-id',
+    expectError: 'DR328',
+    expectMessage: 'The original e-invoice internal ID is required on credit notes, debit notes, and refund notes.',
+    input: withOriginalReference('02', 'CN-BLANK-ID', '', 'NA')
+  },
+  {
+    id: 'ref-02-na-id',
+    expectError: 'DR328',
+    expectMessage: 'The original e-invoice internal ID is required on credit notes, debit notes, and refund notes.',
+    input: withOriginalReference('02', 'CN-NA-ID', 'NA', 'NA')
+  },
+  {
+    id: 'ref-02-not-applicable-id',
+    expectError: 'DR328',
+    expectMessage: 'The original e-invoice internal ID is required on credit notes, debit notes, and refund notes.',
+    input: withOriginalReference('02', 'CN-NOT-APPLICABLE-ID', 'Not Applicable', '8F3C2A1B9E0D4C7A6B5E4D3C2B1A0987')
+  },
+  {
+    id: 'ref-01-no-preceding-ref',
+    expectError: false,
+    input: withOriginalReference('01', 'INV-NO-PRECEDING-REF', '', 'NA'),
+    checks: (payload) => noOriginalReferenceChecks(payload)
+  },
+  {
+    id: 'ref-11-no-preceding-ref',
+    expectError: false,
+    input: withOriginalReference('11', 'SINV-NO-PRECEDING-REF', 'NA', 'NA'),
+    checks: (payload) => noOriginalReferenceChecks(payload)
   }
 ];
 
@@ -961,6 +1086,14 @@ const runCase = (testCase, sample, foreignSample) => {
   let checks;
   if (testCase.expectError) {
     checks = errorChecks(mappingError, testCase.expectError);
+    if (testCase.expectMessage) {
+      checks.push(check(
+        'error.message',
+        testCase.expectMessage,
+        mappingError?.message,
+        mappingError?.message === testCase.expectMessage
+      ));
+    }
     if (payload) {
       checks.push(check('payload', 'must not be produced', 'payload present', false));
     }

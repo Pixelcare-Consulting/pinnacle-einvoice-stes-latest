@@ -577,11 +577,41 @@ const mapInvoiceAdditionalDocumentReferences = (doc) => {
   return refs.length ? refs : undefined;
 };
 
+const ADJUSTMENT_INVOICE_TYPES = new Set(['02', '03', '04', '12', '13', '14']);
+
+const invoiceTypeCode = (invoiceType) => {
+  const raw = String(invoiceType ?? '').trim();
+  if (/^\d{1,2}$/.test(raw)) {
+    return raw.padStart(2, '0');
+  }
+  return raw;
+};
+
 const mapBillingReference = (doc) => {
   const billingEntries = [];
   const originalId = doc.header.InvoiceDocumentReference_ID;
   const originalUuid = doc.header.invoiceDocumentReference;
-  if (hasMeaningfulValue(originalId) || hasMeaningfulValue(originalUuid)) {
+  const adjustmentDocument = ADJUSTMENT_INVOICE_TYPES.has(invoiceTypeCode(doc.header.invoiceType));
+
+  if (adjustmentDocument) {
+    if (!hasMeaningfulValue(originalId)) {
+      throw new LhdnMappingError(
+        'DR328',
+        'The original e-invoice internal ID is required on credit notes, debit notes, and refund notes.',
+        {
+          target: 'Original e-Invoice Internal ID',
+          propertyPath: 'Invoice.BillingReference.InvoiceDocumentReference.ID'
+        }
+      );
+    }
+
+    billingEntries.push({
+      "InvoiceDocumentReference": [{
+        "ID": wrapValue(originalId),
+        "UUID": wrapRequiredText(originalUuid, 'NA')
+      }]
+    });
+  } else if (hasMeaningfulValue(originalId) || hasMeaningfulValue(originalUuid)) {
     billingEntries.push({
       "InvoiceDocumentReference": [{
         ...(hasMeaningfulValue(originalId) ? { "ID": wrapValue(originalId) } : {}),
