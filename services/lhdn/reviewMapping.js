@@ -842,6 +842,14 @@ const CASES = [
     })
   },
   {
+    id: 'cf385-na-description',
+    expectError: 'CF385',
+    input: withDoc((doc) => {
+      doc.header.invoiceNo = 'CF385-NA-DESCRIPTION';
+      doc.items[0].item.description = 'NA';
+    })
+  },
+  {
     id: 'foreign-address-sgp',
     expectError: false,
     input: withDoc((doc) => {

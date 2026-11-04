@@ -17,7 +17,11 @@ export const releases: ReleaseNote[] = [
   {
     version: '1.3.4',
     date: '04.11.26',
+    improvement: [
+      'The error popup now explains that LHDN requires a real product name and links to the official field list'
+    ],
     fix: [
+      'Preview now stops you if a line has no product description (values like NA are not accepted)',
       'Credit notes, debit notes, and refund notes now keep the link to the original invoice, including invoices that were never issued in MyInvois',
       'Those notes are held back before sending when the original invoice number is missing'
     ]

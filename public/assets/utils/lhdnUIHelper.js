@@ -295,12 +295,35 @@ const lhdnUIHelper = (function() {
             `;
         }
 
+        const hasCf385 = formattedError.code === 'CF385'
+            || (Array.isArray(formattedError.details) && formattedError.details.some((detail) => {
+                if (typeof detail === 'string') {
+                    return detail.includes('CF385');
+                }
+                if (detail && typeof detail === 'object') {
+                    return detail.code === 'CF385' || detail.errorCode === 'CF385';
+                }
+                return false;
+            }));
+
         // Add technical details section for CF414 phone number error
         if (formattedError.code === 'CF414') {
             modalHTML += `
                     <div class="error-information">
                         <h6><i class="fas fa-info-circle"></i> How to Fix</h6>
                         <p>The supplier's phone number must be at least 8 characters long. Please update the phone number in your Excel file and try again.</p>
+                    </div>
+            `;
+        }
+
+        // CF385: Description of Product or Service is mandatory
+        if (hasCf385) {
+            modalHTML += `
+                    <div class="error-information">
+                        <h6><i class="fas fa-info-circle"></i> How to Fix</h6>
+                        <p>Enter the real product or service name on each line in Excel (column 86). Values like NA are not accepted.</p>
+                        <p>LHDN source: Description of Product or Service is mandatory ([1-1]), example “Laptop Peripherals”.</p>
+                        <p><a href="https://sdk.myinvois.hasil.gov.my/documents/invoice-v1-0/" target="_blank" rel="noopener noreferrer">Invoice v1.0 – field list</a></p>
                     </div>
             `;
         }

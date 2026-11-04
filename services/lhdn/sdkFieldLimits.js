@@ -18,7 +18,8 @@ const SDK_FIELD_LIMITS = {
   army: 12,
   brn: 20,
   amountDigits: 26,
-  billReference: 150
+  billReference: 150,
+  itemDescription: 300
 };
 
 const DATE_ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -520,13 +521,31 @@ const collectSdkValidationErrors = (doc) => {
   });
 
   (doc.items || []).forEach((item, index) => {
+    const linePath = `Invoice.InvoiceLine[${index + 1}]`;
+    const description = item.item?.description;
+    if (!hasMeaningfulValue(description)) {
+      errors.push({
+        code: 'CF385',
+        message: 'Description of product or service is required',
+        target: 'Description',
+        propertyPath: `${linePath}.Item.Description`
+      });
+    } else if (String(description).trim().length > SDK_FIELD_LIMITS.itemDescription) {
+      errors.push({
+        code: 'CF385',
+        message: `Description of product or service must not exceed ${SDK_FIELD_LIMITS.itemDescription} characters`,
+        target: 'Description',
+        propertyPath: `${linePath}.Item.Description`
+      });
+    }
+
     const lineAmounts = [item.lineExtensionAmount, item.price?.amount, item.taxTotal?.taxAmount];
     if (lineAmounts.some((amount) => exceedsAmountDigits(amount) || (amount != null && /[eE]/.test(String(amount))))) {
       errors.push({
         code: 'CF420',
         message: `Amount fields must be plain numbers of at most ${SDK_FIELD_LIMITS.amountDigits} digits`,
         target: 'Amount',
-        propertyPath: `Invoice.InvoiceLine[${index + 1}]`
+        propertyPath: linePath
       });
     }
   });
